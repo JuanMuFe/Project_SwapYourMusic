@@ -32,8 +32,12 @@
 	</head>
 	
 	<body ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.checkSession()">
-		<h1>You are now in the adminWindow</h1> (admin user)
+		<h1>Welcome admin {{musicCtrl.user.getUserName()}}</h1>
 		
-		<input type="submit" ng-click="musicCtrl.logOut()" value="Log out" />
+		<div>
+			<img src="{{musicCtrl.user.getImage()}}" width="100" />
+			<a>User administration</a> | <a>Items administration</a> | <a>Bids administration</a> | <a ng-click="musicCtrl.logOut()">Log out</a>
+			
+		</div>
 	</body>
 </html>

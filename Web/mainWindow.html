@@ -31,9 +31,24 @@
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
 	
-	<body ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.checkSession()">
-		<h1>You are now in the mainWindow</h1> (normal user)
+	<body ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.checkSession()">				
+		<div>	
+			<h2>Welcome {{musicCtrl.user.getUserName()}} !</h2>			
+			<img src="{{musicCtrl.user.getImage()}}" width="100" />
+			<a ng-click="userPage=1">Profile</a> | <a ng-click="userPage=2">Home</a> | 
+			<a ng-click="userPage=3">Messages</a> | <a ng-click="musicCtrl.logOut()">Log out</a>
+		</div>
 		
-		<input type="submit" ng-click="musicCtrl.logOut()" value="Log out" />
+		<div ng-show="userPage==1">
+			Profile
+		</div>
+		
+		<div ng-show="userPage==2">
+			Home
+		</div>
+		
+		<div ng-show="userPage==3">
+			Messages
+		</div>
 	</body>
 </html>
