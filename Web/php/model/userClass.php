@@ -253,6 +253,20 @@ class userClass {
 		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." like \"%".$likeUserName."%\"";
 		return userClass::findByQuery( $cons );
     }
+    
+    /*
+     * @name: findByUserNameAndPass()
+	 * @author: Irene Blanco & Carlos García
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: $name, $password 
+	 * @return: object with the query results
+	 */ 
+    public static function findByUserNameAndPass($userName, $password ) {
+		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." = \"".$userName."\" and ".userClass::$colNamePassword." = \"".md5($password)."\"";
+		return userClass::findByQuery( $cons );
+    }
 
 
  
