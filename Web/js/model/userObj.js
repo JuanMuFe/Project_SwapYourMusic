@@ -39,8 +39,8 @@ function userObj ()
 	
 	this.getUserID = function () {return this.userID;}
 	this.getUserType = function () {return this.userType;}
-	this.getUserName = function () {return this.password;}
-	this.getPassword = function () {return this.userName;}
+	this.getUserName = function () {return this.userName;}
+	this.getPassword = function () {return this.password;}
 	this.getEmail = function () {return this.email;}
 	this.getRegisterDate = function () {return this.registerDate;}
 	this.getUnsubscribeDate = function () {return this.unsibscribeDate;}
