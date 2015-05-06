@@ -27,28 +27,34 @@
 		
 		<!--Own scripts-->		
 		<script src="js/model/userObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/genreObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/conditionObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/mainWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
 	
-	<body ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.checkSession()">				
+	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
 		<div>	
-			<h2>Welcome {{musicCtrl.user.getUserName()}} !</h2>			
-			<img src="{{musicCtrl.user.getImage()}}" width="100" />
+			<h2>Welcome {{sessionCtrl.user.getUserName()}} !</h2>			
+			<img src="{{sessionCtrl.user.getImage()}}" width="100" />
 			<a ng-click="userPage=1">Profile</a> | <a ng-click="userPage=2">Home</a> | 
-			<a ng-click="userPage=3">Messages</a> | <a ng-click="musicCtrl.logOut()">Log out</a>
+			<a ng-click="userPage=3">Messages</a> | <a ng-click="sessionCtrl.logOut()">Log out</a>
 		</div>
 		
-		<div ng-show="userPage==1">
-			Profile
+		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData()">
+			<div ng-show="userPage==1">
+				<user-profile-management></user-profile-management>
+			</div>
+			
+			<div ng-show="userPage==2">
+				Home
+			</div>
+			
+			<div ng-show="userPage==3">
+				Messages
+			</div>
 		</div>
 		
-		<div ng-show="userPage==2">
-			Home
-		</div>
-		
-		<div ng-show="userPage==3">
-			Messages
-		</div>
 	</body>
 </html>

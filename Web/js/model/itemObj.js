@@ -1,4 +1,4 @@
-function userObj ()
+function itemObj ()
 {
 	//Attributes declaration
 	this.itemID;
@@ -10,11 +10,11 @@ function userObj ()
 	this.genreID;
 	this.conditionID;
 	this.image;
-	this.avaliable;
+	this.available;
 	
 	
 	//Methods declaration
-	this.construct = function (itemID,userID,itemType, title, artist, releaseYear, unsibscribeDate, conditionID, image, avaliable)
+	this.construct = function (itemID,userID,itemType, title, artist, releaseYear, genreID, conditionID, image, available)
 	{
 		this.setItemID(itemID);
 		this.setUserID(userID);
@@ -22,10 +22,10 @@ function userObj ()
 		this.setTitle(title);
 		this.setArtist(artist);
 		this.setReleaseYear(releaseYear);
-		this.setgenreID(unsibscribeDate);
+		this.setGenreID(genreID);
 		this.setConditionID(conditionID);
 		this.setImage(image);
-		this.setAvaliable(avaliable);
+		this.setAvailable(available);
 	}
 	
 	//getters and setters
@@ -35,21 +35,21 @@ function userObj ()
 	this.setTitle = function (title){this.title=title;}
 	this.setArtist = function (artist){this.artist=artist;}
 	this.setReleaseYear = function (releaseYear){this.releaseYear=releaseYear;}
-	this.setgenreID = function (unsibscribeDate){this.unsibscribeDate=unsibscribeDate;}
+	this.setGenreID = function (genreID){this.genreID=genreID;}
 	this.setConditionID = function (conditionID){this.conditionID=conditionID;}
 	this.setImage = function (image){this.image=image;}
-	this.setAvaliable = function (avaliable){this.avaliable=avaliable;}
+	this.setAvailable = function (available){this.available=available;}
 	
 	this.getItemID = function () {return this.itemID;}
 	this.getUserID = function () {return this.userID;}
-	this.getItemType = function () {return this.title;}
-	this.getTitle = function () {return this.itemType;}
+	this.getItemType = function () {return this.itemType;}
+	this.getTitle = function () {return this.title;}
 	this.getArtist = function () {return this.artist;}
 	this.getReleaseYear = function () {return this.releaseYear;}
-	this.getgenreID = function () {return this.unsibscribeDate;}
+	this.getGenreID = function () {return this.genreID;}
 	this.getConditionID = function () {return this.conditionID;}
 	this.getImage = function () {return this.image;}
-	this.getAvaliable = function () {return this.avaliable;}
+	this.getAvailable = function () {return this.available;}
 	
 	/*
 	* @name: arrayToString()
@@ -78,7 +78,7 @@ function userObj ()
 	* @return: clientString - well formed strng with all the object data
 	*/ 
 	this.toString = function(){
-		var itemString="id= "+this.getItemID()+ " userID= "+this.getUserID()+" itemType= "+this.getItemType()+" title= "+this.getTitle()+" artist= "+this.getArtist()+" releaseYear= "+this.getReleaseYear()+" genreID= "+this.getgenreID()+" conditionID= "+this.getConditionID()+" image= "+this.getImage()+" avaliable= "+this.getAvaliable();
+		var itemString="id= "+this.getItemID()+ " userID= "+this.getUserID()+" itemType= "+this.getItemType()+" title= "+this.getTitle()+" artist= "+this.getArtist()+" releaseYear= "+this.getReleaseYear()+" genreID= "+this.getGenreID()+" conditionID= "+this.getConditionID()+" image= "+this.getImage()+" avaliable= "+this.getAvailable();
 		return itemString;
 	}
 }

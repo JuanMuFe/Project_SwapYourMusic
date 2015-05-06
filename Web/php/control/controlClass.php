@@ -21,6 +21,21 @@ require_once "toDoClass.php";
 					
 					case 1:	echo toDoClass::userConnection($this->params['action'], $this->params['JSONData']);
 							break;						
+					
+					case 2: echo toDoClass::searchItemsByUser($this->params['action'], $this->params['userID']);
+							break;
+							
+					case 3: echo toDoClass::searchGenres($this->params['action']);
+							break;
+							
+					case 4: echo toDoClass::searchConditions($this->params['action']);
+							break;
+						
+					case 5: echo toDoClass::insertItem($this->params['action'], $this->params['JSONData']);
+							break;
+						
+					case 6:	echo toDoClass::modifyItem($this->params['action'], $this->params['JSONData']);
+							break;
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

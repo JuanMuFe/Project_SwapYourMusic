@@ -43,7 +43,7 @@ class genreClass {
 		$data["genreID"] = $this->getGenreID();
 		$data["name"] = $this->getName();
 
-	return $data;
+		return $data;
     }
 
 /*
@@ -54,7 +54,7 @@ class genreClass {
 	 * @params: $genreID ,$name
 	 * @return: none
 	 */ 
-    public function setAll($genreID ,$name)) {
+    public function setAll($genreID ,$name) {
 		$this->setGenreID($genreID);
 		$this->setName($name);
     }
@@ -157,7 +157,7 @@ class genreClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".genreClass::$tableName."`";
-	return genreClass::findByQuery( $cons );
+		return genreClass::findByQuery( $cons );
     }
 
 

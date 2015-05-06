@@ -54,7 +54,7 @@ class conditionClass {
 	 * @params: $conditionID ,$name
 	 * @return: none
 	 */ 
-    public function setAll($conditionID ,$name)) {
+    public function setAll($conditionID ,$name) {
 		$this->setConditionID($conditionID);
 		$this->setName($name);
     }
@@ -157,7 +157,7 @@ class conditionClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".conditionClass::$tableName."`";
-	return conditionClass::findByQuery( $cons );
+		return conditionClass::findByQuery( $cons );
     }
 
 

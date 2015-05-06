@@ -18,7 +18,7 @@ class itemClass {
     private $genreID;
     private $conditionID;
     private $image;
-    private $avaliable;
+    private $available;
 
     //----------Data base Values---------------------------------------
     private static $tableName = "items";
@@ -31,7 +31,7 @@ class itemClass {
     private static $colNameGenreID = "genreID";
     private static $colNameConditionID = "conditionID";
     private static $colNameImage = "image";
-    private static $colNameAvaliable = "avaliable";
+    private static $colNameAvailable = "available";
         
     function __construct() {
     }
@@ -104,29 +104,29 @@ class itemClass {
         $this->image = $image;
     }
     
-    public function getAvaliable() {
-        return $this->avaliable;
+    public function getAvailable() {
+        return $this->available;
     }
-    public function setAvaliable($avaliable) {
-        $this->avaliable = $avaliable;
+    public function setAvailable($available) {
+        $this->available = $available;
     }
     
 
 	
     public function getAll() {
-	$data = array();
-	$data["itemID"] = $this->getItemID();
-	$data["userID"] = $this->getUserID();
-	$data["itemType"] = $this->getItemType();
-	$data["title"] = $this->getTitle();
-	$data["artist"] = $this->getArtist();
-	$data["releaseYear"] = $this->getReleaseYear();
-	$data["genreID"] = $this->getgenreID();
-	$data["conditionID"] = $this->getConditionID();
-	$data["image"] = $this->getImage();
-	$data["avaliable"] = $this->getAvaliable();
-
-	return $data;
+		$data = array();
+		$data["itemID"] = $this->getItemID();
+		$data["userID"] = $this->getUserID();
+		$data["itemType"] = $this->getItemType(); 
+		$data["title"] = utf8_encode($this->getTitle());
+		$data["artist"] = utf8_encode($this->getArtist());
+		$data["releaseYear"] = $this->getReleaseYear();
+		$data["genreID"] = $this->getGenreID();
+		$data["conditionID"] = $this->getConditionID();
+		$data["image"] = $this->getImage();
+		$data["available"] = $this->getAvailable();
+		
+		return $data;
     }
 
 /*
@@ -137,7 +137,7 @@ class itemClass {
 	 * @params: $itemID ,$userID, $itemType, $title,$title,$artist, $releaseYear,$genreID,$image
 	 * @return: none
 	 */ 
-    public function setAll($itemID ,$userID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $avaliable) {
+    public function setAll($itemID ,$userID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $available){
 		$this->setItemID($itemID);
 		$this->setUserID($userID);
 		$this->setItemType($itemType);
@@ -147,7 +147,7 @@ class itemClass {
 		$this->setReleaseYear($releaseYear);
 		$this->setConditionID($conditionID);
 		$this->setImage($image);
-		$this->setAvaliable($avaliable);
+		$this->setAvailable($available);
     }
     
     //---Databese management section-----------------------
@@ -161,16 +161,16 @@ class itemClass {
 	 * @return: objects collection
 	 */ 
     private static function fromResultSetList( $res ) {
-	$entityList = array();
-	$i=0;
-	while ( ($row = $res->fetch_array(MYSQLI_BOTH)) != NULL ) {
-		//We get all the values an add into the array
-		$entity = itemClass::fromResultSet( $row );
-		
-		$entityList[$i]= $entity;
-		$i++;
-	}
-	return $entityList;
+		$entityList = array();
+		$i=0;
+		while ( ($row = $res->fetch_array(MYSQLI_BOTH)) != NULL ) {
+			//We get all the values an add into the array
+			$entity = itemClass::fromResultSet( $row );
+			
+			$entityList[$i]= $entity;
+			$i++;
+		}
+		return $entityList;
     }
 
     /*
@@ -193,7 +193,7 @@ class itemClass {
 		$genreID=$res[itemClass::$colNameGenreID];
 		$conditionID = $res[ itemClass::$colNameConditionID ];
 		$image = $res[ itemClass::$colNameImage ];
-		$avaliable = $res[ itemClass::$colNameAvaliable ];
+		$available = $res[ itemClass::$colNameAvailable ];
 
        	//Object construction
        	$entity = new itemClass();
@@ -203,10 +203,10 @@ class itemClass {
 		$entity->setTitle($title);
 		$entity->setArtist($artist);
 		$entity->setReleaseYear($releaseYear);
-		$entity->setgenreID($genreID);
-		$entity->setconditionID($conditionID);
+		$entity->setGenreID($genreID);
+		$entity->setConditionID($conditionID);
 		$entity->setImage($image);
-		$entity->setAvaliable($avaliable);
+		$entity->setAvailable($available);
 
 
 		return $entity;
@@ -222,19 +222,19 @@ class itemClass {
 	 * @return: objects collection
 	 */ 
     public static function findByQuery( $cons ) {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-    		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	
-	//Run the query
-	$res = $conn->query($cons);
-	
-	if ( $conn != null ) $conn->close();
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+				printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		
+		//Run the query
+		$res = $conn->query($cons);
+		
+		if ( $conn != null ) $conn->close();
 
-	return itemClass::fromResultSetList( $res );
+		return itemClass::fromResultSetList( $res );
     }
 
     /*
@@ -247,10 +247,27 @@ class itemClass {
 	 * @return: object with the query results
 	 */ 
     public static function findById( $itemID ) {
-	$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameItemID." = \"".$itemID."\"";
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameItemID." = \"".$itemID."\"";
 
-	return itemClass::findByQuery( $cons );
+		return itemClass::findByQuery( $cons );
     }
+    
+    /*
+     * @itemType: findByUserId()
+	 * @artist: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: userId
+	 * @return: object with the query results
+	 */ 
+    public static function findByUserId( $userID ) {
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameUserID." = \"".$userID."\"";
+
+		return itemClass::findByQuery( $cons );
+    }
+    
+    
   
   
   /*
@@ -263,9 +280,9 @@ class itemClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByGenre( $genreID ) {
-	$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameGenreID." = \"".$genreID."\"";
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameGenreID." = \"".$genreID."\"";
 
-	return itemClass::findByQuery( $cons );
+		return itemClass::findByQuery( $cons );
     }
     
     /*
@@ -278,9 +295,9 @@ class itemClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByReleaseYear( $releaseYear ) {
-	$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameReleaseYear." = \"".$releaseYear."\"";
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameReleaseYear." = \"".$releaseYear."\"";
 
-	return itemClass::findByQuery( $cons );
+		return itemClass::findByQuery( $cons );
     }
     
 
@@ -326,7 +343,7 @@ class itemClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".itemClass::$tableName."`";
-	return itemClass::findByQuery( $cons );
+		return itemClass::findByQuery( $cons );
     }
 
 
@@ -340,22 +357,22 @@ class itemClass {
 	 * @return: none
 	 */ 
     public function create() {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	//return $this->toString();
-	//Preparing the sentence
-	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`avaliable`) values (?,?,?,?,?,?,?,?,?,?)" )) {
-		$stmt->bind_param("iiissiiisi",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvaliable());
-		//executar consulta
-		$stmt->execute();
-	    }
-	    
-	    if ( $conn != null ) $conn->close();
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		//return $this->toString();
+		//Preparing the sentence
+		$stmt = $conn->stmt_init();
+		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`) values (?,?,?,?,?,?,?,?,?,?)" )) {
+			$stmt->bind_param("iisssiiisi",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable());
+			//executar consulta
+			$stmt->execute();
+		}
+			
+		if ( $conn != null ) $conn->close();
 	}
 
 	/*
@@ -377,7 +394,7 @@ class itemClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("UPDATE `".itemClass::$tableName."` SET avaliable=0 where ".itemClass::$colNameItemID." = ?")) {
+		if ($stmt->prepare("UPDATE `".itemClass::$tableName."` SET available=0 where ".itemClass::$colNameItemID." = ?")) {
 			$stmt->bind_param("i",$this->getItemID());
 			$stmt->execute();
 		}
@@ -397,7 +414,7 @@ class itemClass {
     public function update() {
 		//Connection with the database
 		$conn = new BDSwap_your_music();
-		if (mysqli_connect_errno()) {
+		if (mysqli_connect_errno()){
     		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
     		exit();
 		}
@@ -405,13 +422,12 @@ class itemClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvaliable." = ? where ".itemClass::$colNameItemID." =?") ) {
-			$stmt->bind_param("iiissiiisii",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvaliable(),$this->getItemID());
+		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ? where ".itemClass::$colNameItemID." =?") ) {
+			$stmt->bind_param("iisssiiisii",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(),$this->getItemID());
 			//executar consulta
 			$stmt->execute();;
 		}
 		if ( $conn != null ) $conn->close();
-
     }
     
     
@@ -425,7 +441,7 @@ class itemClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "itemClass[itemID=" . $this->itemID . "][userID=" . $this->userID . "][itemType=" . $this->itemType . "][title=" . $this->title . "][artist=" . $this->artist . "][releaseYear=" . $this->releaseYear . "][genreID=" . $this->genreID . "][conditionID=" . $this->conditionID."][image=" . $this->image . "][avaliable=" . $this->avaliable."]";
+        $toString = "itemClass[itemID=" . $this->itemID . "][userID=" . $this->userID . "][itemType=" . $this->itemType . "][title=" . $this->title . "][artist=" . $this->artist . "][releaseYear=" . $this->releaseYear . "][genreID=" . $this->genreID . "][conditionID=" . $this->conditionID."][image=" . $this->image . "][available=" . $this->available."]";
 		return $toString;
 
     }

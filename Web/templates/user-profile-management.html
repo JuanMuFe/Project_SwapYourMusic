@@ -1,0 +1,70 @@
+<form name="userProfileManagement" ng-submit="userProfileManagement.$valid" novalidate>
+	<nav>
+		<a ng-click="userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2">Friends list</a> | <a ng-click="userProfile=3">Bids</a>
+	</nav>
+	
+	<div ng-show="userProfile==1">
+		<h3>Items</h3>	
+		<nav>
+			<a ng-click="items=1">Add new item</a> | <a ng-click="items=2">View items</a>
+		</nav>			
+		
+		<div ng-show="items==1">
+			<label>Item type:</label>
+			<select id="itemType" ng-model="musicCtrl.item.itemType" required>
+				<option ng-repeat="itemType in musicCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}<option>
+			</select><br/>
+			
+			<label>Artist:</label>
+			<input type="text" id="artist" ng-model="musicCtrl.item.artist" required /><br />
+			
+			<label>Title:</label>
+			<input type="text" id="title" ng-model="musicCtrl.item.title" required /><br />
+						
+			<label>Release year:</label>
+			<input type="text" id="releaseYear" ng-model="musicCtrl.item.releaseYear" required /><br />
+			
+			<label>Genre:</label>
+			<select ng-model="musicCtrl.item.genreID" required>
+				<option ng-repeat="genres in musicCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
+			</select><br />
+			
+			<label>Condition:</label>
+			<select ng-model="musicCtrl.item.conditionID"required>
+				<option ng-repeat="conditions in musicCtrl.conditionsArray" value="{{conditions.conditionID}}">{{conditions.name}}</option>
+			</select><br />
+			
+			<label>Image:</label>
+			<input type="file" id="itemImage" ng-model="musicCtrl.item.image" required /><br/>
+			
+			<input type="button" value="Add item" ng-click="musicCtrl.addItem()"/>
+		</div>	
+		
+		<div ng-show="items==2">
+			<table border=1>
+				<tr><th>Item type</th><th>Title</th><th>Artist</th><th>Release year</th><th>Genre</th><th>Conditions</th><th>Image</th><th>Modify</th><th>Delete</th></tr>
+				<tr ng-repeat="item in musicCtrl.itemsArray">
+					<td>{{item.getItemType()}}</td>
+					<td>{{item.getTitle()}}</td>
+					<td>{{item.getArtist()}}</td>
+					<td>{{item.getReleaseYear()}}</td>
+					<td>{{musicCtrl.genresArray[item.getGenreID()].name}}</td> 
+					<td>{{musicCtrl.conditionsArray[item.getConditionID()].name}}</td>
+					<td><img src="{{item.getImage()}}" width="100px"/></td>
+					<td><a href="#"><img src="img/modify.png" width="30" /></a></td>
+					<td><a ng-click="musicCtrl.deleteItem()" href="#" id="delete{{$index}}"><img src="img/delete.png" width="30" /></a></td>
+				</tr>
+			</table>
+		</div>		
+		
+		
+	</div>
+	
+	<div ng-show="userProfile==2">
+		<h3>Friends</h3>
+	</div>
+	
+	<div ng-show="userProfile==3">
+		<h3>Bids</h3>
+	</div>
+</form>
