@@ -1,0 +1,69 @@
+		<form class="login2" name="userManagement" ng-submit="sessionCtrl.userManagement()" novalidate>
+			<div class="container well">
+				<div class="form-horizontal" >
+
+					<!-- <div>passwordValid:{{passwordValid}} userManagement.$valid: {{userManagement.$valid}} DNI valid:{{dniValid}}</div> -->
+			
+			<div class="row" ng-show="userAction==1">
+						<div class="col-xs-12"><h2>Add new User</h2></div>
+					</div>
+					<div class="row" ng-show="userAction==2">
+						<div class="col-xs-12"><h2>Modify your data</h2></div>
+					</div>
+					<br/>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup">User name:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" id="userName" ng-change="sessionCtrl.checkUserName()" ng-model="sessionCtrl.user.userName"  required/>
+							<p class="warning" ng-if="!userNameValid" >
+								This user name is used by another user
+							</p>
+						</div>
+						<label class="col-sm-2 control-label" for="formGroup">Email:</label>
+						<div class="col-sm-4">
+							<input class="form-control" id="email" type="email" ng-model="sessionCtrl.user.email"  ng-change="sessionCtrl.checkEmail()" ng-pattern="/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/" required></input>
+							<p class="warning" ng-if="!emailValid" >
+								This email is already registered.
+							</p>
+						</div>						
+						
+						</br></br></br></br>
+	
+						<label class="col-sm-2 control-label" for="formGroup">Password:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="password" ng-model="sessionCtrl.user.password" name="password" ng-minlength="6" ng-change="sessionCtrl.checkPassword()" required/>
+							<p class="warning" ng-if="userManagement.password.$error.minlength || userManagement.password.$invalid" >
+								Password must be at least 6 characters
+							</p>
+						</div>	
+						<label class="col-sm-2 control-label" for="formGroup">Repeat password:</label>
+						<div class="col-sm-4">							
+							<input class="form-control" id="password2" type="password" ng-model="sessionCtrl.passControl" name="password2" ng-minlength="6" required ng-change="sessionCtrl.checkPassword()"/>
+							
+							<p class="warning" ng-if="!passwordValid" >
+								Password do not match
+							</p>							
+						</div>							
+						</br></br></br></br>
+						
+					</div>
+					<div class="form-group">						
+						<label class="col-sm-2 control-label" for="formGroup">Image: <img src="{{sessionCtrl.user.image}}" width="50" ng-show="userAction==2"/></label>
+						<label class="col-sm-6 control-label" for="formGroup" ng-if="userAction==1"><input class="form-control" type="file" file="image" accept="image/*" ng-model="image" id="imageUser" required/></label>						
+						<label class="col-sm-6 control-label" for="formGroup" ng-if="userAction==2"><input class="form-control" type="file" file="image" accept="image/*" id="imageUserMod" /></label>						
+					</div>
+					<br />
+					<br />
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup"></label>
+						<div class="col-sm-4">
+							<button ng-disabled="userManagement.$invalid || !passwordValid ||!dniValid ||!ageValid ||!nickValid" class="btn btn-success" >
+								Submit
+							</button>
+						</div>
+						<div class="form-group col-sm-6">
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>

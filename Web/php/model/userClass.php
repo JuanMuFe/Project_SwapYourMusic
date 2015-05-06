@@ -238,6 +238,21 @@ class userClass {
 
 	return userClass::findByQuery( $cons );
     }
+    
+    /*
+     * @userName: findByUserName()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByUserName( $userName ) {
+	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." = \"".$userName."\"";
+
+	return userClass::findByQuery( $cons );
+    }
   
 
     /**
@@ -256,7 +271,7 @@ class userClass {
     
     /*
      * @name: findByUserNameAndPass()
-	 * @author: Irene Blanco & Carlos García
+	 * @author: Irene Blanco 
 	 * @version: 1.0
 	 * @description: this function runs a query and returns an object array
      * @date: 27/03/2015
@@ -272,7 +287,7 @@ class userClass {
  
     /*
      * @userName: findAll()
-	 * @author: Irene Blanco & Carlos García
+	 * @author: Irene Blanco 
 	 * @version: 1.0
 	 * @description: this function runs a query and returns an object array
      * @date: 27/03/2015

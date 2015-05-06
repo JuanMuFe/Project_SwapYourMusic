@@ -20,7 +20,9 @@ require_once "toDoClass.php";
 				switch ($this->params['action']){
 					
 					case 1:	echo toDoClass::userConnection($this->params['action'], $this->params['JSONData']);
-							break;						
+							break;	
+					case 2:	echo toDoClass::searchByUserName($this->params['action'], $this->params['JSONData']);
+							break;											
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;
