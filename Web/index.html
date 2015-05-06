@@ -28,6 +28,8 @@
 		
 		<!--Own scripts-->		
 		<script src="js/model/userObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/regionObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/index.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
@@ -49,7 +51,7 @@
 			<button class="btn" ng-click="flag=1">Register now!</button>	
 		</div>
 		
-		<div id="registerDiv" ng-show="flag==1">
+		<div id="registerDiv" ng-show="flag==1" ng-init="sessionCtrl.loadRegions()">
 			REGISTRO
 			<user-data-management></user-data-management>
 						

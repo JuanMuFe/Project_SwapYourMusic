@@ -1,0 +1,10 @@
+.ng-invalid.ng-dirty{
+	border-color:#FF5B60;
+}
+.ng-valid.ng-dirty{
+	border-color:#69F174;
+}
+.warning{
+	font-size:12px;
+	color:grey;
+}

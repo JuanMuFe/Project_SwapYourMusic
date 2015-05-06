@@ -239,6 +239,21 @@ class userClass {
 	return userClass::findByQuery( $cons );
     }
     
+     /*
+     * @userName: findClientUsers()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findClientUsers() {
+	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserType." = 1";
+
+	return userClass::findByQuery( $cons );
+    }
+    
     /*
      * @userName: findByUserName()
 	 * @author: Irene Blanco 
@@ -250,6 +265,21 @@ class userClass {
 	 */ 
     public static function findByUserName( $userName ) {
 	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." = \"".$userName."\"";
+
+	return userClass::findByQuery( $cons );
+    }
+  
+  /*
+     * @userName: findByEmail()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByEmail( $email ) {
+	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameEmail." = \"".$email."\"";
 
 	return userClass::findByQuery( $cons );
     }
@@ -320,12 +350,13 @@ class userClass {
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
 	if ($stmt->prepare("insert into ".userClass::$tableName."(`userID`,`userType`,`userName`,`password`,`email`,`registerDate`,`unsubscribeDate`,`image`,`provinceID`) values (?,?,?,?,?,?,?,?,?)" )) {
-		$stmt->bind_param("iissssssi",$this->getUserID(), $this->getUserType(),$this->getUserName(), $this->getPassword() , $this->getEmail() , $this->getRegisterDate() , $this->getUnsubscribeDate() ,$this->getImage(),$this->getProvinceID());
+		$stmt->bind_param("iissssssi",$this->getUserID(), $this->getUserType(),$this->getUserName(), md5($this->getPassword()) , $this->getEmail() , $this->getRegisterDate() , $this->getUnsubscribeDate() ,$this->getImage(),$this->getProvinceID());
 		//executar consulta
 		$stmt->execute();
 	    }
 	    
 	    if ( $conn != null ) $conn->close();
+	     return $this->getUserID();
 	}
 
 	/*
