@@ -1,0 +1,110 @@
+		<form name="userManagement" ng-submit="adminCtrl.userManagement()" novalidate>
+			<div class="container well">
+				<div class="form-horizontal" >
+
+<!--
+					 <div>{{adminCtrl.selectedRegion}}
+					 </br>passwordValid:{{passwordValid}} userManagement.$invalid: {{userManagement.$invalid}} email valid:{{emailValid}} userName valid:{{userNameValid}}</div> 
+					
+-->
+			<div class="row" ng-show="userAction==1">
+						<div class="col-xs-12"><h2>Register</h2></div>
+					</div>
+					<div class="row" ng-show="userAction==2">
+						<div class="col-xs-12"><h2>Modify user data</h2></div>
+					</div>
+					<br/>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup">User name:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" id="userName" ng-pattern="/[a-zA-Z0-9^ ]/" ng-change="adminCtrl.checkUserName()" ng-model="adminCtrl.user.userName"  required/>
+							<p class="warning" ng-show="!userNameValid" >
+								This user name is used by another user
+							</p>
+						</div>
+						<label class="col-sm-2 control-label" for="formGroup">Email:</label>
+						<div class="col-sm-4">
+							<input class="form-control" id="email" type="email" ng-model="adminCtrl.user.email"  ng-change="adminCtrl.checkEmail()" ng-pattern="/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/" required></input>
+							<p class="warning" ng-show="!emailValid" >
+								This email is already registered.
+							</p>
+						</div>						
+						
+						</br></br></br></br>
+	
+						<label class="col-sm-2 control-label" for="formGroup">Password:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="password" ng-model="adminCtrl.user.password" name="password" ng-minlength="6" ng-change="adminCtrl.checkPassword()" required/>
+							<p class="warning" ng-if="userManagement.password.$error.minlength || userManagement.password.$invalid" >
+								Password must be at least 6 characters
+							</p>
+						</div>	
+						<label class="col-sm-2 control-label" for="formGroup">Repeat password:</label>
+						<div class="col-sm-4">		
+										
+							<input class="form-control" id="password2" type="password" ng-model="passControl" name="password2" ng-minlength="6" required ng-change="adminCtrl.checkPassword()"/>
+							
+							<p class="warning" ng-if="!passwordValid" >
+								Password do not match
+							</p>							
+						</div>							
+						</br></br></br></br>
+	
+						<label class="col-sm-2 control-label" for="formGroup">Region:</label>
+						<div class="col-sm-4">REGION {{adminCtrl.selectedRegion}}
+							<select class="form-control" name="region"  ng-model="adminCtrl.selectedRegion" ng-change="adminCtrl.loadProvincesByRegion()"required>
+								<option ng-selected="{{region.regionID == adminCtrl.selectedRegion}}" ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+							</select>
+
+						</div>	
+
+						<label class="col-sm-2 control-label" for="formGroup">Province:</label>
+						<div class="col-sm-4">	provinceID 					
+							<select ng-disabled="adminCtrl.selectedRegion==undefined" class="form-control" id="province" name="province"  ng-model="adminCtrl.user.provinceID" required>
+								<option ng-selected="{{province.provinceID == adminCtrl.user.provinceID}}" ng-repeat="province in adminCtrl.allProvincesArray" value="{{province.provinceID}}"> {{province.name}}</option>
+							</select>		
+							<p class="warning" ng-show="adminCtrl.selectedRegion==undefined" >
+								Select first your region
+							</p>		
+										
+						</div>							
+
+
+						</br></br></br></br>
+						
+						<label class="col-sm-2 control-label" for="formGroup">Register Date:</label>
+						<div class="col-sm-4">
+							<input type="text" calendar ng-model="adminCtrl.user.registerDate" readonly/>
+
+						</div>	
+						<label class="col-sm-2 control-label" for="formGroup">Unsubscribe Date:</label>
+						<div class="col-sm-4">							
+							<input type="text" calendar ng-model="adminCtrl.user.unsubscribeDate" readonly/>
+										
+						</div>							
+						</br></br></br></br>
+						
+					</div>
+					<div class="form-group">						
+						<label class="col-sm-2 control-label" for="formGroup">Image: <img src="{{adminCtrl.user.image}}" width="50"/></label>						
+						<label class="col-sm-6 control-label" for="formGroup" ><input class="form-control" type="file" file="image" accept="image/*" id="imageUserMod" /></label>						
+					</div>
+					<br />
+					<br />
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup"></label>
+						<div class="col-sm-4">
+							<button ng-disabled="userManagement.$invalid || !passwordValid ||!emailValid ||!userNameValid" class="btn btn-success" >
+								Submit
+							</button>
+						</div>
+						<div class="form-group col-sm-6">
+							<label>
+								<input class="btn btn-default btn-primary btn-block" type="button"  value="Back" ng-click="flag=1 ; usersFlag=0"> 
+								
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>

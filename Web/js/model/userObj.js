@@ -33,7 +33,7 @@ function userObj ()
 	this.setPassword = function (password){this.password=password;}
 	this.setEmail = function (email){this.email=email;}
 	this.setRegisterDate = function (registerDate){this.registerDate=registerDate;}
-	this.setUnsubscribeDate = function (unsibscribeDate){this.unsibscribeDate=unsibscribeDate;}
+	this.setUnsubscribeDate = function (unsubscribeDate){this.unsubscribeDate=unsubscribeDate;}
 	this.setImage = function (image){this.image=image;}
 	this.setProvinceID = function (provinceID){this.provinceID=provinceID;}
 	
@@ -43,7 +43,7 @@ function userObj ()
 	this.getPassword = function () {return this.password;}
 	this.getEmail = function () {return this.email;}
 	this.getRegisterDate = function () {return this.registerDate;}
-	this.getUnsubscribeDate = function () {return this.unsibscribeDate;}
+	this.getUnsubscribeDate = function () {return this.unsubscribeDate;}
 	this.getImage = function () {return this.image;}
 	this.getProvinceID = function () {return this.provinceID;}
 	
