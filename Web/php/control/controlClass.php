@@ -32,7 +32,12 @@ require_once "toDoClass.php";
 					case 54:	echo toDoClass::insertUser($this->params['action'], $this->params['JSONData']);
 							break;	
 					case 55:	echo toDoClass::searchClientUsers($this->params['action']);
+							break;
+					case 56:	echo toDoClass::deleteUser($this->params['action'], $this->params['JSONData']);
 							break;	
+					case 57:	echo toDoClass::modifyUser($this->params['action'], $this->params['JSONData']);
+							break;
+								
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

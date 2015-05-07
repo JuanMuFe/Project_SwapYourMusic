@@ -173,7 +173,7 @@
 * @name: checkEmail()
 * @author: Irene Blanco 
 * @version: 1.0
-* @description: this function checks the existence of the userName
+* @description: this function checks the existence of the email
 * @date: 26/04/2015
 * @params: none
 * @return: none
@@ -230,7 +230,7 @@
  *@name: loadRegions
  *@author: Irene Blanco Fabregat
  *@versio: 1.0
- *@description: this function controls if user exist in database and redirects depending if is admin user or normal user
+ *@description: this function controls loads all the regions
  *@date: 2015/05/05
  *@params: none
  *@return: none
@@ -267,7 +267,7 @@
  *@name: loadProvincesByRegion
  *@author: Irene Blanco Fabregat
  *@versio: 1.0
- *@description: this function controls if user exist in database and redirects depending if is admin user or normal user
+ *@description: this function loads all the provinces by region
  *@date: 2015/05/05
  *@params: none
  *@return: none

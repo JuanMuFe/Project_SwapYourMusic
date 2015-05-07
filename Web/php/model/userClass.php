@@ -118,6 +118,7 @@ class userClass {
 
 	return $data;
     }
+    
 
 /*
      * @userName: setAll()
@@ -407,7 +408,7 @@ class userClass {
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
 		if ($stmt->prepare("update `".userClass::$tableName."` set ".userClass::$colNameUserID." = ?,".userClass::$colNameUserType." = ?,".userClass::$colNameUserName." = ?,".userClass::$colNamePassword." = ?,".userClass::$colNameEmail." = ?,".userClass::$colNameRegisterDate." = ?,".userClass::$colNameUnsubscribeDate." = ?, ".userClass::$colNameImage." = ?,".userClass::$colNameProvinceID." = ? where ".userClass::$colNameUserID." =?") ) {
-			$stmt->bind_param("iisssssssi",$this->getUserID(), $this->getUserType(),$this->getUserName(), $this->getPassword() , $this->getEmail() , $this->getRegisterDate() , $this->getUnsubscribeDate() ,$this->getImage(),$this->getProvinceID(),$this->getUserID());
+			$stmt->bind_param("iissssssii",$this->getUserID(), $this->getUserType(),$this->getUserName(), $this->getPassword() , $this->getEmail() , $this->getRegisterDate() , $this->getUnsubscribeDate() ,$this->getImage(),$this->getProvinceID(),$this->getUserID());
 			//executar consulta
 			$stmt->execute();;
 		}

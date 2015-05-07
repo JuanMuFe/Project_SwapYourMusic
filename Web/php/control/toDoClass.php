@@ -12,7 +12,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: userConnection
  *@author: Juan Antonio Muñoz
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -47,7 +47,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: findByUserName
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -82,7 +82,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: searchByEmail
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -116,7 +116,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: searchRegions
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -149,7 +149,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: searchProvincesByRegion
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -182,7 +182,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: insertUser
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -205,7 +205,7 @@ require_once "../model/provinceClass.php";
 /*
  *@name: searchClientUsers
  *@author: Irene Blanco Fabregat
- *@versio: 1.0
+ *@version: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action
@@ -224,14 +224,96 @@ require_once "../model/provinceClass.php";
 				$outPutData[1]=$errors;
 			}else{
 				$userClientsArray=array();
+				$userProvincesArray = array();
 				
 				foreach ($userClientsList as $user){
 					 $userClientsArray[]=$user->getAll();
-				}				
+					 $userProvince=provinceClass::findById($user->getProvinceID());
+					 foreach ($userProvince as $province){
+						$userProvincesArray[]=$province->getAll();
+					}
+				}	
+							
 				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
 			}
 			
 			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: searchProvinces
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchProvinces($action){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findAll();
+			
+			if (count($provincesList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$provincesArray=array();
+				
+				foreach ($provincesList as $province){
+					 $provincesArray[]=$province->getAll();
+				}				
+				$outPutData[1]=$provincesArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: deleteUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function deleteUser($action, $JSONData){
+
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->delete();
+			
+			echo true;
+		}
+		
+/*
+ *@name: modifyUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function modifyUser($action, $JSONData){
+
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->update();
+			
+			echo true;
 		}
 }
 	

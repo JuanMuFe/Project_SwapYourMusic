@@ -24,14 +24,13 @@
 			}
 			echo json_encode($newFileNames);
 			break;
-		case "10010":
+		case "51":
 			//This option is to remove files from the server
 			//$_REQUEST["JSONData"] contains all the file's names to remove
 			$filesToDeleteArray = json_decode(stripslashes($_REQUEST["JSONData"]));
 
 			foreach($filesToDeleteArray as $filename){
-				chmod("../".$filename, 0777);
-				unlink("../".$filename);
+				unlink('../../'.$filename);
 			}
 			
 			echo true;
