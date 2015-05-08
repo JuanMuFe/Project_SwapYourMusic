@@ -11,7 +11,7 @@
 			parent::__construct(
 				"localhost",
 				"root",
-				"",
+				"root",
 				"swap_your_music"
 			);
 		}

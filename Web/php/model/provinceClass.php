@@ -50,7 +50,7 @@ class provinceClass {
     public function getAll() {
 	$data = array();
 	$data["provinceID"] = $this->getProvinceID();
-	$data["name"] = $this->getName();
+	$data["name"] = UTF8_encode($this->getName());
 	$data["regionID"] = $this->getRegionID();
 
 	return $data;
@@ -64,7 +64,7 @@ class provinceClass {
 	 * @params: $provinceID ,$name
 	 * @return: none
 	 */ 
-    public function setAll($provinceID ,$name, $regionID)) {
+    public function setAll($provinceID ,$name, $regionID) {
 		$this->setProvinceID($provinceID);
 		$this->setName($name);
 		$this->setRegionID($regionID);
@@ -171,6 +171,21 @@ class provinceClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".provinceClass::$tableName."`";
+	return provinceClass::findByQuery( $cons );
+    }
+
+	    /*
+     * @userName: findByRegionID()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByRegionID($regionID) {
+	$cons = "select * from `".provinceClass::$tableName."` where ".provinceClass::$colNameRegionID." = \"".$regionID."\"";
+
 	return provinceClass::findByQuery( $cons );
     }
 
