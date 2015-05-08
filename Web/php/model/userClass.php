@@ -264,7 +264,7 @@ class userClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByUserNameAndPass($userName, $password ) {
-		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." = \"".$userName."\" and ".userClass::$colNamePassword." = \"".md5($password)."\"";
+		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." = \"".$userName."\" and ".userClass::$colNamePassword." = \"".$password."\"";
 		return userClass::findByQuery( $cons );
     }
 

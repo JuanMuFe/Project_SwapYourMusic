@@ -126,13 +126,34 @@ require_once "../model/conditionClass.php";
 			echo true;
 		}
 		
-		public function modifyItem($action, $JSONData){
+		public function deleteItem($action, $JSONData){
 			$itemObject= json_decode(stripslashes($JSONData));
 			$item= new itemClass();
 			
 			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
 							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available);
-			$item->update();				
+			$item->delete();				
+			echo true;
+		}
+		
+		public function modifyItems($action, $JSONItemToMod){
+			$itemObject = json_decode(stripslashes($JSONItemToMod));
+			
+			$item = new itemClass();	   	    
+			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available);
+			$item->update();		    
+			
+			echo true;
+		}
+		
+		public function modifyUser($action, $JSONData){
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName, md5($userObj->password),$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->update();
+			
 			echo true;
 		}
 	}

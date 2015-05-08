@@ -123,7 +123,7 @@ class itemClass {
 		$data["releaseYear"] = $this->getReleaseYear();
 		$data["genreID"] = $this->getGenreID();
 		$data["conditionID"] = $this->getConditionID();
-		$data["image"] = $this->getImage();
+		$data["image"] = utf8_encode($this->getImage());
 		$data["available"] = $this->getAvailable();
 		
 		return $data;
@@ -141,8 +141,8 @@ class itemClass {
 		$this->setItemID($itemID);
 		$this->setUserID($userID);
 		$this->setItemType($itemType);
-		$this->setTitle($title);
-		$this->setArtist($artist);
+		$this->setTitle(utf8_decode($title));
+		$this->setArtist(utf8_decode($artist));
 		$this->setgenreID($genreID);
 		$this->setReleaseYear($releaseYear);
 		$this->setConditionID($conditionID);
@@ -265,9 +265,7 @@ class itemClass {
 		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameUserID." = \"".$userID."\"";
 
 		return itemClass::findByQuery( $cons );
-    }
-    
-    
+    }    
   
   
   /*
@@ -363,11 +361,10 @@ class itemClass {
 			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
 				exit();
 		}
-		//return $this->toString();
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
 		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`) values (?,?,?,?,?,?,?,?,?,?)" )) {
-			$stmt->bind_param("iisssiiisi",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable());
+			$stmt->bind_param("iisssiiisi",$this->getItemID(), $this->getUserID(),$this->getItemType(),$this->getTitle(),  $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable());
 			//executar consulta
 			$stmt->execute();
 		}
@@ -384,7 +381,7 @@ class itemClass {
 	 * @params: none
 	 * @return: none
 	 */ 
-    public function delete() {
+    public function delete(){
 		//Connection with the database
 		$conn = new BDSwap_your_music();
 		if (mysqli_connect_errno()) {
@@ -411,7 +408,7 @@ class itemClass {
 	 * @params: none
 	 * @return: none
 	 */ 
-    public function update() {
+    public function update(){
 		//Connection with the database
 		$conn = new BDSwap_your_music();
 		if (mysqli_connect_errno()){
@@ -420,12 +417,11 @@ class itemClass {
 		}
 		
 		//Preparing the sentence
-		//return $this->toString();
 		$stmt = $conn->stmt_init();
 		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ? where ".itemClass::$colNameItemID." =?") ) {
-			$stmt->bind_param("iisssiiisii",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(),$this->getItemID());
+			$stmt->bind_param("iisssiiisii",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(), $this->getImage(),$this->getAvailable(),$this->getItemID());
 			//executar consulta
-			$stmt->execute();;
+			$stmt->execute();
 		}
 		if ( $conn != null ) $conn->close();
     }

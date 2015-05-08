@@ -34,8 +34,14 @@ require_once "toDoClass.php";
 					case 5: echo toDoClass::insertItem($this->params['action'], $this->params['JSONData']);
 							break;
 						
-					case 6:	echo toDoClass::modifyItem($this->params['action'], $this->params['JSONData']);
+					case 6:	echo toDoClass::deleteItem($this->params['action'], $this->params['JSONData']);
 							break;
+						
+					case 7:	echo toDoClass::modifyItems($this->params['action'], $this->params['JSONItemToMod']);
+							break;
+							
+					case 57: echo toDoClass::modifyUser($this->params['action'], $this->params['JSONData']);
+							 break;
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;
