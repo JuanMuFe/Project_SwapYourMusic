@@ -5,14 +5,11 @@
 */
 
 require_once "../model/userClass.php";
-<<<<<<< HEAD
 require_once "../model/itemClass.php";
 require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
-=======
 require_once "../model/regionClass.php";
 require_once "../model/provinceClass.php";
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 
 	class toDoClass {
 /*
@@ -50,7 +47,7 @@ require_once "../model/provinceClass.php";
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
+
 		public function searchItemsByUser($action, $userID){
 			$outPutData = array();
 			$errors = array();
@@ -71,7 +68,8 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$itemsArray;
-=======
+			}
+		}
 /*
  *@name: findByUserName
  *@author: Irene Blanco Fabregat
@@ -169,13 +167,12 @@ require_once "../model/provinceClass.php";
 					 $regionsArray[]=$region->getAll();
 				}				
 				$outPutData[1]=$regionsArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
+
 		public function searchGenres($action){
 			$outPutData = array();
 			$errors = array();
@@ -194,7 +191,9 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$genresArray;
-=======
+			}
+		}
+
 /*
  *@name: searchProvincesByRegion
  *@author: Irene Blanco Fabregat
@@ -252,7 +251,7 @@ require_once "../model/provinceClass.php";
 		
 		
 /*
- *@name: searchClientUsers
+ *@name: searchClientUsersNameLike
  *@author: Irene Blanco Fabregat
  *@version: 1.0
  *@description: this function 
@@ -261,12 +260,12 @@ require_once "../model/provinceClass.php";
  *@return: $outPutData -> array with all user data.
  *
 */
-		public function searchClientUsers ($action){
+		public function searchClientUsersNameLike ($action, $userName){
 			$outPutData = array();
 			$errors = array();
 			$outPutData[0]=true;
 			
-			$userClientsList = userClass::findClientUsers();
+			$userClientsList = userClass::findClientLikeUserName($userName);
 			
 			if (count($userClientsList)==0){
 				$outPutData[0]=false;
@@ -285,13 +284,106 @@ require_once "../model/provinceClass.php";
 							
 				$outPutData[1]=$userClientsArray;
 				$outPutData[2]=$userProvincesArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
+
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
+/*
+ *@name: searchClientUsersByRegion
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchClientUsersByRegion ($action, $regionID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findProvincesByRegion($regionID);
+			$userClientsList = userClass::findClientUsers();
+
+				$userClientsArray=array();
+				$userProvincesArray = array();
+				
+				foreach ($userClientsList as $user){
+					 $user->getAll();					
+					foreach ($provincesList as $province){
+												
+						if (strcmp($user->getProvinceID(),$province->getProvinceID())==0){
+							$userClientsArray[] = $user->getAll();
+							$userProvince=provinceClass::findById($user->getProvinceID());							
+							foreach ($userProvince as $province){								
+								$userProvincesArray[]=$province->getAll();
+							}
+						}
+					}
+				}								
+				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
+				
+				if(count($userClientsArray)==0){
+					$outPutData[0]=false;
+					$outPutData[1]=$errors;	
+					$outPutData[2]=$errors;	
+				}
+			
+			return json_encode($outPutData);
+		}
+
+/*
+ *@name: searchClientUsersByRegionLikeName
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchClientUsersByRegionLikeName ($action, $regionID, $userName){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findProvincesByRegion($regionID);
+			$userClientsList = userClass::findClientLikeUserName($userName);
+
+				$userClientsArray=array();
+				$userProvincesArray = array();
+				
+				foreach ($userClientsList as $user){
+					 $user->getAll();					
+					foreach ($provincesList as $province){
+						
+						if (strcmp($user->getProvinceID(),$province->getProvinceID())==0){
+							$userClientsArray[] = $user->getAll();
+							$userProvince=provinceClass::findById($user->getProvinceID());							
+							foreach ($userProvince as $province){								
+								$userProvincesArray[]=$province->getAll();
+							}
+						}
+					}
+				}								
+				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
+				
+				if(count($userClientsArray)==0){
+					$outPutData[0]=false;
+					$outPutData[1]=$errors;	
+					$outPutData[2]=$errors;	
+				}
+			
+			return json_encode($outPutData);
+		}		
+
+		
+
 		public function searchConditions($action){
 			$outPutData = array();
 			$errors = array();
@@ -310,7 +402,9 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$conditionsArray;
-=======
+			}
+		}
+
 /*
  *@name: searchProvinces
  *@author: Irene Blanco Fabregat
@@ -339,13 +433,13 @@ require_once "../model/provinceClass.php";
 					 $provincesArray[]=$province->getAll();
 				}				
 				$outPutData[1]=$provincesArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
+
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
+
 		public function insertItem($action, $JSONData){
 			$itemObject = json_decode(stripslashes($JSONData));
 			
@@ -365,8 +459,8 @@ require_once "../model/provinceClass.php";
 			$item->update();				
 			echo true;
 		}
-	}
-=======
+	
+
 /*
  *@name: deleteUser
  *@author: Irene Blanco Fabregat
@@ -403,12 +497,12 @@ require_once "../model/provinceClass.php";
 			$userObj = json_decode(stripslashes($JSONData));
 		
 			$user = new userClass();	   	
-			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,md5($userObj->password),$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
 			$user->update();
 			
 			echo true;
 		}
 }
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
+
 	
 ?>

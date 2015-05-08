@@ -159,6 +159,21 @@ class provinceClass {
 	return provinceClass::findByQuery( $cons );
     }
 
+   /*
+     * @userName: findProvincesByRegion()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findProvincesByRegion( $regionID ) {
+	$cons = "select * from `".provinceClass::$tableName."` where ".provinceClass::$colNameRegionID." = \"".$regionID."\"";
+
+	return provinceClass::findByQuery( $cons );
+    }
+
  
     /*
      * @userName: findAll()

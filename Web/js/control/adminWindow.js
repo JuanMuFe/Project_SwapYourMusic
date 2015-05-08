@@ -35,7 +35,20 @@
 			}						
 		}
 		
-		
+/*
+ *@name: logOut
+ *@author: Juan Antonio Muñoz
+ *@versio: 1.0
+ *@description: This function removes the session called 'userConnected' and redirects to index.
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/		
+		this.logOut= function(){
+			sessionStorage.removeItem("userConnected");			
+			window.open("index.html","_self");
+		}		
 		
 	});
 	
@@ -47,6 +60,7 @@
 		this.usersArray = new Array();
 		this.provincesArray = new Array();
 		
+		this.nameToSearch;
 		this.user = new userObj();//user to modify
 		this.currEmail;
 		this.currUserName;
@@ -54,6 +68,7 @@
 		this.allRegionsArray = new Array();
 		this.allProvincesArray = new Array();
 		this.selectedRegion;
+		this.regionToSearch;
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
@@ -61,6 +76,7 @@
 		$scope.passwordValid = true;
 		$scope.userNameValid = true;
 		$scope.emailValid = true;
+		$scope.noUsers = true;
 		
 //METHODS
 /*
@@ -73,43 +89,83 @@
  *@return: none
  *
 */			
-		this.loadUsers = function(){
-			
-			var outPutData= new Array();						
-			
+		this.loadUsers = function(){			
+			this.usersArray = new Array();
 			this.provincesArray = new Array();
-			
-			//getting the client users
-			$.ajax({
-				  url: 'php/control/control.php',
-				  type: 'POST',
-				  async: false,
-				  data: 'action=55',
-				  dataType: "json",				  
-				  success: function (response) { 
-					  outPutData = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError) {
-						alert(xhr.status+"\n"+thrownError);
-				  }					  
-			});
-			
-			if(outPutData[0]){
-				for (var i = 0; i < outPutData[1].length; i++)
-				{
-					var user = new userObj();
-					user.construct(outPutData[1][i].userID, outPutData[1][i].userType, outPutData[1][i].userName, outPutData[1][i].password,
-									outPutData[1][i].email, outPutData[1][i].registerDate, outPutData[1][i].unsubscribeDate, outPutData[1][i].image,
-									outPutData[1][i].provinceID);		
-					
-					this.usersArray.push(user);					
-					
-					var province = new provinceObj();
-					province.construct(outPutData[2][i].provinceID, outPutData[2][i].name,outPutData[2][i].regionID);
-					this.provincesArray.push(province);
+	
+			if(this.nameToSearch!=""||this.regionToSearch!="") {			
+				
+				$scope.usersFlag = 0;				
+				var outPutData= new Array();						
+				
+				if(this.nameToSearch!="" && (this.regionToSearch=="" || this.regionToSearch==undefined)){
+					this.provincesArray = new Array();
+						//getting the client users
+						$.ajax({
+							  url: 'php/control/control.php',
+							  type: 'POST',
+							  async: false,
+							  data: 'action=55&userName='+this.nameToSearch,
+							  dataType: "json",				  
+							  success: function (response) { 
+								  outPutData = response;
+							  },
+							  error: function (xhr, ajaxOptions, thrownError) {
+									alert(xhr.status+"\n"+thrownError);
+							  }					  
+						});	
 				}			
-					
-			}		
+				else if((this.nameToSearch==undefined || this.nameToSearch=="") && this.regionToSearch!=""){
+					$.ajax({
+						  url: 'php/control/control.php',
+						  type: 'POST',
+						  async: false,
+						  data: 'action=58&regionID='+this.regionToSearch,
+						  dataType: "json",				  
+						  success: function (response) { 
+							  outPutData = response;
+						  },
+						  error: function (xhr, ajaxOptions, thrownError) {
+								alert(xhr.status+"\n"+thrownError);
+						  }					  
+					});
+				}
+				else if(this.nameToSearch!="" && this.regionToSearch!=""){
+						$.ajax({
+						  url: 'php/control/control.php',
+						  type: 'POST',
+						  async: false,
+						  data: 'action=59&regionID='+this.regionToSearch+'&userName='+this.nameToSearch,
+						  dataType: "json",				  
+						  success: function (response) { 
+							  outPutData = response;
+						  },
+						  error: function (xhr, ajaxOptions, thrownError) {
+								alert(xhr.status+"\n"+thrownError);
+						  }					  
+					});
+				}
+				
+				if(outPutData[0]){
+					$scope.noUsers = false;
+					for (var i = 0; i < outPutData[1].length; i++)
+					{
+						var user = new userObj();
+						user.construct(outPutData[1][i].userID, outPutData[1][i].userType, outPutData[1][i].userName, outPutData[1][i].password,
+										outPutData[1][i].email, outPutData[1][i].registerDate, outPutData[1][i].unsubscribeDate, outPutData[1][i].image,
+										outPutData[1][i].provinceID);		
+						
+						this.usersArray.push(user);					
+						
+						var province = new provinceObj();
+						province.construct(outPutData[2][i].provinceID, outPutData[2][i].name,outPutData[2][i].regionID);
+						this.provincesArray.push(province);
+					}			
+						
+				}
+				else $scope.noUsers = true;
+			}
+			else $scope.noUsers = true;
 		}
 		
 /*
@@ -166,20 +222,15 @@
  *
 */			
 		this.modifyUser = function(index){
-			console.log(this.user);			
-				this.user = this.usersArray[index];	
-				console.log(this.user);			
+
+				this.user = this.usersArray[index];		
 				$scope.passControl = this.user.getPassword();
 				
 				this.selectedRegion = this.provincesArray[index].getRegionID();
 				
 				this.currEmail = this.user.getEmail() ;
 				this.currUserName = this.user.getUserName() ;
-				
-				
-				alert("REGION ID"+this.provincesArray[index].getRegionID());
-				alert(this.user.getProvinceID());
-				console.log(this.user);			
+
 				$scope.usersFlag=1;	
 		}
 		
@@ -251,7 +302,7 @@
 */ 
 		this.checkPassword = function ()
 		{
-			if(this.user.password != this.passControl)
+			if(this.user.password != $scope.passControl)
 			{
 				$scope.passwordValid = false;
 				$("#password2").removeClass("ng-valid");
@@ -558,15 +609,7 @@ function userImagesManagement(userNick, imageName)
 	
 	var image = $("#imageUserMod")[0].files[0];
 	
-	//File name
-	var fileName = image.name;
-	
-	//File type
-	var fileType = image.type;
-	
-	//File size
-	var fileSize = image.size;
-	
+
 	imageFiles.append('images[]',image);
 	
 	var serverFileNames = new Array();

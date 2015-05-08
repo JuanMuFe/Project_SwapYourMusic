@@ -240,6 +240,22 @@ class userClass {
 	return userClass::findByQuery( $cons );
     }
     
+    
+
+    /*
+     * @userName: findClientByProvince()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findClientByProvince( $provinceID ) {
+	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameProvinceID." = \"".$provinceID."\"";
+
+	return userClass::findByQuery( $cons );
+    }
      /*
      * @userName: findClientUsers()
 	 * @author: Irene Blanco 
@@ -295,8 +311,8 @@ class userClass {
 	 * @param userName
 	 * @return object with the query results
     */
-    public static function findlikeUserName( $likeUserName ) {
-		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." like \"%".$likeUserName."%\"";
+    public static function findClientLikeUserName( $likeUserName ) {
+		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserName." like '%".$likeUserName."%' and ".userClass::$colNameUserType." = 1";
 		return userClass::findByQuery( $cons );
     }
     

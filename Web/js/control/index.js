@@ -58,12 +58,14 @@
 				if(!typeof(Storage)){
 					alert("This browser does not accept local variables");
 				}else{
-					sessionStorage.setItem("userConnected", JSON.stringify(this.user));		
+					if(this.user.getUnsubscribeDate()=="0000-00-00"){ //users no cancelled
+						sessionStorage.setItem("userConnected", JSON.stringify(this.user));		
 					
-					if(this.user.getUserType()==0){  //if the user is admin, redirect to admin page with this administration methods
-						window.open("adminWindow.html","_self");
-					}else window.open("mainWindow.html", "_self");						
-				}				
+						if(this.user.getUserType()==0){  //if the user is admin, redirect to admin page with this administration methods
+							window.open("adminWindow.html","_self");
+						}else window.open("mainWindow.html", "_self");
+					}else alert("Your account is temporarily canceled.");										
+				}					
 			}else{
 				showErrors(outPutData[1]);
 			}

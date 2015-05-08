@@ -20,7 +20,7 @@ require_once "toDoClass.php";
 				switch ($this->params['action']){
 					
 					case 1:	echo toDoClass::userConnection($this->params['action'], $this->params['JSONData']);
-<<<<<<< HEAD
+
 							break;						
 					
 					case 2: echo toDoClass::searchItemsByUser($this->params['action'], $this->params['userID']);
@@ -37,8 +37,7 @@ require_once "toDoClass.php";
 						
 					case 6:	echo toDoClass::modifyItem($this->params['action'], $this->params['JSONData']);
 							break;
-=======
-							break;	
+	
 					case 50:	echo toDoClass::searchByUserName($this->params['action'], $this->params['JSONData']);
 							break;		
 					case 51:	echo toDoClass::searchByEmail($this->params['action'], $this->params['JSONData']);
@@ -49,14 +48,18 @@ require_once "toDoClass.php";
 							break;		
 					case 54:	echo toDoClass::insertUser($this->params['action'], $this->params['JSONData']);
 							break;	
-					case 55:	echo toDoClass::searchClientUsers($this->params['action']);
+					case 55:	echo toDoClass::searchClientUsersNameLike($this->params['action'], $this->params['userName']);
 							break;
 					case 56:	echo toDoClass::deleteUser($this->params['action'], $this->params['JSONData']);
 							break;	
 					case 57:	echo toDoClass::modifyUser($this->params['action'], $this->params['JSONData']);
 							break;
+					case 58:	echo toDoClass::searchClientUsersByRegion($this->params['action'], $this->params['regionID']);
+							break;
+					case 59:	echo toDoClass::searchClientUsersByRegionLikeName($this->params['action'], $this->params['regionID'], $this->params['userName']);
+							break;
 								
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
+
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

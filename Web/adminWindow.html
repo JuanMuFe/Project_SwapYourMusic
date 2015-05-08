@@ -40,12 +40,23 @@
 		
 		<div>
 			<img src="{{sessionCtrl.loggedUser.getImage()}}" width="100" />
-			<a ng-click="flag=1">Users administration</a> | <a ng-click="flag=2">Items administration</a> | <a ng-click="flag=3">Bids administration</a> | <a ng-click="musicCtrl.logOut()">Log out</a>
+			<a ng-click="flag=1">Users administration</a> | <a ng-click="flag=2">Items administration</a> | <a ng-click="flag=3">Bids administration</a> | <a ng-click="sessionCtrl.logOut()">Log out</a>
 			
-			<div id="management" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadUsers()">
+			<div id="management" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
 				<div id="usersAdministration" ng-show="flag==1 ">	
 					<h2>Users Administration</h2>
 					<div ng-show="usersFlag!=1">
+						
+							<label for="nameToSearch"> Search by user name</label>
+							 <input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadUsers()"/>
+
+							
+							<label for="region"> Search by region</label>
+							 <select name="region"  ng-model="adminCtrl.regionToSearch" ng-change="adminCtrl.loadUsers()">
+								<option value="">Select region</option>
+								<option ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+							</select>
+						<button class="">Add a new user</button>
 						<users-admin-management ></users-admin-management>		
 					</div>
 					<div ng-show="usersFlag==1" >

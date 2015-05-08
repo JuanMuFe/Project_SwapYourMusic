@@ -1,7 +1,7 @@
 <?php
 	session_start();
 	$newFileNames = array();
-<<<<<<< HEAD
+
 	switch ($_REQUEST["action"]){	
 			case 1:	//option to upload item images to the server
 					$nameFile=str_replace(" ","",$_REQUEST["titleItem"])."".$_REQUEST["userID"];
@@ -19,15 +19,7 @@
 					}
 					echo json_encode($newFileNames);
 					break;
-					
-			case 2:
-					break;
-			
-			default: echo "Action not correct: ".$_REQUEST["action"];
-					 break;
-=======
-	switch ($_REQUEST["action"] )
-    {
+
 		case "50":
 			//This option is to upload users images to the server
 			//$_FILES contains all the file to upload
@@ -60,9 +52,9 @@
 			
 			echo true;
 			break;
+			
 		default:
 			echo "Action not correct: ".$_REQUEST["action"];
 			break;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 	}
 ?>

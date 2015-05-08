@@ -1,0 +1,38 @@
+<form name="itemsModification" ng-submit="itemsModification.$valid && musicCtrl.modifyItem()" novalidate>
+		<div>
+			<form>
+				<table border=1>
+					<tr><th>Item type</th><th>Title</th><th>Artist</th><th>Release year</th><th>Genre</th><th>Conditions</th><th>Image</th></tr>
+					<tr>
+						<td>
+							<select id="itemTypeMod" ng-model="musicCtrl.item.itemType" required>
+								<option>{{item.itemType}}</option>
+								<option ng-repeat="itemType in musicCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}<option>
+							</select><br/>
+						</td>
+						<td><input type="text" id="titleMod" ng-model="musicCtrl.item.title" /></td>
+						<td><input type="text" id="artistMod" ng-model="musicCtrl.item.artist" /></td> 
+						<td><input type="text" id="releaseYearMod" ng-model="musicCtrl.item.releaseYear" /></td>
+						
+						<td>
+							<select id="genreMod" ng-model="musicCtrl.item.genreID">
+								<option>{{musicCtrl.genresArray[item.getGenreID()].name}}</option>
+								<option ng-repeat="genres in musicCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
+							</select>							
+						</td> 
+						
+						<td>
+							<select id="conditionMod" ng-model="musicCtrl.item.conditionID">
+								<option>{{musicCtrl.conditionsArray[item.getConditionID()].name}}</option>
+								<option ng-repeat="conditions in musicCtrl.conditionsArray" value="{{conditions.conditionID}}">{{conditions.name}}</option>
+							</select>
+						</td>
+						<td><img src="{{musicCtrl.item.image}}" width="120"/>
+						<input type="file" accept="image/*" id="imageMod"/></td>
+					</tr>
+				</table>
+				<input type="submit" value="Save changes"/>
+				<input type="button" value="Back" ng-click="musicCtrl.hideShowWindows();musicCtrl.loadUserItems()" />
+			</form>
+		</div>	
+</form>

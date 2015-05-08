@@ -8,6 +8,8 @@
 		<link rel="shortcut icon" href=""/>
 		<meta name="description" content="Swap Your Music Project">
 		<meta name="author" content="JuanMuñoz_IreneBlanco">
+		
+		<!-- Styles -->
 		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/style.css"  />
 		  
@@ -25,6 +27,9 @@
 		<!-- jQuery Cookies management-->
 		<script src="js/frameWorks/jQuery/jquery-cookie/jquery.cookie.js" type="text/javascript" xml:space="preserve"></script>
 		
+		<!-- Jquery/JavaScript md5 functions-->
+		<script src="js/frameWorks/md5.js" type="text/javascript" xml:space="preserve"></script>
+		
 		<!--Own scripts-->		
 		<script src="js/model/userObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/genreObj.js" type="text/javascript" xml:space="preserve"></script>
@@ -37,22 +42,36 @@
 	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
 		<div>	
 			<h2>Welcome {{sessionCtrl.user.getUserName()}} !</h2>			
-			<img src="{{sessionCtrl.user.getImage()}}" width="100" />
+			<img src="{{sessionCtrl.user.image}}" width="100" />
 			<a ng-click="userPage=1">Profile</a> | <a ng-click="userPage=2">Home</a> | 
 			<a ng-click="userPage=3">Messages</a> | <a ng-click="sessionCtrl.logOut()">Log out</a>
 		</div>
 		
 		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData()">
 			<div ng-show="userPage==1">
-				<user-profile-management></user-profile-management>
+				<nav>
+					<a ng-click="musicCtrl.loadUserItems();userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2">Friends list</a> | <a ng-click="userProfile=3">Bids</a> | <a ng-click="userProfile=4">Settings</a>
+				</nav>
+				<user-items-management id="userItemsManag"></user-items-management>
+				<user-items-modification id="userItemsMod"></user-items-modification>
 			</div>
 			
-			<div ng-show="userPage==2">
-				Home
+			<div ng-show="userProfile==2">
+				Friends
 			</div>
 			
-			<div ng-show="userPage==3">
-				Messages
+			<div ng-show="userProfile==3">
+				Bids
+			</div>
+			
+			<div ng-show="userProfile==4"><br />
+				<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1">Delete account</a></nav>
+				<div ng-show="deleteAccount==1">
+					Introduce your password if you want to delete your account: <br />
+					<input type="password" id="passwordToDelete"/><br />
+					<p id="message"></p>
+					<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
+				</div>
 			</div>
 		</div>
 		
