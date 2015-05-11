@@ -11,10 +11,11 @@ function itemObj ()
 	this.conditionID;
 	this.image;
 	this.available;
+	this.uploadDate;
 	
 	
 	//Methods declaration
-	this.construct = function (itemID,userID,itemType, title, artist, releaseYear, genreID, conditionID, image, available)
+	this.construct = function (itemID,userID,itemType, title, artist, releaseYear, genreID, conditionID, image, available, uploadDate)
 	{
 		this.setItemID(itemID);
 		this.setUserID(userID);
@@ -26,6 +27,7 @@ function itemObj ()
 		this.setConditionID(conditionID);
 		this.setImage(image);
 		this.setAvailable(available);
+		this.setUploadDate(uploadDate);
 	}
 	
 	//getters and setters
@@ -39,6 +41,7 @@ function itemObj ()
 	this.setConditionID = function (conditionID){this.conditionID=conditionID;}
 	this.setImage = function (image){this.image=image;}
 	this.setAvailable = function (available){this.available=available;}
+	this.setUploadDate= function(uploadDate){this.uploadDate=uploadDate;}
 	
 	this.getItemID = function () {return this.itemID;}
 	this.getUserID = function () {return this.userID;}
@@ -50,6 +53,7 @@ function itemObj ()
 	this.getConditionID = function () {return this.conditionID;}
 	this.getImage = function () {return this.image;}
 	this.getAvailable = function () {return this.available;}
+	this.getUploadDate= function () {return this.uploadDate;}
 	
 	/*
 	* @name: arrayToString()
@@ -78,7 +82,7 @@ function itemObj ()
 	* @return: clientString - well formed strng with all the object data
 	*/ 
 	this.toString = function(){
-		var itemString="id= "+this.getItemID()+ " userID= "+this.getUserID()+" itemType= "+this.getItemType()+" title= "+this.getTitle()+" artist= "+this.getArtist()+" releaseYear= "+this.getReleaseYear()+" genreID= "+this.getGenreID()+" conditionID= "+this.getConditionID()+" image= "+this.getImage()+" avaliable= "+this.getAvailable();
+		var itemString="id= "+this.getItemID()+ " userID= "+this.getUserID()+" itemType= "+this.getItemType()+" title= "+this.getTitle()+" artist= "+this.getArtist()+" releaseYear= "+this.getReleaseYear()+" genreID= "+this.getGenreID()+" conditionID= "+this.getConditionID()+" image= "+this.getImage()+" avaliable= "+this.getAvailable()+ " Upload Date= "+this.getUploadDate();
 		return itemString;
 	}
 }

@@ -5,20 +5,16 @@
 */
 
 require_once "../model/userClass.php";
-<<<<<<< HEAD
 require_once "../model/itemClass.php";
 require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
-=======
-require_once "../model/regionClass.php";
-require_once "../model/provinceClass.php";
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
+require_once "../model/warningUsersClass.php";
 
 	class toDoClass {
 /*
  *@name: userConnection
  *@author: Juan Antonio Muñoz
- *@version: 1.0
+ *@versio: 1.0
  *@description: this function 
  *@date: 2015/05/05
  *@params: $action, $JSONData
@@ -50,7 +46,6 @@ require_once "../model/provinceClass.php";
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
 		public function searchItemsByUser($action, $userID){
 			$outPutData = array();
 			$errors = array();
@@ -71,111 +66,11 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$itemsArray;
-=======
-/*
- *@name: findByUserName
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchByUserName($action, $JSONData){
-			$userObj = json_decode(stripslashes($JSONData));
-
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$userList = userClass::findByUserName($userObj->userName);
-			
-			if (count($userList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$usersArray=array();
-				
-				foreach ($userList as $user){
-					$usersArray[]=$user->getAll();
-				}				
-				$outPutData[1]=$usersArray;
-			}
-			
-			return json_encode($outPutData);
-		}
-	
-	
-/*
- *@name: searchByEmail
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchByEmail($action, $JSONData){
-			$userObj = json_decode(stripslashes($JSONData));
-
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$userList = userClass::findByEmail($userObj->email);
-			
-			if (count($userList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$usersArray=array();
-				
-				foreach ($userList as $user){
-					$usersArray[]=$user->getAll();
-				}				
-				$outPutData[1]=$usersArray;
-			}
-			
-			return json_encode($outPutData);
-		}
-	
-/*
- *@name: searchRegions
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchRegions($action){
-
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$regionsList = regionClass::findAll();
-			
-			if (count($regionsList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$regionsArray=array();
-				
-				foreach ($regionsList as $region){
-					 $regionsArray[]=$region->getAll();
-				}				
-				$outPutData[1]=$regionsArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
 		public function searchGenres($action){
 			$outPutData = array();
 			$errors = array();
@@ -194,104 +89,11 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$genresArray;
-=======
-/*
- *@name: searchProvincesByRegion
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchProvincesByRegion($action, $regionID){
-
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$regionList = provinceClass::findByRegionID($regionID);
-			
-			if (count($regionList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$regionsArray=array();
-				
-				foreach ($regionList as $region){
-					$regionsArray[]=$region->getAll();
-				}				
-				$outPutData[1]=$regionsArray;
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-/*
- *@name: insertUser
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function insertUser($action, $JSONData){
-
-			$userObj = json_decode(stripslashes($JSONData));
-		
-			$user = new userClass();	   	
-			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
-			
-			//the senetnce returns de id of the user inserted
-			echo json_encode($user->create());	
-		}
-		
-		
-		
-/*
- *@name: searchClientUsers
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchClientUsers ($action){
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$userClientsList = userClass::findClientUsers();
-			
-			if (count($userClientsList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$userClientsArray=array();
-				$userProvincesArray = array();
-				
-				foreach ($userClientsList as $user){
-					 $userClientsArray[]=$user->getAll();
-					 $userProvince=provinceClass::findById($user->getProvinceID());
-					 foreach ($userProvince as $province){
-						$userProvincesArray[]=$province->getAll();
-					}
-				}	
-							
-				$outPutData[1]=$userClientsArray;
-				$outPutData[2]=$userProvincesArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
-			}
-			
-			return json_encode($outPutData);
-		}
-		
-<<<<<<< HEAD
 		public function searchConditions($action){
 			$outPutData = array();
 			$errors = array();
@@ -310,48 +112,17 @@ require_once "../model/provinceClass.php";
 				}				
 				
 				$outPutData[1]=$conditionsArray;
-=======
-/*
- *@name: searchProvinces
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action
- *@return: $outPutData -> array with all user data.
- *
-*/
-		public function searchProvinces($action){
-
-			$outPutData = array();
-			$errors = array();
-			$outPutData[0]=true;
-			
-			$provincesList = provinceClass::findAll();
-			
-			if (count($provincesList)==0){
-				$outPutData[0]=false;
-				$outPutData[1]=$errors;
-			}else{
-				$provincesArray=array();
-				
-				foreach ($provincesList as $province){
-					 $provincesArray[]=$province->getAll();
-				}				
-				$outPutData[1]=$provincesArray;
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 			}
 			
 			return json_encode($outPutData);
 		}
 		
-<<<<<<< HEAD
 		public function insertItem($action, $JSONData){
 			$itemObject = json_decode(stripslashes($JSONData));
 			
 			$item = new itemClass();
 			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available);
+							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->create();				
 			echo true;
 		}
@@ -361,7 +132,7 @@ require_once "../model/provinceClass.php";
 			$item= new itemClass();
 			
 			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available);
+							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->delete();				
 			echo true;
 		}
@@ -371,7 +142,7 @@ require_once "../model/provinceClass.php";
 			
 			$item = new itemClass();	   	    
 			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available);
+							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->update();		    
 			
 			echo true;
@@ -386,50 +157,80 @@ require_once "../model/provinceClass.php";
 			
 			echo true;
 		}
+		
+		public function searchLimitedItems($action, $limitNumber){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listItemsSearch = itemClass::findAllWithLimit($limitNumber);
+			
+			if (count($listItemsSearch)==0){
+				$outPutData[0]=false;
+				$errors[]="No items have been found into the databse";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$itemsArray= array();
+				foreach ($listItemsSearch as $item){
+					$itemsArray[]=$item->getAll();
+				}				
+				
+				$outPutData[1]=$itemsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		public function searchItems($action, $itemType, $genreID, $artist){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listItemsSearch = array();
+			
+			if($itemType!="" and $genreID=="" and $artist=="") $listItemsSearch = itemClass::findByItemType( $itemType );
+			if($itemType=="" and $genreID!="" and $artist=="") $listItemsSearch = itemClass::findByGenre( $genreID );
+			if($itemType== "" and $genreID=="" and $artist!="") $listItemsSearch = itemClass::findlikeArtist( $artist );
+			if($itemType!= "" and $genreID!="" and $artist=="") $listItemsSearch = itemClass::findByItemtypeAndGenre( $itemType, $genreID );
+			if($itemType!= "" and $genreID=="" and $artist!="") $listItemsSearch = itemClass::findByItemTypeAndArtist( $itemType, $artist );
+			
+			if (count($listItemsSearch)==0){
+				$outPutData[0]=false;
+				$errors[]="No items have been found into the databse";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$itemsArray=array();
+				foreach ($listItemsSearch as $item){
+					$itemsArray[]=$item->getAll();
+				}
+				$outPutData[1]=$itemsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		public function checkWarnings($action,$userID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listWarnings = warningUsersClass::findUserWarnings($userID);
+			
+			if (count($listWarnings)==0){
+				$outPutData[0]=false;
+				$errors[]="No warnings have been found to this user";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$warningsArray= array();
+				foreach ($listWarnings as $warning){
+					$warningsArray[]=$warning->getAll();
+				}				
+				
+				$outPutData[1]=$warningsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
 	}
-=======
-/*
- *@name: deleteUser
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: true
- *
-*/
-		public function deleteUser($action, $JSONData){
-
-			$userObj = json_decode(stripslashes($JSONData));
-		
-			$user = new userClass();	   	
-			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
-			$user->delete();
-			
-			echo true;
-		}
-		
-/*
- *@name: modifyUser
- *@author: Irene Blanco Fabregat
- *@version: 1.0
- *@description: this function 
- *@date: 2015/05/05
- *@params: $action, $JSONData
- *@return: true
- *
-*/
-		public function modifyUser($action, $JSONData){
-
-			$userObj = json_decode(stripslashes($JSONData));
-		
-			$user = new userClass();	   	
-			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
-			$user->update();
-			
-			echo true;
-		}
-}
->>>>>>> bc61bf70b022cf299088ddfb413396cc50106a05
 	
 ?>

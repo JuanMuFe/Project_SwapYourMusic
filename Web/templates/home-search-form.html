@@ -1,0 +1,40 @@
+<form name="homeSearchForm" ng-submit="homeSearchForm.$valid && musicCtrl.searchItems()" novalidate>
+	<h2>Some user items</h2><br/>
+	You can search items by:<br/>
+	Item type:
+	<select id="itemType" ng-model="musicCtrl.item.itemType" ng-change="musicCtrl.searchItems()">
+		<option value="">Item type</option>
+		<option ng-repeat="itemType in musicCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}<option>
+	</select>
+		
+	Genre:
+	<select ng-model="musicCtrl.item.genreID" ng-change="musicCtrl.searchItems()">
+		<option value="" selected>Genre</option>
+		<option ng-repeat="genres in musicCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
+	</select>
+	
+	Or artist:
+	<input type="text" id="artistToSearch" ng-model="musicCtrl.item.artist" value="" ng-change="musicCtrl.searchItems()"/>
+	<br /><br /><br />
+	
+	<p id="searchMessage"></p>
+	<div ng-repeat="itemHome in musicCtrl.itemsArrayHome">
+		<table border=1>
+			<tr><th>Item type</th><th>Title</th><th>Artist</th><th>Release year</th><th>Genre</th><th>Conditions</th><th>Image</th><th></th><th style="border: hidden"></th></tr>
+			<tr>
+				<td>{{itemHome.getItemType()}}</td> 
+				<td>{{itemHome.getTitle()}}</td>
+				<td>{{itemHome.getArtist()}}</td>
+				<td>{{itemHome.getReleaseYear()}}</td>
+				<td>{{musicCtrl.genresArray[itemHome.getGenreID()].name}}</td>
+				<td>{{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}</td>
+				<td><img ng-src="{{itemHome.image}}" width="90px"/></td>
+				<td></td>
+				<td style="border: hidden">
+					<a href="#" id="contact{{$index}}" title="Contact to start trade" ng-click=""><img src="img/contact.png" width="70"/></a>
+				</td>
+			</tr>			
+		</table>
+		<br/><br/>
+	</div>
+</form>

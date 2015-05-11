@@ -47,33 +47,41 @@
 			<a ng-click="userPage=3">Messages</a> | <a ng-click="sessionCtrl.logOut()">Log out</a>
 		</div>
 		
-		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData()">
+		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData();musicCtrl.checkWarnings()">
 			<div ng-show="userPage==1">
 				<nav>
 					<a ng-click="musicCtrl.loadUserItems();userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2">Friends list</a> | <a ng-click="userProfile=3">Bids</a> | <a ng-click="userProfile=4">Settings</a>
 				</nav>
 				<user-items-management id="userItemsManag"></user-items-management>
 				<user-items-modification id="userItemsMod"></user-items-modification>
-			</div>
-			
-			<div ng-show="userProfile==2">
-				Friends
-			</div>
-			
-			<div ng-show="userProfile==3">
-				Bids
-			</div>
-			
-			<div ng-show="userProfile==4"><br />
-				<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1">Delete account</a></nav>
-				<div ng-show="deleteAccount==1">
-					Introduce your password if you want to delete your account: <br />
-					<input type="password" id="passwordToDelete"/><br />
-					<p id="message"></p>
-					<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
+				
+				<div ng-show="userProfile==2">
+					Friends
 				</div>
+				
+				<div ng-show="userProfile==3">
+					Bids
+				</div>
+				
+				<div ng-show="userProfile==4"><br />
+					<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1">Delete account</a></nav>
+					<div ng-show="deleteAccount==1">
+						Introduce your password if you want to delete your account: <br />
+						<input type="password" id="passwordToDelete"/><br />
+						<p id="message"></p>
+						<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
+					</div>
+				</div>
+				
+			</div>			
+			
+			<div ng-show="userPage==2">
+				<home-search-form></home-search-form>
 			</div>
-		</div>
-		
+			
+			<div ng-show="userPage==3">
+				Message
+			</div>
+		</div>		
 	</body>
 </html>

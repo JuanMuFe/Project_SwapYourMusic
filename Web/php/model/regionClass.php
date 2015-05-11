@@ -41,7 +41,7 @@ class regionClass {
     public function getAll() {
 		$data = array();
 		$data["regionID"] = $this->getRegionID();
-		$data["name"] = UTF8_encode($this->getName());
+		$data["name"] = $this->getName();
 
 	return $data;
     }
@@ -54,7 +54,7 @@ class regionClass {
 	 * @params: $regionID ,$name
 	 * @return: none
 	 */ 
-    public function setAll($regionID ,$name) {
+    public function setAll($regionID ,$name)) {
 		$this->setRegionID($regionID);
 		$this->setName($name);
     }

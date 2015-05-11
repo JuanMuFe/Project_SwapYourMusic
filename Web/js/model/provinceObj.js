@@ -1,4 +1,4 @@
-function provinceObj ()
+function userObj ()
 {
 	//Attributes declaration
 	this.provinceID;

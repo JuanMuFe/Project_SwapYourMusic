@@ -1,6 +1,6 @@
 <?php
 /*
- * warningClass.php
+ * warningUsersClass.php
  * @author: Irene Blanco
  * @version: 1.0
  * @userID: php class of the object
@@ -8,14 +8,16 @@
  */
 require_once "BDSwap_your_music.php";
 
-class warningClass {
+class warningUsersClass {
     private $warningID;
     private $userID;
+    private $read;
 
     //----------Data base Values---------------------------------------
-    private static $tableName = "warnings";
+    private static $tableName = "warnings_users";
     private static $colNameWarningID = "warningID";
     private static $colNameUserID = "userID";
+    private static $colNameRead = "read";
         
     function __construct() {
     }
@@ -28,6 +30,7 @@ class warningClass {
         $this->warningID = $warningID;
     }
     
+
     public function getUserID() {
         return $this->userID;
     }
@@ -36,12 +39,21 @@ class warningClass {
         $this->userID = $userID;
     }
     
+    public function getRead() {
+        return $this->read;
+    }
+    
+    
+    public function setRead($read) {
+        $this->read = $read;
+    }
   
 	
     public function getAll() {
 		$data = array();
 		$data["warningID"] = $this->getWarningID();
 		$data["userID"] = $this->getUserID();
+		$data["read"] = $this->getRead();
 
 	return $data;
     }
@@ -54,9 +66,10 @@ class warningClass {
 	 * @params: $warningID ,$userID
 	 * @return: none
 	 */ 
-    public function setAll($warningID ,$userID)) {
+    public function setAll($warningID ,$userID, $read) {
 		$this->setWarningID($warningID);
 		$this->setUserID($userID);
+		$this->setRead($read);
     }
     
     //---Databese management section-----------------------
@@ -74,7 +87,7 @@ class warningClass {
 	$i=0;
 	while ( ($row = $res->fetch_array(MYSQLI_BOTH)) != NULL ) {
 		//We get all the values an add into the array
-		$entity = warningClass::fromResultSet( $row );
+		$entity = warningUsersClass::fromResultSet( $row );
 		
 		$entityList[$i]= $entity;
 		$i++;
@@ -93,13 +106,15 @@ class warningClass {
 	 */ 
     private static function fromResultSet( $res ) {
 		//We get all the values form the query
-		$warningID=$res[warningClass::$colNameWarningID];
-		$userID=$res[warningClass::$colNameUserID];
+		$warningID=$res[warningUsersClass::$colNameWarningID];
+		$userID=$res[warningUsersClass::$colNameUserID];
+		$read=$res[warningUsersClass::$colNameRead];
 
        	//Object construction
-       	$entity = new warningClass();
+       	$entity = new warningUsersClass();
 		$entity->setWarningID($warningID);
 		$entity->setUserID($userID);
+		$entity->setUserID($read);
 
 
 		return $entity;
@@ -127,7 +142,7 @@ class warningClass {
 	
 	if ( $conn != null ) $conn->close();
 
-	return warningClass::fromResultSetList( $res );
+	return warningUsersClass::fromResultSetList( $res );
     }
 
     /*
@@ -140,9 +155,9 @@ class warningClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByUserId( $userID ) {
-	$cons = "select * from `".warningClass::$tableName."` where ".warningClass::$colNameUserID." = \"".$userID."\"";
+	$cons = "select * from `".warningUsersClass::$tableName."` where ".warningUsersClass::$colNameUserID." = \"".$userID."\"";
 
-	return warningClass::findByQuery( $cons );
+	return warningUsersClass::findByQuery( $cons );
     }
 
  
@@ -156,8 +171,8 @@ class warningClass {
 	 * @return: objects collection
 	 */ 
     public static function findAll( ) {
-    	$cons = "select * from `".warningClass::$tableName."`";
-	return warningClass::findByQuery( $cons );
+    	$cons = "select * from `".warningUsersClass::$tableName."`";
+	return warningUsersClass::findByQuery( $cons );
     }
 
 
@@ -180,8 +195,8 @@ class warningClass {
 	//return $this->toString();
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".warningClass::$tableName."(`warningID`,`userID`) values (?,?)" )) {
-		$stmt->bind_param("ii",$this->getWarningID(), $this->getUserID());
+	if ($stmt->prepare("insert into ".warningUsersClass::$tableName."(`warningID`,`userID`,`read`) values (?,?,?)" )) {
+		$stmt->bind_param("iii",$this->getWarningID(), $this->getUserID(),$this->getRead());
 		//executar consulta
 		$stmt->execute();
 	    }
@@ -208,7 +223,7 @@ class warningClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("DELETE FROM `".warningClass::$tableName."` where ".warningClass::$colNameWarningID." = ? and".warningClass::$colNameUserID." = ?")) {
+		if ($stmt->prepare("DELETE FROM `".warningUsersClass::$tableName."` where ".warningUsersClass::$colNameWarningID." = ? and".warningUsersClass::$colNameUserID." = ?")) {
 			$stmt->bind_param("ii",$this->getWarningID(),$this->getUserID());
 			$stmt->execute();
 		}
@@ -236,7 +251,7 @@ class warningClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".warningClass::$tableName."` set ".warningClass::$colNameWarningID." = ?,".warningClass::$colNameUserID." = ? where ".warningClass::$colNameWarningID." =? and".warningClass::$colNameUserID." = ?") ) {
+		if ($stmt->prepare("update `".warningUsersClass::$tableName."` set ".warningUsersClass::$colNameWarningID." = ?,".warningUsersClass::$colNameUserID." = ? where ".warningUsersClass::$colNameWarningID." =? and".warningUsersClass::$colNameUserID." = ?") ) {
 			$stmt->bind_param("iiii",$this->getWarningID(), $this->getUserID(),$this->getWarningID(),$this->getUserID() );
 			//executar consulta
 			$stmt->execute();;
@@ -244,6 +259,7 @@ class warningClass {
 		if ( $conn != null ) $conn->close();
 
     }
+    
     
     
     /*
@@ -256,7 +272,7 @@ class warningClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "warningClass[warningID=" . $this->warningID . "][userID=" . $this->userID . "]";
+        $toString = "warningUsersClass[warningID=" . $this->warningID . "][userID=" . $this->userID . "][read=" . $this->read . "]";
 		return $toString;
 
     }

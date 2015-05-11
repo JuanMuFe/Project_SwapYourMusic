@@ -7,8 +7,9 @@ $(document).ready(function(){
 (function(){
 	var swapYourMusicApp = angular.module("swapYourMusicApp", []);
 	
-	swapYourMusicApp.controller("sessionController", function(){
+	swapYourMusicApp.controller("sessionController", function($scope){
 		this.user= new userObj();
+		$scope.userPage=2;
 /*
  *@name: checkSession
  *@author: Juan Antonio Muñoz
@@ -53,11 +54,11 @@ $(document).ready(function(){
 		this.itemToAdd= new itemObj();
 		this.genre= new genreObj();
 		this.conditions= new conditionObj();
-		$scope.itemMod=0;
 		$scope.imagesArray= new Array();
 		
 		//Data from DDBB
 		this.itemsArray= new Array(); 
+		this.itemsArrayHome= new Array();
 		this.genresArray= new Array();
 		this.conditionsArray= new Array();
 		this.itemTypesArray= new Array("Vinyl", "Cassete", "CD");
@@ -124,6 +125,34 @@ $(document).ready(function(){
 				}			
 			}
 			else showErrors(outPutdata[1]);
+			
+			//calls to AJAX in order to search all items to put in home
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=8&limitNumber='+5,   // limitNumber=5 is the number of items that the admin wants to appear in the home
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					var item = new itemObj();
+					item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+										outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
+					this.itemsArrayHome.push(item);					
+				}			
+			}
+			else showErrors(outPutdata[1]);
 		}
 		
 		this.loadUserItems= function(){
@@ -151,7 +180,7 @@ $(document).ready(function(){
 						var item = new itemObj();
 						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
 										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-										outPutdata[1][i].image,outPutdata[1][i].available);	
+										outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
 						this.itemsArray.push(item);	
 						this.item.setUserID(outPutdata[1][i].userID);
 						$scope.imagesArray.push(outPutdata[1][i].image);				
@@ -160,15 +189,33 @@ $(document).ready(function(){
 			}else showErrors(outPutdata[1]);
 		}
 		
-		this.addItem= function(){			
+		this.addItem= function(){
+				
 			//Uploading files
 			var itemImage = imagesItemManagement(this.item.userID);
-			
+			var now = new Date();
+
+			var month = now.getMonth()+1;
+			var day = now.getDate();
+				if(day<10) day= "0"+day;
+				if(month<10) month= "0"+month;					
+			var year = now.getFullYear();
+			var hours= now.getHours();
+			var minutes= now.getMinutes();				
+			var seconds= now.getSeconds();
+				if(hours<10) hours= "0"+hours;
+				if(minutes<10) minutes= "0"+minutes;
+				if(seconds<10) seconds= "0"+seconds;
+			var currentDateHour= year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
+			alert(currentDateHour);
+	
 			this.item.setItemID(0);
 			this.item.setAvailable(1);
 			this.item.setImage(itemImage[0]);
+			this.item.setUploadDate(currentDateHour);
 			
 			this.item = angular.copy(this.item);
+			alert(this.item);
 			var idItem;
 			
 			$.ajax({
@@ -186,7 +233,11 @@ $(document).ready(function(){
 				  }	
 			});	
 			
-			if(idItem!=null) this.loadUserItems();		
+			if(idItem!=null){
+				$scope.userPage=2;
+				this.item= new itemObj();
+				this.loadUserItems();	
+			} 	
 		}
 		
 		this.deleteItem= function(itemIDToDelete){
@@ -224,6 +275,51 @@ $(document).ready(function(){
 				}				
 			}
 		}
+		
+		this.searchItems= function(){	
+						
+			if((this.item.getItemType()!=null && this.item.getItemType()!="") || (this.item.getGenreID()!=null && this.item.getGenreID()!="") || (this.item.getArtist()!=null && this.item.getArtist()!="")){
+				this.item= angular.copy(this.item);	
+				this.itemsArrayHome= new Array();		
+				var outPutdata= new Array();			
+				
+				var itemType= ((typeof this.item.getItemType() == "undefined") ? '' : this.item.getItemType());
+				var genreID=((typeof this.item.getGenreID() == "undefined") ? '' : this.item.getGenreID());
+				var artist= ((typeof this.item.getArtist() == "undefined") ? '' : this.item.getArtist());		
+				
+				$.ajax({
+					url: 'php/control/control.php',  
+					type: 'POST',  
+					async: false,   
+					data: 'action=9&itemType='+itemType+'&genreID='+genreID+'&artist='+artist, 
+					dataType: "json", 
+					success: function (response) { 
+						outPutdata = response;
+					},
+					error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+					}	
+				});
+				
+				if (outPutdata[0]){	
+					$("#searchMessage").hide();	
+					for (var i = 0; i < outPutdata[1].length; i++){
+						if(outPutdata[1][i].available==1){
+							var item = new itemObj();
+							item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+											outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
+							this.itemsArrayHome.push(item);					
+						}									
+					}				
+				}else{
+					$("#searchMessage").html("No items have been found into the databse");
+					$("#searchMessage").fadeIn(500);	
+				}					
+			}			
+		}			
+		
 		
 		this.createModItemForm= function(item){
 			this.item= new itemObj();
@@ -324,6 +420,22 @@ $(document).ready(function(){
 			}
 		}
 			
+		this.checkWarnings= function(){
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=10&userID='+this.user.getUserID(), 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+		}
 		
 	});
 	
@@ -347,6 +459,17 @@ $(document).ready(function(){
 			
 		  },
 		  controllerAs: 'userItemsModification'
+		};
+	});
+	
+	swapYourMusicApp.directive("homeSearchForm", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/home-search-form.html",
+		  controller:function(){
+			
+		  },
+		  controllerAs: 'homeSearchForm'
 		};
 	});
 	

@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-05-2015 a las 09:03:08
+-- Tiempo de generación: 11-05-2015 a las 12:25:26
 -- Versión del servidor: 5.6.24
 -- Versión de PHP: 5.6.8
 
@@ -67,16 +67,16 @@ CREATE TABLE IF NOT EXISTS `bids_participation` (
 CREATE TABLE IF NOT EXISTS `conditions` (
   `conditionID` int(11) NOT NULL,
   `name` varchar(200) COLLATE utf8_spanish2_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `conditions`
 --
 
 INSERT INTO `conditions` (`conditionID`, `name`) VALUES
-(1, 'New'),
-(2, 'Used'),
-(3, 'Rarely used');
+(0, 'New'),
+(1, 'Used'),
+(2, 'Rarely used');
 
 -- --------------------------------------------------------
 
@@ -163,25 +163,25 @@ INSERT INTO `friends` (`userID`, `friendID`) VALUES
 CREATE TABLE IF NOT EXISTS `genres` (
   `genreID` int(11) NOT NULL,
   `name` varchar(200) COLLATE utf8_spanish2_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `genres`
 --
 
 INSERT INTO `genres` (`genreID`, `name`) VALUES
-(1, 'Pop'),
-(2, 'Rock'),
-(3, 'Hip-Hop'),
-(4, 'Jazz-Blues'),
-(5, 'Classical'),
-(6, 'Childrens music'),
-(7, 'Opera'),
-(8, 'Heavy metal'),
-(9, 'Country'),
-(10, 'New age'),
-(11, 'Singer-songwriter'),
-(12, 'Electronic');
+(0, 'Pop'),
+(1, 'Rock'),
+(2, 'Hip-Hop'),
+(3, 'Jazz-Blues'),
+(4, 'Classical'),
+(5, 'Childrens music'),
+(6, 'Opera'),
+(7, 'Heavy metal'),
+(8, 'Country'),
+(9, 'New age'),
+(10, 'Singer-songwriter'),
+(11, 'Electronic');
 
 -- --------------------------------------------------------
 
@@ -199,23 +199,29 @@ CREATE TABLE IF NOT EXISTS `items` (
   `genreID` int(2) NOT NULL,
   `conditionID` int(2) NOT NULL,
   `image` varchar(255) COLLATE utf8_spanish2_ci NOT NULL,
-  `available` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+  `available` int(11) NOT NULL,
+  `uploadDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `items`
 --
 
-INSERT INTO `items` (`itemID`, `userID`, `itemType`, `title`, `artist`, `releaseYear`, `genreID`, `conditionID`, `image`, `available`) VALUES
-(19, 1, 'Cassette', 'Veneno en la piel', 'Radio Futura', 1990, 1, 2, 'img/items/item0.jpg', 1),
-(20, 2, 'Cassette', 'No es pecado', 'Alaska y Dinarama', 1986, 0, 1, 'img/items/item1.jpg', 1),
-(21, 3, 'Cassette', 'Lo mejor de…', 'Leño', 1990, 1, 2, 'img/items/item2.jpg', 1),
-(22, 1, 'Vinyl', 'The very best of', 'Enya', 2009, 9, 0, 'img/items/item3.jpg', 1),
-(23, 2, 'Vinyl', 'Rumours', 'Fleetwood Mac', 1977, 1, 1, 'img/items/item4.jpg', 1),
-(24, 4, 'Vinyl', 'Chariots of fire', 'Vangelis', 1981, 11, 1, 'img/items/item5.jpg', 1),
-(25, 1, 'CD', 'Kvelertak', 'Kvelertak', 2010, 7, 0, 'img/items/item6.jpg', 1),
-(26, 9, 'CD', '19 días y 500 noches', 'Joaquín Sabina', 1990, 10, 2, 'img/items/item7.jpg', 1),
-(27, 10, 'CD', 'De vuelta y vuelta', 'Jarabe de Palo', 2001, 1, 1, 'img/items/item8.jpg', 1);
+INSERT INTO `items` (`itemID`, `userID`, `itemType`, `title`, `artist`, `releaseYear`, `genreID`, `conditionID`, `image`, `available`, `uploadDate`) VALUES
+(19, 5, 'Cassette', 'Veneno en la piel', 'Radio Futura', 1990, 1, 2, 'img/items/item0.jpg', 1, '2015-05-11 03:20:31'),
+(20, 2, 'Cassette', 'No es pecado', 'Alaska y Dinarama', 1986, 1, 1, 'img/items/item1.jpg', 1, '2015-05-01 07:31:26'),
+(21, 5, 'Cassette', 'Lo mejor de…', 'Leño', 1990, 1, 2, 'img/items/item2.jpg', 1, '2015-05-10 10:13:44'),
+(22, 1, 'Vinyl', 'The very best of', 'Enya', 2009, 9, 1, 'img/items/item3.jpg', 1, '2015-05-08 11:39:18'),
+(23, 2, 'Vinyl', 'Rumours', 'Fleetwood Mac', 1977, 1, 1, 'img/items/item4.jpg', 1, '2015-05-07 09:31:49'),
+(24, 4, 'Vinyl', 'Chariots of fire', 'Vangelis', 1981, 11, 1, 'img/items/item5.jpg', 1, '2015-05-03 08:42:26'),
+(25, 1, 'CD', 'Kvelertak', 'Kvelertak', 2010, 7, 2, 'img/items/item6.jpg', 1, '2015-05-09 06:43:19'),
+(27, 10, 'CD', 'De vuelta y vuelta', 'Jarabe de Palo', 2001, 1, 1, 'img/items/item8.jpg', 1, '2015-05-10 04:38:13'),
+(31, 9, 'CD', 'Andy Warhol', 'Andy', 2051, 3, 2, 'img/items/AndyWarhol9.jpg', 1, '2015-05-06 19:33:52'),
+(62, 9, 'Cassete', 'Furia', 'AC/DC', 1998, 0, 0, 'img/items/Furia9.jpg', 1, '2015-05-07 08:40:32'),
+(63, 9, 'Cassete', 'Juan', 'Juan', 2015, 4, 2, 'img/items/Juan9.jpg', 1, '2015-05-09 22:37:22'),
+(100, 7, 'CD', 'qweqw', 'qweqwe', 2015, 2, 1, 'img/items/item10.jpg', 1, '2015-05-11 12:10:22'),
+(101, 9, 'Cassete', 'owerwo', 'iuqwh', 2015, 0, 1, 'img/items/owerwo9.jpg', 1, '2015-05-11 12:21:26'),
+(102, 9, 'Cassete', 'owerwo', 'iuqwh', 2015, 0, 1, 'img/items/owerwo9.jpg', 1, '2015-05-11 12:22:15');
 
 -- --------------------------------------------------------
 
@@ -363,11 +369,11 @@ INSERT INTO `users` (`userID`, `userType`, `userName`, `password`, `email`, `reg
 (2, 0, 'juan', '640f03b862944def762b9c7153124388', 'juanmf1894@gmail.com', '2015-05-04', '0000-00-00', 'img/users/juan.png', 7),
 (4, 0, 'admin', '62f04a011fbb80030bb0a13701c20b41', 'admin@gmail.com', '2015-05-04', '0000-00-00', 'img/users/admin.jpg', 27),
 (5, 1, 'user1', '24c9e15e52afc47c225b757e7bee1f9d', 'user1@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user1.jpg', 7),
-(6, 1, 'user2', '7e58d63b60197ceb55a1c487989a3720', 'user2@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user2.jpg', 18),
+(6, 1, 'user2', 'd079f41b77a39477b1547e6259d70ebd', 'user2@gmail.com', '2015-05-04', '2015-05-08', 'img/users/user2.jpg', 18),
 (7, 1, 'user3', '92877af70a45fd6a2ed7fe81e1236b78', 'user3@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user3.jpg', 9),
-(8, 1, 'user4', '3f02ebe3d7929b091e3d8ccfde2f3bc6', 'user4@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user4.jpg', 5),
+(8, 1, 'user4', '177d0f03e6312d7e5e63da3571cc0672', 'user4@gmail.com', '2015-05-04', '2015-05-08', 'img/users/user4.jpg', 5),
 (9, 1, 'user5', '0a791842f52a0acfbb3a783378c066b8', 'user5@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user5.jpg', 23),
-(10, 1, 'user6', 'affec3b64cf90492377a8114c86fc093', 'user6@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user6.jpg', 10),
+(10, 1, 'user6', 'affec3b64cf90492377a8114c86fc093', 'user6@gmail.com', '2015-05-04', '2013-05-01', 'img/users/user6.jpg', 10),
 (11, 1, 'user7', '3e0469fb134991f8f75a2760e409c6ed', 'user7@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user7.jpg', 12);
 
 -- --------------------------------------------------------
@@ -511,7 +517,7 @@ ALTER TABLE `bids`
 -- AUTO_INCREMENT de la tabla `conditions`
 --
 ALTER TABLE `conditions`
-  MODIFY `conditionID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
+  MODIFY `conditionID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
 --
 -- AUTO_INCREMENT de la tabla `direct_message`
 --
@@ -531,12 +537,12 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT de la tabla `genres`
 --
 ALTER TABLE `genres`
-  MODIFY `genreID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
+  MODIFY `genreID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT de la tabla `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=28;
+  MODIFY `itemID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=103;
 --
 -- AUTO_INCREMENT de la tabla `provinces`
 --
