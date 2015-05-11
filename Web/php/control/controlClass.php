@@ -58,7 +58,11 @@ require_once "toDoClass.php";
 							break;
 					case 59:	echo toDoClass::searchClientUsersByRegionLikeName($this->params['action'], $this->params['regionID'], $this->params['userName']);
 							break;
-								
+					case 60:	echo toDoClass::searchWarnings($this->params['action']);
+							break;
+					case 61: echo toDoClass::insertWarningToUser($this->params['warningID'],$this->params['userID']);
+							break;
+					
 
 							
 					default: echo "Action ".$action." not correct in toDoClass.";

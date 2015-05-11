@@ -3,20 +3,24 @@ function warningUsersObj ()
 	//Attributes declaration
 	this.warningID;
 	this.userID;
+	this.read;
 	
 	//Methods declaration
-	this.construct = function (warningID,userID)
+	this.construct = function (warningID,userID, read)
 	{
 		this.setWarningID(warningID);
 		this.setUserID(userID);
+		this.setRead(read);
 	}
 	
 	//getters and setters
 	this.setWarningID = function (warningID){this.warningID=warningID;}
 	this.setUserID = function (userID){this.userID=userID;}
+	this.setRead = function (read){this.read=read;}
 	
 	this.getWarningID = function () {return this.warningID;}
 	this.getUserID = function () {return this.userID;}
+	this.getRead = function () {return this.read;}
 
 	
 	/*
@@ -46,7 +50,7 @@ function warningUsersObj ()
 	* @return: clientString - well formed strng with all the object data
 	*/ 
 	this.toString = function(){
-		var warningUsersString="warningID= "+this.getWarningID()+ " userID= "+this.getUserID();
+		var warningUsersString="warningID= "+this.getWarningID()+ " userID= "+this.getUserID()+ " read= "+this.getRead();
 		return warningUsersString;
 	}
 }

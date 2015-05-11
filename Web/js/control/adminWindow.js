@@ -10,9 +10,6 @@
 		$scope.flag=0;		
 
 //METHODS
-
-
-
 /*
  *@name: checkSession
  *@author: Juan Antonio Muñoz
@@ -69,9 +66,14 @@
 		this.allProvincesArray = new Array();
 		this.selectedRegion;
 		this.regionToSearch;
+		
+		this.allWarningsArray = new Array();
+		this.selectedWarning = 1;
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
+		$scope.userAction=2;
+		
 		$scope.passControl;
 		$scope.passwordValid = true;
 		$scope.userNameValid = true;
@@ -92,6 +94,7 @@
 		this.loadUsers = function(){			
 			this.usersArray = new Array();
 			this.provincesArray = new Array();
+			$scope.userAction=2;
 	
 			if(this.nameToSearch!=""||this.regionToSearch!="") {			
 				
@@ -246,18 +249,32 @@
 		*/
 		this.userManagement = function ()
 		{
-			var confirmModify = confirm("Are you sure that you want to modify this user?");
+			if($scope.userAction==2) {
+				var confirmModify = confirm("Are you sure that you want to modify this user?");
+				var action = 57;
+			}
+			else {
+				var confirmAdd = confirm("Are you sure that you want to add this user?");
+				var action = 54;
+			}
 			
-			if(confirmModify){
+			if(confirmModify || confirmAdd){
 				this.user=angular.copy(this.user);
 
-				var imageUserMod = $("#imageUserMod")[0].files[0];
-				
-				if(imageUserMod != undefined)
-				{
-					var imagesNameArray = userImagesManagement(this.user.getUserName(), this.user.getImage());
-					this.user.setImage(imagesNameArray[0]);	
-				}			
+				if($scope.userAction==2) {
+					var imageUserMod = $("#imageUserMod")[0].files[0];
+					
+					if(imageUserMod != undefined)
+					{
+						var imagesNameArray = userImagesManagement(this.user.getUserName(), this.user.getImage());
+						this.user.setImage(imagesNameArray[0]);	
+					}
+				}	
+				else{
+					var imagesNameArray = imagesManagement(this.user.getUserName());
+					this.user.setImage(imagesNameArray[0]);
+
+				}		
 							
 				var error = false;
 				
@@ -265,7 +282,7 @@
 					  url: 'php/control/control.php',
 					  type: 'POST',
 					  async: false,
-					  data: 'action=57&JSONData='+JSON.stringify(this.user),
+					  data: 'action='+action+'&JSONData='+JSON.stringify(this.user),
 					  dataType: "json",
 					  success: function (response) { 
 						  
@@ -278,7 +295,8 @@
 				
 				if(!error)
 				{
-					alert("User correctly modified!");	
+					if($scope.userAction==2) alert("User correctly modified!");	
+					else alert("User correctly added!");	
 					$scope.usersFlag=0;	
 					this.usersArray = new Array();
 					this.loadUsers();
@@ -507,7 +525,121 @@
 				}
 			}			
 		}
+		
+/*
+ *@name: prepareRegister
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.prepareRegister = function(){
 
+				this.user= new userObj();
+				$scope.passControl="";
+				this.user.setUnsubscribeDate("0000-00-00");
+				this.user.setUserType(1);
+				this.user.setUserID(0);
+		}
+
+/*
+ *@name: warnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function defines the user and
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.warnings = function(index){
+				$scope.usersFlag = 2;
+				this.user = this.usersArray[index];				
+		}
+		
+/*
+ *@name: sendWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This functionsends the selected warning to the user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.sendWarning = function(){
+			
+			var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=61&warningID='+this.selectedWarning+'&userID='+this.user.getUserID(),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("The warning has been sent.")
+					$scope.usersFlag = 0;
+					
+				}
+			}
+						
+		
+/*
+ *@name: loadWarnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.loadWarnings = function(){
+			
+			this.allWarningsArray = new Array();
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=60',
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var warning = new warningObj();
+					warning.construct(outPutData[1][i].warningID, outPutData[1][i].description);					
+					this.allWarningsArray.push(warning);
+				}			
+					
+			}				
+				
+				
+		}
 		
 	});
 	
@@ -553,6 +685,7 @@
                 }
             };
      });	
+     
 	
 	swapYourMusicApp.directive("usersAdminManagement", function (){
 		return {
@@ -562,6 +695,28 @@
 
 		  },
 		  controllerAs: 'usersAdminManagement'
+		};
+	});
+	
+	swapYourMusicApp.directive("warningsAdminSending", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/warnings-admin-sending.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'warningsAdminSending'
+		};
+	});
+	
+	swapYourMusicApp.directive("warningsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/warnings-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'warningsAdminManagement'
 		};
 	});
 	
@@ -616,6 +771,59 @@ function userImagesManagement(userNick, imageName)
 	
 	$.ajax({
 		url : 'php/control/controlFiles.php?action=50&userNamesArray='+JSON.stringify(nicksArray),
+        type : 'POST',
+        async: false,
+        data : imageFiles,
+        dataType: "json",
+        //~ beforesend:
+        //~ complete:
+        processData : false, 
+        contentType : false, 
+        success : function(response){
+                   serverFileNames = response;
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+			alert(xhr.status+"\n"+thrownError);
+		}                
+    });
+    
+    return serverFileNames;
+	
+}
+
+ /*
+		* @name: imagesManagement()
+		* @author: Irene Blanco
+		* @version: 1.0
+		* @description: this function manages the images
+		* the database
+		* @date: 26/04/2015
+		* @params: userNick
+		* @return: none
+		*/
+function imagesManagement(userName)
+{
+	var imageFiles = new FormData();
+	var userNamesArray = new Array();
+	userNamesArray.push(userName);
+	
+	var image = $("#imageUser")[0].files[0];
+	
+	//File name
+	var fileName = image.name;
+	
+	//File type
+	var fileType = image.type;
+	
+	//File size
+	var fileSize = image.size;
+	
+	imageFiles.append('images[]',image);
+	
+	var serverFileNames = new Array();
+	
+	$.ajax({
+		url : 'php/control/controlFiles.php?action=50&userNamesArray='+JSON.stringify(userNamesArray),
         type : 'POST',
         async: false,
         data : imageFiles,

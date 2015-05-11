@@ -54,7 +54,7 @@ class warningClass {
 	 * @params: $warningID ,$description
 	 * @return: none
 	 */ 
-    public function setAll($warningID ,$description)) {
+    public function setAll($warningID ,$description) {
 		$this->setWarningID($warningID);
 		$this->setDescription($description);
     }

@@ -10,6 +10,8 @@ require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
 require_once "../model/regionClass.php";
 require_once "../model/provinceClass.php";
+require_once "../model/warningClass.php";
+require_once "../model/warningUsersClass.php";
 
 	class toDoClass {
 /*
@@ -502,7 +504,62 @@ require_once "../model/provinceClass.php";
 			
 			echo true;
 		}
-}
 
-	
+
+
+/*
+ *@name: searchWarnings
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchWarnings(){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$warningsList = warningClass::findAll();
+			
+			if (count($warningsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$warningsArray=array();
+				
+				foreach ($warningsList as $warning){
+					 $warningsArray[]=$warning->getAll();
+				}				
+				$outPutData[1]=$warningsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: insertWarningToUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts a new sent warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function insertWarningToUser($warningID, $userID){
+		
+			$userWarning = new warningUsersClass();	   	
+			$userWarning->setAll($warningID, $userID,0);		
+			
+			//the senetnce returns de id of the user inserted
+			echo json_encode($userWarning->create());	
+		}
+		
+		
+
+}	
 ?>
