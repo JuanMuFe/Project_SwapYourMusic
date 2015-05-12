@@ -20,7 +20,6 @@ require_once "toDoClass.php";
 				switch ($this->params['action']){
 					
 					case 1:	echo toDoClass::userConnection($this->params['action'], $this->params['JSONData']);
-
 							break;						
 					
 					case 2: echo toDoClass::searchItemsByUser($this->params['action'], $this->params['userID']);
@@ -62,7 +61,14 @@ require_once "toDoClass.php";
 							break;
 					case 61: echo toDoClass::insertWarningToUser($this->params['warningID'],$this->params['userID']);
 							break;
-					
+					case 62:	echo toDoClass::insertWarning($this->params['JSONData']);
+						break;
+					case 63:	echo toDoClass::setWarningInactive($this->params['JSONData']);
+						break;
+					case 64:	echo toDoClass::modifyWarning($this->params['JSONData']);
+						break;
+					case 65:	echo toDoClass::searchBids();
+							break;
 
 							
 					default: echo "Action ".$action." not correct in toDoClass.";

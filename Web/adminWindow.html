@@ -32,6 +32,7 @@
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/adminWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
@@ -40,10 +41,11 @@
 		<h1>Welcome {{sessionCtrl.loggedUser.getUserName()}}</h1>
 		
 		<div>
-			<img src="{{sessionCtrl.loggedUser.getImage()}}" width="100" />
-			<a ng-click="flag=1">USERS</a> | <a ng-click="flag=2">ITEMS</a> | <a ng-click="flag=3">BIDS</a> | <a ng-click="flag=5">SWAPS</a> | <a ng-click="flag=6">WARNINGS</a>  | <a ng-click="sessionCtrl.logOut()">Log out</a>
-			
 			<div id="management" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
+				<img src="{{sessionCtrl.loggedUser.getImage()}}" width="100" />
+				<a ng-click="flag=1">USERS</a> | <a ng-click="flag=2">ITEMS</a> | <a ng-click="flag=3;adminCtrl.loadBids()">BIDS</a> | <a ng-click="flag=5">SWAPS</a> | <a ng-click="flag=6;adminCtrl.loadWarnings()">WARNINGS</a>  | <a ng-click="sessionCtrl.logOut()">Log out</a>
+				
+			
 				FLAG: {{flag}}
 				USERSFLAG: {{usersFlag}}
 				<div id="usersAdministration" ng-show="flag==1 ">	
@@ -66,11 +68,11 @@
 						<user-data-admin-management ></user-data-admin-management>	
 					</div>	
 				</div>
-				<div id="warningsAdministration" ng-show="flag==6">
+				<div id="warningsAdministration" ng-show="flag==6" >
 					<warnings-admin-management></warnings-admin-management>			
 				</div>
 				
-				<div id="sendWarning" ng-show="usersFlag==2">
+				<div class="popUp" ng-show="usersFlag==2">
 					<warnings-admin-sending id="warningsAdminSending"></warnings-admin-sending>			
 				</div>
 				
@@ -79,7 +81,7 @@
 				</div>
 				
 				<div id="bidsAdministration" ng-show="flag==3">
-					Bids Administration			
+					<bids-admin-management></bids-admin-management>
 				</div>				
 				
 				<div id="swapsAdministration" ng-show="flag==5">

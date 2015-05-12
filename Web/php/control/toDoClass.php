@@ -12,6 +12,7 @@ require_once "../model/regionClass.php";
 require_once "../model/provinceClass.php";
 require_once "../model/warningClass.php";
 require_once "../model/warningUsersClass.php";
+require_once "../model/bidClass.php";
 
 	class toDoClass {
 /*
@@ -523,7 +524,7 @@ require_once "../model/warningUsersClass.php";
 			$errors = array();
 			$outPutData[0]=true;
 			
-			$warningsList = warningClass::findAll();
+			$warningsList = warningClass::findActives();
 			
 			if (count($warningsList)==0){
 				$outPutData[0]=false;
@@ -554,12 +555,107 @@ require_once "../model/warningUsersClass.php";
 		
 			$userWarning = new warningUsersClass();	   	
 			$userWarning->setAll($warningID, $userID,0);		
-			
-			//the senetnce returns de id of the user inserted
+
 			echo json_encode($userWarning->create());	
 		}
 		
 		
+/*
+ *@name: insertWarning
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts  warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function insertWarning($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	   	
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active );		
+
+			echo json_encode($warning->create());	
+		}
+		
+/*
+ *@name: setWarningInactive
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts  warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function setWarningInactive($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	 
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active);  	
+			$warning->setInactive();
+			
+			echo true;	
+			
+
+		}
+		
+/*
+ *@name: modifyWarning
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function modifyWarning($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	   	
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active);  	
+			$warning->update();
+			
+			echo true;
+		}
+		
+/*
+ *@name: searchBids
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchBids(){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$bidsList = bidClass::findAll();
+			
+			if (count($bidsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$bidsArray=array();
+				
+				foreach ($bidsList as $bid){
+					 $bidsArray[]=$bid->getAll();
+				}				
+				$outPutData[1]=$bidsArray;
+			}
+			
+			return json_encode($outPutData);
+		}		
 
 }	
 ?>

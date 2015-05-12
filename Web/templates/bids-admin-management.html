@@ -1,0 +1,19 @@
+<h2>Bids management</h2>
+
+
+<table class="table table-hover">
+		<tr><th>Item</th><th>Start price</th><th>Actual price</th><th>Start date</th><th>Duration</th><th>Finish date</th></tr>
+		<tr ng-repeat="bid in adminCtrl.allBidsArray">
+			<td>{{bid.itemID}}</td>
+			<td>{{bid.startPrice}}</td>
+			<td>{{bid.actualPrice}}</td>
+			<td>{{bid.startDate}}</td>
+			<td>{{bid.duration}}</td>			
+			<td ng-if="bid.finishDate!=null">{{bid.finishDate}}</td>
+			<td ng-if="bid.finishDate==null">Not finished</td>
+<!--
+			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.changeFlag($index)"/></td>
+			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteWarning($index)"/></td>
+-->
+		</tr>	
+</table>

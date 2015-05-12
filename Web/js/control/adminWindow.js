@@ -69,6 +69,10 @@
 		
 		this.allWarningsArray = new Array();
 		this.selectedWarning = 1;
+		this.warning = new warningObj();
+		this.description;
+		
+		this.allBidsArray = new Array();
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
@@ -79,6 +83,8 @@
 		$scope.userNameValid = true;
 		$scope.emailValid = true;
 		$scope.noUsers = true;
+		
+
 		
 //METHODS
 /*
@@ -632,7 +638,7 @@
 				for (var i = 0; i < outPutData[1].length; i++)
 				{
 					var warning = new warningObj();
-					warning.construct(outPutData[1][i].warningID, outPutData[1][i].description);					
+					warning.construct(outPutData[1][i].warningID, outPutData[1][i].description, outPutData[1][i].active);					
 					this.allWarningsArray.push(warning);
 				}			
 					
@@ -640,6 +646,173 @@
 				
 				
 		}
+		
+/*
+ *@name: changeFlag
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function defines the user and
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.changeFlag = function(index){
+				$scope.usersFlag = 3;			
+				$scope.userAction = 1;	
+				this.warning = this.allWarningsArray[index];					
+				this.description = this.warning.getDescription();					
+		}
+		
+/*
+ *@name: clearWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function restarts the warning Object
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.clearWarning = function(index){
+				this.warning = new warningObj();					
+				
+		}
+/*
+ *@name: addWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.warningsManagement = function(action){
+			if(action==62){
+				var confirmAdd = confirm("Do you really want to add this new warning message?");
+				this.warning.setWarningID(0);
+				this.warning.setActive(1);
+			}
+			else if(action==64){
+				var modifyAdd = confirm("Do you really want to modify this  warning message?");
+				this.warning.setDescription(this.description);
+			}
+			
+			if(confirmAdd || modifyAdd){
+				var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action='+action+'&JSONData='+JSON.stringify(this.warning),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("Warning succesfully added!");	
+					$scope.usersFlag=0;	
+					this.warning = new warningObj;
+					this.loadWarnings();
+					//location.reload();
+					
+				}
+			}else this.warning = new warningObj();						
+		}
+
+		
+/*
+ *@name: deleteWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.deleteWarning = function(index){
+			var confirmDelete = confirm("Do you really want to delete the warning message?");
+			this.warning = this.allWarningsArray[index];
+
+
+			if(confirmDelete){
+				var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=63&JSONData='+JSON.stringify(this.warning),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("Warning succesfully deleted!");	
+					$scope.usersFlag=0;	
+					this.warning = new warningObj;
+					this.loadWarnings();
+					
+				}
+			}else this.warning = new warningObj();				
+		}
+		
+/*
+ *@name: loadBids
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.loadBids = function(){
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=65',
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var bid = new bidObj();
+					bid.construct(outPutData[1][i].bidID, outPutData[1][i].itemID, outPutData[1][i].startPrice, outPutData[1][i].actualPrice, outPutData[1][i].duration, outPutData[1][i].startDate, outPutData[1][i].finishDate);					
+					this.allBidsArray.push(bid);
+				}			
+					
+			}			
+		}
+		
 		
 	});
 	
@@ -719,6 +892,18 @@
 		  controllerAs: 'warningsAdminManagement'
 		};
 	});
+	
+	swapYourMusicApp.directive("bidsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/bids-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'bidsAdminManagement'
+		};
+	});
+	
 	
 })();
 

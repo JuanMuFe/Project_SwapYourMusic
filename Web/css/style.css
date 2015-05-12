@@ -16,24 +16,27 @@ body{
 }
 
 
-#popUpDiv{
-	position:absolute:
-	top:0;
-
-}
 
 
-#sendWarning{
+.popUp{
 	background-color:white;
 	-webkit-box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
 	-moz-box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
 	box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
 	position:fixed;
 	width:50%;
-	height:50%;
 	top:30%;
 	left:25%;
 	margin:auto;
+	padding:3%;
 }
 
 
+textarea{
+	resize:none;
+	width:75%;
+}
+
+.red{
+	color:#E93A3A;
+}

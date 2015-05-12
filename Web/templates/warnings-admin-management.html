@@ -1,5 +1,29 @@
 <h2>Warnings management</h2>
+<button ng-click="usersFlag=3; userAction=2;adminCtrl.clearWarning()">Add new</button>
+{{usersFlag}}
+<table class="table table-hover">
+		<tr><th>Warning message</th><th></th><th></th></tr>
+		<tr ng-repeat="warning in adminCtrl.allWarningsArray">
+			<td>{{warning.description}}</td>
+			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.changeFlag($index)"/></td>
+			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteWarning($index)"/></td>
+		</tr>	
+</table>
 
 
+<div ng-show="usersFlag==3" class="popUp">
+	<h3 ng-if="userAction==2">Adding a new warning message</h3>
+	<h3 ng-if="userAction==1">Modifying the warning message</h3>
+	<form name="warningForm" novalidate>
+		<span ng-if="userAction==2">Write here the new message</span> </br>
+		<span ng-if="userAction==1">Modify here the message</span> </br>
+		<textArea  ng-if="userAction==2" id="description" ng-model="adminCtrl.warning.description" required> </textArea></br></br>		
+		<textArea ng-if="userAction==1" id="description" ng-model="adminCtrl.description" required> </textArea></br></br>		
+		
+		<input ng-if="userAction==2" type="submit"  ng-disabled="adminCtrl.warning.description==undefined" ng-click="adminCtrl.warningsManagement(62)" class="btn btn-success" value="Submit"/>
+		<input ng-if="userAction==1" type="submit"   ng-disabled="adminCtrl.description==undefined" ng-click="adminCtrl.warningsManagement(64)" class="btn btn-success" value="Submit"/>
 
+		<input class="btn btn-default btn-primary" type="button" value="Cancel" ng-click="usersFlag=0"> 
+	</form>
 
+</div>
