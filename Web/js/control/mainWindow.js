@@ -54,14 +54,20 @@ $(document).ready(function(){
 		this.itemToAdd= new itemObj();
 		this.genre= new genreObj();
 		this.conditions= new conditionObj();
+		this.warningsUser= new warningUsersObj();
+		this.warnings= new warningObj();
 		$scope.imagesArray= new Array();
+		$scope.warningRead=0;
 		
 		//Data from DDBB
 		this.itemsArray= new Array(); 
 		this.itemsArrayHome= new Array();
 		this.genresArray= new Array();
 		this.conditionsArray= new Array();
+		this.usersArray= new Array();
 		this.itemTypesArray= new Array("Vinyl", "Cassete", "CD");
+		this.warningsArray= new Array();
+		this.warningsToShowArray= new Array();
 		
 				
 		var user = JSON.parse(sessionStorage.getItem("userConnected"));
@@ -132,7 +138,7 @@ $(document).ready(function(){
 				  url: 'php/control/control.php',  
 				  type: 'POST',  
 				  async: false,   
-				  data: 'action=8&limitNumber='+5,   // limitNumber=5 is the number of items that the admin wants to appear in the home
+				  data: 'action=8&limitNumber='+10,   // limitNumber=10 is the number of items that the admin wants to appear in the home
 				  dataType: "json", 
 				  success: function (response) { 
 					  outPutdata = response;
@@ -145,12 +151,25 @@ $(document).ready(function(){
 			
 			if (outPutdata[0]){		
 				for (var i = 0; i < outPutdata[1].length; i++){
-					var item = new itemObj();
-					item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
-										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-										outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
-					this.itemsArrayHome.push(item);					
-				}			
+					if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
+						this.itemsArrayHome.push(item);
+					}										
+				}	
+				
+				for (var i = 0; i < outPutdata[2].length; i++){
+					if(outPutdata[2][i].unsubscribeDate=="0000-00-00"){
+						var user= new userObj();
+						user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
+									   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image,
+									   outPutdata[2][i].provinceID);
+						this.usersArray.push(user);
+					}
+				}
+						
 			}
 			else showErrors(outPutdata[1]);
 		}
@@ -177,8 +196,9 @@ $(document).ready(function(){
 			if (outPutdata[0]){		
 				for (var i = 0; i < outPutdata[1].length; i++){
 					if(outPutdata[1][i].available==1){
+						$scope.userItems=0;
 						var item = new itemObj();
-						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
 										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
 										outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
 						this.itemsArray.push(item);	
@@ -186,11 +206,13 @@ $(document).ready(function(){
 						$scope.imagesArray.push(outPutdata[1][i].image);				
 					}									
 				}				
-			}else showErrors(outPutdata[1]);
+			}else{
+				$("#userItemsMeesage").html("Still it does not have any item added");
+				$("#userItemsTable").hide();
+			}
 		}
 		
-		this.addItem= function(){
-				
+		this.addItem= function(){				
 			//Uploading files
 			var itemImage = imagesItemManagement(this.item.userID);
 			var now = new Date();
@@ -207,7 +229,6 @@ $(document).ready(function(){
 				if(minutes<10) minutes= "0"+minutes;
 				if(seconds<10) seconds= "0"+seconds;
 			var currentDateHour= year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
-			alert(currentDateHour);
 	
 			this.item.setItemID(0);
 			this.item.setAvailable(1);
@@ -215,7 +236,6 @@ $(document).ready(function(){
 			this.item.setUploadDate(currentDateHour);
 			
 			this.item = angular.copy(this.item);
-			alert(this.item);
 			var idItem;
 			
 			$.ajax({
@@ -245,7 +265,7 @@ $(document).ready(function(){
 				for (var i = 0; i <this.itemsArray.length; i++){
 					if(this.itemsArray[i].getItemID()==itemIDToDelete){					
 						var item= new itemObj();						
-						item.construct(this.itemsArray[i].itemID, this.itemsArray[i].userID, this.itemsArray[i].itemType,
+						item.construct(this.itemsArray[i].itemID, this.itemsArray[i].userID, this.itemsArray[i].bidID, this.itemsArray[i].itemType,
 										this.itemsArray[i].title,this.itemsArray[i].artist,this.itemsArray[i].releaseYear,
 										this.itemsArray[i].genreID,this.itemsArray[i].conditionID,this.itemsArray[i].image,
 										this.itemsArray[i].available);
@@ -276,8 +296,7 @@ $(document).ready(function(){
 			}
 		}
 		
-		this.searchItems= function(){	
-						
+		this.searchItems= function(){							
 			if((this.item.getItemType()!=null && this.item.getItemType()!="") || (this.item.getGenreID()!=null && this.item.getGenreID()!="") || (this.item.getArtist()!=null && this.item.getArtist()!="")){
 				this.item= angular.copy(this.item);	
 				this.itemsArrayHome= new Array();		
@@ -305,13 +324,13 @@ $(document).ready(function(){
 				if (outPutdata[0]){	
 					$("#searchMessage").hide();	
 					for (var i = 0; i < outPutdata[1].length; i++){
-						if(outPutdata[1][i].available==1){
+						if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
 							var item = new itemObj();
-							item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+							item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
 											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
 											outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
 							this.itemsArrayHome.push(item);					
-						}									
+						}							
 					}				
 				}else{
 					$("#searchMessage").html("No items have been found into the databse");
@@ -323,7 +342,7 @@ $(document).ready(function(){
 		
 		this.createModItemForm= function(item){
 			this.item= new itemObj();
-			this.item.construct(item.itemID, item.userID, item.itemType, item.title, item.artist, item.releaseYear,
+			this.item.construct(item.itemID, item.userID, item.bidID, item.itemType, item.title, item.artist, item.releaseYear,
 								item.genreID, item.conditionID,item.image, item.userID,item.available);
 			$("#userItemsManag").hide();			
 			$("#userItemsMod").fadeIn(1000);
@@ -341,10 +360,7 @@ $(document).ready(function(){
 				
 				if(this.item.getReleaseYear()>year){
 					alert("You must introduce a valid release year");
-				}else{
-					
-				}
-																	
+				}																	
 				
 				//Item type, genreID and conditionID modification				
 				this.item.setItemType($("#itemTypeMod").find('option:selected').attr('value'));	
@@ -421,6 +437,7 @@ $(document).ready(function(){
 		}
 			
 		this.checkWarnings= function(){
+			var outPutdata= new Array();
 			$.ajax({
 				  url: 'php/control/control.php',  
 				  type: 'POST',  
@@ -435,7 +452,73 @@ $(document).ready(function(){
 						console.log(xhr.status+"\n"+thrownError);
 				  }	
 			});
+			
+			if (outPutdata[0]){
+				$("#warningAlert").fadeIn(200);		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					if(outPutdata[1][i].read==0){
+						this.warningsUser = new warningUsersObj();
+						this.warningsUser.construct(outPutdata[1][i].warningID, outPutdata[1][i].userID, outPutdata[1][i].read);	
+						this.warningsArray.push(this.warningsUser);	
+					}else $("#warningAlert").hide();													
+				}	
+				
+				var outPutdata= new Array();								
+				$.ajax({
+					  url: 'php/control/control.php',  
+					  type: 'POST',  
+					  async: false,   
+					  data: 'action=11', 
+					  dataType: "json", 
+					  success: function (response) { 
+						  outPutdata = response;
+					  },
+					  error: function (xhr, ajaxOptions, thrownError){
+							alert("There has been and error while connecting to server");
+							console.log(xhr.status+"\n"+thrownError);
+					  }	
+				});	
+				
+				if(outPutdata[0]){
+					for (var i = 0; i < this.warningsArray.length; i++){
+						for (var j = 0; j < outPutdata[1].length; j++){
+							if((outPutdata[1][j].warningID==this.warningsArray[i].getWarningID())){								
+								this.warnings= new warningObj();
+								this.warnings.construct(outPutdata[1][j].warningID, outPutdata[1][j].description);
+								this.warningsToShowArray.push(this.warnings);								
+							}							
+						}												
+					}					
+				}	
+			}else $("#warningAlert").hide();
+			var divContent="";
+			for (var i = 0; i < this.warningsToShowArray.length; i++){
+				divContent +=(i+1)+".- "+this.warningsToShowArray[i].description+"<br />";
+			}
+			$("#warningsDiv").html(divContent);					
 		}
+		
+		this.readUserWarnings= function(){
+			for (var i = 0; i < this.warningsArray.length; i++){
+				this.warningsArray[i].setRead(1);
+			}
+			this.warningsArray = angular.copy(this.warningsArray);	
+			var success;								
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=12&warningsArray='+JSON.stringify(this.warningsArray), 
+				  dataType: "json", 
+				  success: function (response){ 
+					  success = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});	
+		}		
 		
 	});
 	

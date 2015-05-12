@@ -19,22 +19,27 @@
 	
 	<p id="searchMessage"></p>
 	<div ng-repeat="itemHome in musicCtrl.itemsArrayHome">
-		<table border=1>
-			<tr><th>Item type</th><th>Title</th><th>Artist</th><th>Release year</th><th>Genre</th><th>Conditions</th><th>Image</th><th></th><th style="border: hidden"></th></tr>
-			<tr>
-				<td>{{itemHome.getItemType()}}</td> 
-				<td>{{itemHome.getTitle()}}</td>
-				<td>{{itemHome.getArtist()}}</td>
-				<td>{{itemHome.getReleaseYear()}}</td>
-				<td>{{musicCtrl.genresArray[itemHome.getGenreID()].name}}</td>
-				<td>{{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}</td>
-				<td><img ng-src="{{itemHome.image}}" width="90px"/></td>
-				<td></td>
-				<td style="border: hidden">
-					<a href="#" id="contact{{$index}}" title="Contact to start trade" ng-click=""><img src="img/contact.png" width="70"/></a>
-				</td>
-			</tr>			
-		</table>
-		<br/><br/>
+		<img ng-src="{{itemHome.image}}" width="200px"/><br />
+		{{itemHome.getArtist()}} - {{itemHome.getTitle()}}<br />
+		{{itemHome.getReleaseYear()}}				
+		<a href="#" id="contact{{$index}}" title="View more" ng-click="itemInformation =! itemInformation">View more</a>
+		<a href="#" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
+		<a href="#" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a>			
+		<br/><br />
+		
+		<div id="moreInformationDiv" ng-show="itemInformation">
+			<img ng-src="{{itemHome.image}}" width="250px"/><br />
+			<b>Artist:</b> {{itemHome.getArtist()}} <br />
+			<b>Title:</b> {{itemHome.getTitle()}} <br />
+			<b>Genre:</b> {{musicCtrl.genresArray[itemHome.getGenreID()].name}} <br/>
+			<b>Item type:</b> {{itemHome.getItemType()}}<br />
+			<b>Release year:</b> {{itemHome.getReleaseYear()}}<br/>		
+			<b>Condition:</b> {{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}<br />
+			<b>User:</b> <a href="#">{{musicCtrl.usersArray[itemHome.getUserID()].userName}}</a><br />
+			{{itemHome.getUserID()}}
+			<button ng-click="itemInformation =! itemInformation">Close</button>			
+		</div>		
 	</div>
+	
+	
 </form>

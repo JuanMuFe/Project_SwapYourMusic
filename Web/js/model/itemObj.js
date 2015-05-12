@@ -3,6 +3,7 @@ function itemObj ()
 	//Attributes declaration
 	this.itemID;
 	this.userID;
+	this.bidID;
 	this.itemType;
 	this.title;
 	this.artist;
@@ -15,10 +16,11 @@ function itemObj ()
 	
 	
 	//Methods declaration
-	this.construct = function (itemID,userID,itemType, title, artist, releaseYear, genreID, conditionID, image, available, uploadDate)
+	this.construct = function (itemID, userID, bidID, itemType, title, artist, releaseYear, genreID, conditionID, image, available, uploadDate)
 	{
 		this.setItemID(itemID);
 		this.setUserID(userID);
+		this.setBidID(bidID);
 		this.setItemType(itemType);
 		this.setTitle(title);
 		this.setArtist(artist);
@@ -33,6 +35,7 @@ function itemObj ()
 	//getters and setters
 	this.setItemID = function (itemID){this.itemID=itemID;}
 	this.setUserID = function (userID){this.userID=userID;}
+	this.setBidID = function (bidID){this.bidID=bidID;}
 	this.setItemType = function (itemType){this.itemType=itemType;}
 	this.setTitle = function (title){this.title=title;}
 	this.setArtist = function (artist){this.artist=artist;}
@@ -45,6 +48,7 @@ function itemObj ()
 	
 	this.getItemID = function () {return this.itemID;}
 	this.getUserID = function () {return this.userID;}
+	this.getBidID = function () {return this.bidID;}
 	this.getItemType = function () {return this.itemType;}
 	this.getTitle = function () {return this.title;}
 	this.getArtist = function () {return this.artist;}

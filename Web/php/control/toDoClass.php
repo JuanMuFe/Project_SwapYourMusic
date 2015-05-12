@@ -9,6 +9,7 @@ require_once "../model/itemClass.php";
 require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
 require_once "../model/warningUsersClass.php";
+require_once "../model/warningClass.php";
 
 	class toDoClass {
 /*
@@ -176,6 +177,16 @@ require_once "../model/warningUsersClass.php";
 				}				
 				
 				$outPutData[1]=$itemsArray;
+				
+				$listUsersSearch= userClass::findAll();
+				
+				if(count($listUsersSearch)!=0){
+					$usersArray= array();
+					foreach($listUsersSearch as $user){
+						$usersArray[]=$user->getAll();
+					}
+					$outPutData[2]=$usersArray;					
+				}	
 			}
 			
 			return json_encode($outPutData);
@@ -213,11 +224,11 @@ require_once "../model/warningUsersClass.php";
 			$outPutData = array();
 			$errors = array();
 			$outPutData[0]=true;
-			$listWarnings = warningUsersClass::findUserWarnings($userID);
+			$listWarnings = warningUsersClass::findByUserId($userID);
 			
 			if (count($listWarnings)==0){
 				$outPutData[0]=false;
-				$errors[]="No warnings have been found to this user";
+				$errors[]="No warnings have been found to you";
 				$outPutData[1]=$errors;
 			}
 			else{
@@ -230,6 +241,40 @@ require_once "../model/warningUsersClass.php";
 			}
 			
 			return json_encode($outPutData);
+		}
+		
+		public function searchWarnings($action){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listWarnings = warningClass::findAll();
+			
+			if (count($listWarnings)==0){
+				$outPutData[0]=false;
+				$errors[]="No warnings have been found";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$warningsArray= array();
+				foreach ($listWarnings as $warning){
+					$warningsArray[]=$warning->getAll();
+				}				
+				
+				$outPutData[1]=$warningsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		public function modifyReadWarnings($action, $warningsArray){
+			$userWarningsArray = json_decode(stripslashes($warningsArray));
+			
+			foreach($userWarningsArray as $warningObject){
+				$userWarning= new warningUsersClass();
+				$userWarning->setAll($warningObject->warningID, $warningObject->userID, $warningObject->read);
+				$userWarning->updateRead(); 			
+			}		
+			echo true;
 		}
 	}
 	

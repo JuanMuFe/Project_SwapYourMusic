@@ -48,6 +48,12 @@ require_once "toDoClass.php";
 							
 					case 10: echo toDoClass::checkWarnings($this->params['action'], $this->params['userID']);
 							 break;
+					
+					case 11: echo toDoClass::searchWarnings($this->params['action']);
+							 break;
+					
+					case 12: echo toDoClass::modifyReadWarnings($this->params['action'], $this->params['warningsArray']);
+							 break;
 						
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
@@ -56,18 +62,4 @@ require_once "toDoClass.php";
 			}			
 		}
 	}
-	
-	/*
-     * @itemType: findUserWarnings()
-	 * @artist: Irene Blanco
-	 * @version: 1.0
-	 * @description: this function finds warnings
-     * @date: 27/03/2015
-	 * @params: none
-	 * @return: none
-	 */ 
-    public function findUserWarnings(){
-		$cons = "select * from `".itemClass::$tableName."` order by ".itemClass::$colNameUploadDate." DESC limit ".$limitNumber;
-		return itemClass::findByQuery( $cons );
-    }
 ?>

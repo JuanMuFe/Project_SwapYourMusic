@@ -41,8 +41,10 @@
 	}
 	
 	function stripAccents($string){
+        $string = utf8_decode($string);
         $originals  = 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ';
         $modified = 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY';
-        return strtr($string,utf8_decode($originals), $modified);
+        $result = utf8_encode(strtolower(strtr($string,utf8_decode($originals), $modified)));
+        return $result;
     }
 ?>

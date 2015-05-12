@@ -11,6 +11,7 @@ require_once "BDSwap_your_music.php";
 class itemClass {
     private $itemID;
     private $userID;
+    private $bidID;
     private $itemType;
     private $title;
     private $artist;
@@ -25,6 +26,7 @@ class itemClass {
     private static $tableName = "items";
     private static $colNameItemID = "itemID";
     private static $colNameUserID = "userID";
+    private static $colNameBidID = "bidID";
     private static $colNameItemType = "itemType";
     private static $colNameTitle = "title";
     private static $colNameArtist = "artist";
@@ -53,6 +55,14 @@ class itemClass {
     
     public function setUserID($userID) {
         $this->userID = $userID;
+    }
+    
+    public function getBidID() {
+        return $this->bidID;
+    }
+    
+    public function setBidID($bidID) {
+        $this->bidID = $bidID;
     }
     
     public function getItemType() {
@@ -126,6 +136,7 @@ class itemClass {
 		$data = array();
 		$data["itemID"] = $this->getItemID();
 		$data["userID"] = $this->getUserID();
+		$data["bidID"] = $this->getBidID();
 		$data["itemType"] = $this->getItemType(); 
 		$data["title"] = utf8_encode($this->getTitle());
 		$data["artist"] = utf8_encode($this->getArtist());
@@ -147,9 +158,10 @@ class itemClass {
 	 * @params: $itemID ,$userID, $itemType, $title,$title,$artist, $releaseYear,$genreID,$image
 	 * @return: none
 	 */ 
-    public function setAll($itemID ,$userID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $available, $uploadDate){
+    public function setAll($itemID ,$userID, $bidID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $available, $uploadDate){
 		$this->setItemID($itemID);
 		$this->setUserID($userID);
+		$this->setBidID($bidID);
 		$this->setItemType($itemType);
 		$this->setTitle(utf8_decode($title));
 		$this->setArtist(utf8_decode($artist));
@@ -197,6 +209,7 @@ class itemClass {
 		//We get all the values form the query
 		$itemID=$res[itemClass::$colNameItemID];
 		$userID=$res[itemClass::$colNameUserID];
+		$bidID=$res[itemClass::$colNameBidID];
 		$itemType = $res[ itemClass::$colNameItemType ];
 		$title=$res[itemClass::$colNameTitle];
 		$artist=$res[itemClass::$colNameArtist];
@@ -211,6 +224,7 @@ class itemClass {
        	$entity = new itemClass();
 		$entity->setItemID($itemID);
 		$entity->setUserID($userID);
+		$entity->setBidID($bidID);
 		$entity->setItemType($itemType);
 		$entity->setTitle($title);
 		$entity->setArtist($artist);
@@ -430,8 +444,8 @@ class itemClass {
 		}
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`,`uploadDate`) values (?,?,?,?,?,?,?,?,?,?,?)" )) {
-			$stmt->bind_param("iisssiiisis",$this->getItemID(), $this->getUserID(),$this->getItemType(),$this->getTitle(),  $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(), $this->getUploadDate());
+		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`bidID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`,`uploadDate`) values (?,?,?,?,?,?,?,?,?,?,?,?)" )) {
+			$stmt->bind_param("iiisssiiisis",$this->getItemID(), $this->getUserID(),$this->getBidID(), $this->getItemType(),$this->getTitle(),  $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(), $this->getUploadDate());
 			//executar consulta
 			$stmt->execute();
 		}
@@ -485,8 +499,8 @@ class itemClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ?,".itemClass::$colNameUploadDate." = ? where ".itemClass::$colNameItemID." =?") ) {
-			$stmt->bind_param("iisssiiisisi",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(), $this->getImage(),$this->getAvailable(),$this->getUploadDate(),$this->getItemID());
+		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameBidID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ?,".itemClass::$colNameUploadDate." = ? where ".itemClass::$colNameItemID." =?") ) {
+			$stmt->bind_param("iiisssiiisisi",$this->getItemID(), $this->getUserID(), $this->getBidID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(), $this->getImage(),$this->getAvailable(),$this->getUploadDate(),$this->getItemID());
 			//executar consulta
 			$stmt->execute();
 		}

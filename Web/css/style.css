@@ -1,0 +1,30 @@
+#warningAlert{
+	position: absolute;
+	top: 12.5%;
+	left: 28%;
+	border: 1px dashed red;
+}
+
+#warningAlert:hover{
+	position: absolute;
+	top: 12.5%;
+	left: 28%;
+	border: 1px dashed blue;
+}
+
+#warningsDiv{
+	position: absolute;
+	top: 15%;
+	left: 35%;
+	border: 1px solid black;
+	padding: 1%;
+}
+
+#moreInformationDiv{
+	position: fixed;
+	left: 30%;
+	top: 35%;
+	border: 1px solid black;
+	padding: 2%;
+	text-align: center;
+}
