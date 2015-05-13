@@ -56,6 +56,7 @@ $(document).ready(function(){
 		this.conditions= new conditionObj();
 		this.warningsUser= new warningUsersObj();
 		this.warnings= new warningObj();
+		this.friend= new friendsObj();
 		$scope.imagesArray= new Array();
 		$scope.warningRead=0;
 		
@@ -66,6 +67,8 @@ $(document).ready(function(){
 		this.conditionsArray= new Array();
 		this.usersArray= new Array();
 		this.itemTypesArray= new Array("Vinyl", "Cassete", "CD");
+		this.friendsArray= new Array();
+		this.provincesArray= new Array();
 		this.warningsArray= new Array();
 		this.warningsToShowArray= new Array();
 		
@@ -161,15 +164,14 @@ $(document).ready(function(){
 				}	
 				
 				for (var i = 0; i < outPutdata[2].length; i++){
-					if(outPutdata[2][i].unsubscribeDate=="0000-00-00"){
+					if(outPutdata[2][i].unsubscribeDate=="0000-00-00" && (outPutdata[2][i].userID!=this.user.getUserID())){
 						var user= new userObj();
 						user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
 									   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image,
 									   outPutdata[2][i].provinceID);
 						this.usersArray.push(user);
 					}
-				}
-						
+				}	
 			}
 			else showErrors(outPutdata[1]);
 		}
@@ -205,7 +207,7 @@ $(document).ready(function(){
 						this.item.setUserID(outPutdata[1][i].userID);
 						$scope.imagesArray.push(outPutdata[1][i].image);				
 					}									
-				}				
+				}			
 			}else{
 				$("#userItemsMeesage").html("Still it does not have any item added");
 				$("#userItemsTable").hide();
@@ -394,7 +396,26 @@ $(document).ready(function(){
 		this.deleteAccount= function(){
 			var passToConfirm= $("#passwordToDelete").val();
 			
-			if(window.md5(passToConfirm)==this.user.password){				
+			if(window.md5(passToConfirm)==this.user.password){	
+				for (var i = 0; i < this.itemsArray.length; i++){  
+					this.itemsArray[i].setAvailable(0);						
+				}
+				//call in ajax in order to put available=0 for this user items
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=7&JSONItemToMod='+JSON.stringify(this.itemsArray),
+					  dataType: "json",
+					  success: function (response){ 
+						  success = response;
+						  alert("Account deleted successful");
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+					  }	
+				});
+							
 				$("#message").hide();
 				if(confirm("Are you sure you want to delete your account?")){
 					var now = new Date();
@@ -415,7 +436,7 @@ $(document).ready(function(){
 					  async: false,
 					  data: 'action=57&JSONData='+JSON.stringify(this.user),
 					  dataType: "json",
-					  success: function (response) { 
+					  success: function (response){ 
 						  success = response;
 						  alert("Account deleted successful");
 					  },
@@ -431,10 +452,94 @@ $(document).ready(function(){
 				}
 			}else{
 				var pContent="The passwords do not match";
-				$("#message").html(pContent);
-				//$("#passwordToDelete").removeClass("ng-valid").addClass("ng-invalid");
+				$("#message").html(pContent);				
 			}
 		}
+		
+		this.loadUserFriends= function(){
+			var outPutdata= new Array();
+			this.friendsArray= new Array();
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=13&userID='+this.user.getUserID(), 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if(outPutdata[0]){
+				for (var i = 0; i < outPutdata[1].length; i++){							
+					this.friend= new friendsObj();
+					this.friend.construct(outPutdata[1][i].userID, outPutdata[1][i].friendID);											
+				}
+				
+				for (var i = 0; i < outPutdata[2].length; i++){							
+					var user= new userObj();
+					user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
+								   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image, 
+								   outPutdata[2][i].provinceID);
+					this.friendsArray.push(user);											
+				}								
+			}else $("#friendsErrorMessage").html("Still don't have any added friends");
+			
+			var outPutdata= new Array();
+			this.provincesArray= new Array();
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=14', 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if(outPutdata[0]){
+				for (var i = 0; i < outPutdata[1].length; i++){							
+					var province= new provinceObj();
+					province.construct(outPutdata[1][i].provinceID, outPutdata[1][i].name, outPutdata[1][i].regionID);
+					this.provincesArray.push(province);													
+				}								
+			}else showErrors(outPutdata[1]);	
+		}
+		
+		this.deleteFriend= function(friendToDelete){
+			var friendToDel;
+			for (var i = 0; i < this.friend.length; i++){
+				if(this.friend[i].getUserID()==this.friendsArray[friendToDelete].userID){
+					friendToDel=this.friend[i];
+				}
+			}
+			
+			var success;
+			$.ajax({
+				url: 'php/control/control.php',  
+				type: 'POST',  
+				async: true,   
+				data: 'action=15&friendToDelete='+JSON.stringify(friendToDel),
+				dataType: "json", 
+				success: function (response) { 
+				    success = response;
+				},
+				error: function (xhr, ajaxOptions, thrownError){
+					alert("There has been and error while connecting to server");
+					console.log(xhr.status+"\n"+thrownError);
+				}	
+			});
+			if(success) alert("Friend deleted correctly");
+		}	
 			
 		this.checkWarnings= function(){
 			var outPutdata= new Array();
@@ -553,6 +658,17 @@ $(document).ready(function(){
 			
 		  },
 		  controllerAs: 'homeSearchForm'
+		};
+	});
+	
+	swapYourMusicApp.directive("friendsListForm", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/friends-list-form.html",
+		  controller:function(){
+			
+		  },
+		  controllerAs: 'friendsListForm'
 		};
 	});
 	

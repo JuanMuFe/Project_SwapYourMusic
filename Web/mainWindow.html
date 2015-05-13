@@ -37,6 +37,8 @@
 		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningUsersObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/friendsObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/mainWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
@@ -55,14 +57,14 @@
 			</div>
 			<div ng-show="userPage==1">
 				<nav>
-					<a ng-click="musicCtrl.loadUserItems();userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2">Friends list</a> | <a ng-click="userProfile=3">Bids</a> | <a ng-click="userProfile=4">Settings</a>
+					<a ng-click="musicCtrl.loadUserItems();userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2; musicCtrl.loadUserFriends()">Friends list</a> | <a ng-click="userProfile=3">Bids</a> | <a ng-click="userProfile=4">Settings</a>
 				</nav>
 				<p id="userItemsMeesage"></p>
 				<user-items-management id="userItemsManag"></user-items-management>
 				<user-items-modification id="userItemsMod"></user-items-modification>
 				
 				<div ng-show="userProfile==2">
-					Friends
+					<friends-list-form></friends-list-form>
 				</div>
 				
 				<div ng-show="userProfile==3">
@@ -70,7 +72,7 @@
 				</div>
 				
 				<div ng-show="userProfile==4"><br />
-					<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1">Delete account</a></nav>
+					<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
 					<div ng-show="deleteAccount==1">
 						Introduce your password if you want to delete your account: <br />
 						<input type="password" id="passwordToDelete"/><br />

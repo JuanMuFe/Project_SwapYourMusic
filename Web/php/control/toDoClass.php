@@ -10,6 +10,8 @@ require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
 require_once "../model/warningUsersClass.php";
 require_once "../model/warningClass.php";
+require_once "../model/friendsClass.php";
+require_once "../model/provinceClass.php";
 
 	class toDoClass {
 /*
@@ -139,13 +141,14 @@ require_once "../model/warningClass.php";
 		}
 		
 		public function modifyItems($action, $JSONItemToMod){
-			$itemObject = json_decode(stripslashes($JSONItemToMod));
+			$itemArray = json_decode(stripslashes($JSONItemToMod));
 			
-			$item = new itemClass();	   	    
-			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
-			$item->update();		    
-			
+			foreach($itemArray as $itemObject){
+				$item = new itemClass();	   	    
+				$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+								$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
+				$item->update();
+			}		
 			echo true;
 		}
 		
@@ -172,21 +175,23 @@ require_once "../model/warningClass.php";
 			}
 			else{
 				$itemsArray= array();
+				$usersArray= array();
+				$listUsersSearch = userClass::findAll();
+				
 				foreach ($listItemsSearch as $item){
-					$itemsArray[]=$item->getAll();
-				}				
+					if($item->getAvailable()==1){
+						$itemsArray[]=$item->getAll();
+						
+						foreach($listUsersSearch as $user){
+							if($user->getUserID()==$item->getUserID()){
+								$usersArray[]=$user->getAll();	
+							}
+						}	
+					}																						
+				}			
 				
 				$outPutData[1]=$itemsArray;
-				
-				$listUsersSearch= userClass::findAll();
-				
-				if(count($listUsersSearch)!=0){
-					$usersArray= array();
-					foreach($listUsersSearch as $user){
-						$usersArray[]=$user->getAll();
-					}
-					$outPutData[2]=$usersArray;					
-				}	
+				$outPutData[2]=$usersArray;					
 			}
 			
 			return json_encode($outPutData);
@@ -274,6 +279,72 @@ require_once "../model/warningClass.php";
 				$userWarning->setAll($warningObject->warningID, $warningObject->userID, $warningObject->read);
 				$userWarning->updateRead(); 			
 			}		
+			echo true;
+		}
+		
+		public function loadUserFriends($action, $userID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listUserFriends = friendsClass::findByUserId($userID);
+			
+			if (count($listUserFriends)==0){
+				$outPutData[0]=false;
+				$errors[]="No friends have been found into the database for you";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$friendsArray= array();
+				$usersArray= array();				
+				$listUsersSearch = userClass::findAll();
+				
+				foreach ($listUserFriends as $friend){
+						$friendsArray[]=$friend->getAll();
+						
+						foreach($listUsersSearch as $user){
+							if($user->getUserID()==$friend->getFriendID()){
+								$usersArray[]=$user->getAll();	
+							}
+						}	
+				}								
+				
+				$outPutData[1]=$friendsArray;
+				$outPutData[2]=$usersArray;			
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		public function searchProvinces($action){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$listProvinces = provinceClass::findAll();
+			
+			if (count($listProvinces)==0){
+				$outPutData[0]=false;
+				$errors[]="No provinces have been found into the databse";
+				$outPutData[1]=$errors;
+			}else{
+				$provincesArray= array();
+				
+				foreach ($listProvinces as $province){
+					$provincesArray[]=$province->getAll();
+				}				
+				
+				$outPutData[1]=$provincesArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		public function deleteFriend($action, $friendToDelete){
+			$friendObj = json_decode(stripslashes($friendToDelete));
+		
+			$friend = new friendsClass();	   	
+			$friend->setAll($friendObj->userID ,$friendObj->friendID);		
+			$friend->delete();
+			
 			echo true;
 		}
 	}

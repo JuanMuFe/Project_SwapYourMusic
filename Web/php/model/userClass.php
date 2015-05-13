@@ -234,9 +234,9 @@ class userClass {
 	 * @return: object with the query results
 	 */ 
     public static function findById( $userID ) {
-	$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserID." = \"".$userID."\"";
+		$cons = "select * from `".userClass::$tableName."` where ".userClass::$colNameUserID." = \"".$userID."\"";
 
-	return userClass::findByQuery( $cons );
+		return userClass::findByQuery( $cons );
     }
   
 

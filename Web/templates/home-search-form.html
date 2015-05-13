@@ -35,8 +35,9 @@
 			<b>Item type:</b> {{itemHome.getItemType()}}<br />
 			<b>Release year:</b> {{itemHome.getReleaseYear()}}<br/>		
 			<b>Condition:</b> {{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}<br />
-			<b>User:</b> <a href="#">{{musicCtrl.usersArray[itemHome.getUserID()].userName}}</a><br />
-			{{itemHome.getUserID()}}
+			<b>User:</b> <a href="#">{{musicCtrl.usersArray[$index].userName}} <img src="{{musicCtrl.usersArray[$index].image}}" width="40px"/></a><br />
+			<a href="#" title="Bid up" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
+			<a href="#" title="Start trade" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a><br />
 			<button ng-click="itemInformation =! itemInformation">Close</button>			
 		</div>		
 	</div>

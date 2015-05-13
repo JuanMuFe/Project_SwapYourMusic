@@ -53,8 +53,16 @@ require_once "toDoClass.php";
 							 break;
 					
 					case 12: echo toDoClass::modifyReadWarnings($this->params['action'], $this->params['warningsArray']);
+							 break;	
+							 
+					case 13: echo toDoClass::loadUserFriends($this->params['action'], $this->params['userID']);
 							 break;
-						
+					
+					case 14: echo toDoClass::searchProvinces($this->params['action']);
+							 break;	
+					
+					case 15: echo toDoClass::deleteFriend($this->params['action'], $this->params['friendToDelete']);
+							 break;								
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

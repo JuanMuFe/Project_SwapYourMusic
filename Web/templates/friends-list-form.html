@@ -1,0 +1,10 @@
+<form name="friendListFrom" ng-submit="friendListFrom.$valid" novalidate>
+	<p id="friendsErrorMessage"></p>
+	<div ng-repeat="friend in musicCtrl.friendsArray" style="border:1px solid black;background-color:skyblue">
+		<img src="{{friend.image}}" width="100"/> <br/>
+		Name: {{friend.userName}}<br/>
+		Location: {{musicCtrl.provincesArray[friend.getProvinceID()].name}}<br />
+		<a href="#" title="Visit profile" style="position:relative; left:13%; top:-100px;"><img src="img/goProfile.png" /></a></br>
+		<a href="#" title="Delete friend" ng-click="musicCtrl.deleteFriend($index)" style="position:relative; left:13%; top:-75px;"><img src="img/delFriend.png" /></a>		
+	</div>
+</form>

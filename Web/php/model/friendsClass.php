@@ -54,7 +54,7 @@ class friendsClass {
 	 * @params: $friendID ,$userID
 	 * @return: none
 	 */ 
-    public function setAll($friendID ,$userID)) {
+    public function setAll($userID, $friendID) {
 		$this->setFriendID($friendID);
 		$this->setUserID($userID);
     }
@@ -140,9 +140,9 @@ class friendsClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByUserId( $userID ) {
-	$cons = "select * from `".friendsClass::$tableName."` where ".friendsClass::$colNameUserID." = \"".$userID."\"";
+		$cons = "select * from `".friendsClass::$tableName."` where ".friendsClass::$colNameUserID." = \"".$userID."\"";
 
-	return friendsClass::findByQuery( $cons );
+		return friendsClass::findByQuery( $cons );
     }
 
  
