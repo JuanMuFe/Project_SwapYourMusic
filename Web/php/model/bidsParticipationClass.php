@@ -14,7 +14,7 @@ class bidsParticipationClass {
     private $offeredMoney;
 
     //----------Data base Values---------------------------------------
-    private static $tableName = "evaluations";
+    private static $tableName = "bids_participation";
     private static $colNameUserID = "userID";
     private static $colNameBidID = "bidID";
     private static $colNameOfferedMoney = "offeredMoney";
@@ -64,7 +64,7 @@ class bidsParticipationClass {
 	 * @params: $userID ,$bidID
 	 * @return: none
 	 */ 
-    public function setAll($userID ,$bidID, $offeredMoney)) {
+    public function setAll($userID ,$bidID, $offeredMoney) {
 		$this->setUserID($userID);
 		$this->setBidID($bidID);
 		$this->setOfferedMoney($offeredMoney);
@@ -153,8 +153,8 @@ class bidsParticipationClass {
 	 * @params: id
 	 * @return: object with the query results
 	 */ 
-    public static function findByBidId( $bidID ) {
-	$cons = "select * from `".bidsParticipationClass::$tableName."` where ".bidsParticipationClass::$colNameBidIDD." = \"".$bidID."\"";
+    public static function findByBidID( $bidID ) {
+	$cons = "select * from `".bidsParticipationClass::$tableName."` where ".bidsParticipationClass::$colNameBidID." = \"".$bidID."\"";
 
 	return bidsParticipationClass::findByQuery( $cons );
     }

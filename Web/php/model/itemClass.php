@@ -11,6 +11,7 @@ require_once "BDSwap_your_music.php";
 class itemClass {
     private $itemID;
     private $userID;
+    private $bidID;
     private $itemType;
     private $title;
     private $artist;
@@ -19,11 +20,13 @@ class itemClass {
     private $conditionID;
     private $image;
     private $available;
+    private $uploadDate;
 
     //----------Data base Values---------------------------------------
     private static $tableName = "items";
     private static $colNameItemID = "itemID";
     private static $colNameUserID = "userID";
+    private static $colNameBidID = "bidID";
     private static $colNameItemType = "itemType";
     private static $colNameTitle = "title";
     private static $colNameArtist = "artist";
@@ -32,6 +35,8 @@ class itemClass {
     private static $colNameConditionID = "conditionID";
     private static $colNameImage = "image";
     private static $colNameAvailable = "available";
+    private static $colNameUploadDate = "uploadDate";
+    
         
     function __construct() {
     }
@@ -50,6 +55,14 @@ class itemClass {
     
     public function setUserID($userID) {
         $this->userID = $userID;
+    }
+    
+    public function getBidID() {
+        return $this->bidID;
+    }
+    
+    public function setBidID($bidID) {
+        $this->bidID = $bidID;
     }
     
     public function getItemType() {
@@ -111,20 +124,28 @@ class itemClass {
         $this->available = $available;
     }
     
-
+	public function getUploadDate() {
+        return $this->uploadDate;
+    }
+    
+    public function setUploadDate($uploadDate) {
+        $this->uploadDate = $uploadDate;
+    }
 	
     public function getAll() {
 		$data = array();
 		$data["itemID"] = $this->getItemID();
 		$data["userID"] = $this->getUserID();
+		$data["bidID"] = $this->getBidID();
 		$data["itemType"] = $this->getItemType(); 
 		$data["title"] = utf8_encode($this->getTitle());
 		$data["artist"] = utf8_encode($this->getArtist());
 		$data["releaseYear"] = $this->getReleaseYear();
 		$data["genreID"] = $this->getGenreID();
 		$data["conditionID"] = $this->getConditionID();
-		$data["image"] = $this->getImage();
+		$data["image"] = utf8_encode($this->getImage());
 		$data["available"] = $this->getAvailable();
+		$data["uploadDate"] = $this->getUploadDate();
 		
 		return $data;
     }
@@ -137,17 +158,19 @@ class itemClass {
 	 * @params: $itemID ,$userID, $itemType, $title,$title,$artist, $releaseYear,$genreID,$image
 	 * @return: none
 	 */ 
-    public function setAll($itemID ,$userID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $available){
+    public function setAll($itemID ,$userID, $bidID, $itemType,$title,$artist, $releaseYear,$genreID,$conditionID, $image, $available, $uploadDate){
 		$this->setItemID($itemID);
 		$this->setUserID($userID);
+		$this->setBidID($bidID);
 		$this->setItemType($itemType);
-		$this->setTitle($title);
-		$this->setArtist($artist);
+		$this->setTitle(utf8_decode($title));
+		$this->setArtist(utf8_decode($artist));
 		$this->setgenreID($genreID);
 		$this->setReleaseYear($releaseYear);
 		$this->setConditionID($conditionID);
 		$this->setImage($image);
 		$this->setAvailable($available);
+		$this->setUploadDate($uploadDate);
     }
     
     //---Databese management section-----------------------
@@ -186,6 +209,7 @@ class itemClass {
 		//We get all the values form the query
 		$itemID=$res[itemClass::$colNameItemID];
 		$userID=$res[itemClass::$colNameUserID];
+		$bidID=$res[itemClass::$colNameBidID];
 		$itemType = $res[ itemClass::$colNameItemType ];
 		$title=$res[itemClass::$colNameTitle];
 		$artist=$res[itemClass::$colNameArtist];
@@ -194,11 +218,13 @@ class itemClass {
 		$conditionID = $res[ itemClass::$colNameConditionID ];
 		$image = $res[ itemClass::$colNameImage ];
 		$available = $res[ itemClass::$colNameAvailable ];
+		$uploadDate= $res [ itemClass::$colNameUploadDate ];
 
        	//Object construction
        	$entity = new itemClass();
 		$entity->setItemID($itemID);
 		$entity->setUserID($userID);
+		$entity->setBidID($bidID);
 		$entity->setItemType($itemType);
 		$entity->setTitle($title);
 		$entity->setArtist($artist);
@@ -207,7 +233,7 @@ class itemClass {
 		$entity->setConditionID($conditionID);
 		$entity->setImage($image);
 		$entity->setAvailable($available);
-
+		$entity->setUploadDate($uploadDate);
 
 		return $entity;
     }
@@ -265,10 +291,22 @@ class itemClass {
 		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameUserID." = \"".$userID."\"";
 
 		return itemClass::findByQuery( $cons );
-    }
-    
-    
+    }    
   
+  /*
+     * @itemType: findByItemType()
+	 * @artist: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByItemType( $itemType ) {
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameItemType." = \"".$itemType."\" order by ".itemClass::$colNameUploadDate." DESC";
+
+		return itemClass::findByQuery( $cons );
+    }
   
   /*
      * @itemType: findByGenre()
@@ -280,7 +318,37 @@ class itemClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByGenre( $genreID ) {
-		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameGenreID." = \"".$genreID."\"";
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameGenreID." = \"".$genreID."\" order by ".itemClass::$colNameUploadDate." DESC";
+
+		return itemClass::findByQuery( $cons );
+    }
+    
+    /*
+     * @itemType: findByItemtypeAndGenre()
+	 * @artist: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByItemtypeAndGenre( $itemType, $genreID ) {
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameGenreID." = \"".$genreID."\" AND ".itemClass::$colNameItemType."= \"".$itemType."\" order by ".itemClass::$colNameUploadDate." DESC";
+
+		return itemClass::findByQuery( $cons );
+    }
+    
+    /*
+     * @itemType: findByItemTypeAndArtist()
+	 * @artist: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByItemTypeAndArtist( $itemType, $artist ) {
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameItemType." = \"".$itemType."\" AND ".itemClass::$colNameArtist." like \"%".$artist."%\" order by ".itemClass::$colNameUploadDate." DESC";
 
 		return itemClass::findByQuery( $cons );
     }
@@ -311,7 +379,7 @@ class itemClass {
 	 * @return object with the query results
     */
     public static function findlikeArtist( $artist ) {
-		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameArtist." like \"%".$artist."%\"";
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameArtist." like \"%".$artist."%\" order by ".itemClass::$colNameUploadDate." DESC";
 		return itemClass::findByQuery( $cons );
     }
 
@@ -329,8 +397,6 @@ class itemClass {
 		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameTitle." like \"%".$title."%\"";
 		return itemClass::findByQuery( $cons );
     }
-
-
  
     /*
      * @itemType: findAll()
@@ -346,6 +412,19 @@ class itemClass {
 		return itemClass::findByQuery( $cons );
     }
 
+/*
+     * @itemType: findAll()
+	 * @artist: Irene Blanco & Carlos García
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: objects collection
+	 */ 
+    public static function findAllWithLimit( $limitNumber ) {
+    	$cons = "select * from `".itemClass::$tableName."` order by ".itemClass::$colNameUploadDate." DESC limit ".$limitNumber;
+		return itemClass::findByQuery( $cons );
+    }
 
 	/*
      * @itemType: create()
@@ -363,11 +442,10 @@ class itemClass {
 			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
 				exit();
 		}
-		//return $this->toString();
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`) values (?,?,?,?,?,?,?,?,?,?)" )) {
-			$stmt->bind_param("iisssiiisi",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable());
+		if ($stmt->prepare("insert into ".itemClass::$tableName."(`itemID`,`userID`,`bidID`,`itemType`,`title`,`artist`,`releaseYear`,`genreID`,`conditionID`,`image`,`available`,`uploadDate`) values (?,?,?,?,?,?,?,?,?,?,?,?)" )) {
+			$stmt->bind_param("iiisssiiisis",$this->getItemID(), $this->getUserID(),$this->getBidID(), $this->getItemType(),$this->getTitle(),  $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(), $this->getUploadDate());
 			//executar consulta
 			$stmt->execute();
 		}
@@ -384,7 +462,7 @@ class itemClass {
 	 * @params: none
 	 * @return: none
 	 */ 
-    public function delete() {
+    public function delete(){
 		//Connection with the database
 		$conn = new BDSwap_your_music();
 		if (mysqli_connect_errno()) {
@@ -411,7 +489,7 @@ class itemClass {
 	 * @params: none
 	 * @return: none
 	 */ 
-    public function update() {
+    public function update(){
 		//Connection with the database
 		$conn = new BDSwap_your_music();
 		if (mysqli_connect_errno()){
@@ -420,16 +498,14 @@ class itemClass {
 		}
 		
 		//Preparing the sentence
-		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ? where ".itemClass::$colNameItemID." =?") ) {
-			$stmt->bind_param("iisssiiisii",$this->getItemID(), $this->getUserID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(),$this->getImage(),$this->getAvailable(),$this->getItemID());
+		if ($stmt->prepare("update `".itemClass::$tableName."` set ".itemClass::$colNameItemID." = ?,".itemClass::$colNameUserID." = ?,".itemClass::$colNameBidID." = ?,".itemClass::$colNameItemType." = ?,".itemClass::$colNameTitle." = ?,".itemClass::$colNameArtist." = ?,".itemClass::$colNameReleaseYear." = ?,".itemClass::$colNameGenreID." = ?, ".itemClass::$colNameConditionID." = ?,".itemClass::$colNameImage." = ?,".itemClass::$colNameAvailable." = ?,".itemClass::$colNameUploadDate." = ? where ".itemClass::$colNameItemID." =?") ) {
+			$stmt->bind_param("iiisssiiisisi",$this->getItemID(), $this->getUserID(), $this->getBidID(),$this->getItemType(), $this->getTitle() , $this->getArtist() , $this->getReleaseYear() , $this->getGenreID() ,$this->getConditionID(), $this->getImage(),$this->getAvailable(),$this->getUploadDate(),$this->getItemID());
 			//executar consulta
-			$stmt->execute();;
+			$stmt->execute();
 		}
 		if ( $conn != null ) $conn->close();
     }
-    
     
     /*
      * @itemType: toString()
@@ -441,7 +517,7 @@ class itemClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "itemClass[itemID=" . $this->itemID . "][userID=" . $this->userID . "][itemType=" . $this->itemType . "][title=" . $this->title . "][artist=" . $this->artist . "][releaseYear=" . $this->releaseYear . "][genreID=" . $this->genreID . "][conditionID=" . $this->conditionID."][image=" . $this->image . "][available=" . $this->available."]";
+        $toString = "itemClass[itemID=" . $this->itemID . "][userID=" . $this->userID . "][itemType=" . $this->itemType . "][title=" . $this->title . "][artist=" . $this->artist . "][releaseYear=" . $this->releaseYear . "][genreID=" . $this->genreID . "][conditionID=" . $this->conditionID."][image=" . $this->image . "][available=" . $this->available."][upload date=".$this->uploadDate."]";
 		return $toString;
 
     }

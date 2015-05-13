@@ -1,6 +1,6 @@
 //Angular Code
 (function(){
-	var swapYourMusicApp = angular.module("swapYourMusicApp", []);
+	var swapYourMusicApp = angular.module("swapYourMusicApp", ["ng-currency"]);
 	
 	swapYourMusicApp.controller("sessionController", function($scope){
 		
@@ -73,6 +73,10 @@
 		this.description;
 		
 		this.allBidsArray = new Array();
+		this.bidsHistoryArray = new Array();
+		
+		this.itemsArray = new Array();
+		this.item = new itemObj();
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
@@ -600,6 +604,7 @@
 				{
 					alert("The warning has been sent.")
 					$scope.usersFlag = 0;
+					this.loadWarnings();
 					
 				}
 			}
@@ -787,6 +792,8 @@
 */
 		this.loadBids = function(){
 			var outPutData= new Array();
+			
+			this.allBidsArray = new Array();
 						
 			$.ajax({
 				  url: 'php/control/control.php',
@@ -808,11 +815,99 @@
 					var bid = new bidObj();
 					bid.construct(outPutData[1][i].bidID, outPutData[1][i].itemID, outPutData[1][i].startPrice, outPutData[1][i].actualPrice, outPutData[1][i].duration, outPutData[1][i].startDate, outPutData[1][i].finishDate);					
 					this.allBidsArray.push(bid);
-				}			
-					
+				}
+							
+				for (var i = 0; i < outPutData[2].length; i++)
+				{
+					var item = new itemObj();
+					item.construct(outPutData[2][i].itemID, outPutData[2][i].userID, outPutData[2][i].bidID, outPutData[2][i].itemType, outPutData[2][i].title, outPutData[2][i].artist, outPutData[2][i].releaseYear, outPutData[2][i].genreID, outPutData[2][i].conditionID, outPutData[2][i].image, outPutData[2][i].available, outPutData[2][i].uploadDate);
+					this.itemsArray.push(item);
+				}	
 			}			
 		}
 		
+/*
+ *@name: showStory
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.showHistory = function(index){
+
+			$scope.usersFlag=4;
+			this.bidsHistoryArray = new Array();
+			
+			//loading all the movements on the selected bid
+			var bidIDToSearch = this.allBidsArray[index].getBidID();
+			
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=66&bidID='+bidIDToSearch,
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var bidParticipation = new bidsParticipationObj();
+					bidParticipation.construct(outPutData[1][i].userID, outPutData[1][i].bidID, outPutData[1][i].offeredMoney);					
+					this.bidsHistoryArray.push(bidParticipation);
+				}	
+				
+				for (var i = 0; i < outPutData[2].length; i++)
+				{
+					var user = new userObj();
+						user.construct(outPutData[2][i].userID, outPutData[2][i].userType, outPutData[2][i].userName, outPutData[2][i].password,
+										outPutData[2][i].email, outPutData[1][i].registerDate, outPutData[2][i].unsubscribeDate, outPutData[2][i].image,
+										outPutData[2][i].provinceID);		
+						
+					this.usersArray.push(user);					
+				}				
+					
+			}			
+
+		}
+/*
+ *@name: showItemInfo
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/				
+		this.showItemInfo = function(index){
+			$scope.usersFlag = 5;
+			this.item = this.itemsArray[index];
+		}
+/*
+ *@name: hideItemInfo
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/				
+		this.hideItemInfo = function(){
+			$scope.usersFlag = 0;
+		}
 		
 	});
 	

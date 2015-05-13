@@ -2,18 +2,50 @@
 
 
 <table class="table table-hover">
-		<tr><th>Item</th><th>Start price</th><th>Actual price</th><th>Start date</th><th>Duration</th><th>Finish date</th></tr>
+		<tr><th>Item</th><th>User</th><th>Start price</th><th>Actual price</th><th>Start date</th><th>Est. duration</th><th>Finish date</th><th></th></tr>
 		<tr ng-repeat="bid in adminCtrl.allBidsArray">
-			<td>{{bid.itemID}}</td>
-			<td>{{bid.startPrice}}</td>
-			<td>{{bid.actualPrice}}</td>
+			<td ><img ng-mouseover="adminCtrl.showItemInfo($index)" ng-mouseleave="adminCtrl.hideItemInfo()" src="{{adminCtrl.itemsArray[$index].image}}" width="80"/></td>
+			<td>{{bid.userID}}</td>
+			<td>{{bid.startPrice | currency}}</td>
+			<td>{{bid.actualPrice  | currency}} </td>
 			<td>{{bid.startDate}}</td>
-			<td>{{bid.duration}}</td>			
+			<td>{{bid.duration}} days</td>			
 			<td ng-if="bid.finishDate!=null">{{bid.finishDate}}</td>
 			<td ng-if="bid.finishDate==null">Not finished</td>
-<!--
-			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.changeFlag($index)"/></td>
-			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteWarning($index)"/></td>
--->
+			<td><img src="img/list-1.png" width="20" ng-click="adminCtrl.showHistory($index)"/></td>
 		</tr>	
 </table>
+
+<div class="itemInfo" ng-show="usersFlag==5">
+	<img id="imgDetail" src="{{adminCtrl.item.image}}" width="170"/>
+	<div id="itemDetails">	</br>
+		<b>Title: </b>{{adminCtrl.item.title}}</br>
+		<b>Artist: </b>{{adminCtrl.item.artist}}</br>
+		<b>ItemType: </b>{{adminCtrl.item.itemType}}</br>
+		<b>Genre: </b>{{adminCtrl.item.genreID}}</br>
+		<b>Condition: </b>{{adminCtrl.item.conditionID}}</br>
+		<b>Upload date: </b>{{adminCtrl.item.uploadDate}}</br>
+	</div>
+</div>
+
+<div class="popUp" ng-show="usersFlag==4">
+	<img class="closePopUp" src="img/delete30.png" width="15" ng-click="usersFlag=0"/>
+	<div ng-if="adminCtrl.bidsHistoryArray.length!=0" >
+		<h3>Bid history</h3>
+		<table class="table table-hover">
+			<tr><th>User</th><th>Offered money</th></tr>
+			<tr ng-repeat="register in adminCtrl.bidsHistoryArray">
+				<td>
+					<img src="{{adminCtrl.usersArray[$index].image}}" width="40"/>
+					{{adminCtrl.usersArray[$index].userName}}
+					</td>
+				<td>{{register.offeredMoney | currency}}</td>
+			</tr>	
+		</table>
+	</div>
+	<div ng-if="adminCtrl.bidsHistoryArray.length==0" >
+		<h3>This bid has no participations yet.</h3>
+	</div>
+</div>
+
+

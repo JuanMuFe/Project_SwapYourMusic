@@ -69,6 +69,8 @@ require_once "toDoClass.php";
 						break;
 					case 65:	echo toDoClass::searchBids();
 							break;
+					case 66:	echo toDoClass::searchBidHistory($this->params['bidID']);
+							break;
 
 							
 					default: echo "Action ".$action." not correct in toDoClass.";

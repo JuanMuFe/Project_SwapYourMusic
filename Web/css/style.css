@@ -1,7 +1,13 @@
+html{
+	width:100%;
+	height:100%;	
+}
+
 body{
 	width:100%;
 	height:100%;
 	z-index:0;
+	background-color:#04B4AE;
 	
 }
 .ng-invalid.ng-dirty{
@@ -37,6 +43,81 @@ textarea{
 	width:75%;
 }
 
-.red{
-	color:#E93A3A;
+.closePopUp{
+	position: absolute;
+	top:10%;
+	left:96%;
+}
+
+
+.itemInfo{
+	-webkit-box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
+	-moz-box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
+	box-shadow: 10px 9px 24px -6px rgba(0,0,0,0.75);
+	padding:2%;
+	width:35%;
+	height:28%;
+	background-color:white;
+	position:fixed;
+	left:30%;
+	top:25%;
+}
+
+#itemDetails{
+	margin-bottom:2%;
+}
+
+#imgDetail{
+	float:left;
+	margin-right:2%;
+}
+
+
+#generalDiv{
+	width:100%;
+	height:100%;	
+}
+
+
+#adminMenu{
+	background-color:#626262;
+	width:15%;
+	height:100%;
+	float:left;
+}
+a{
+	color:#C0C0C0;
+	text-decoration:none;
+	width:250%;
+	font-size:1.8rem;
+	line-height:200%;
+	
+}
+a:hover{
+		background-color:#04B4AE;
+		
+}
+
+header{
+	background-color:#626262;
+	text-align:right;
+	color:#C0C0C0;
+	width:100%;
+}
+
+#management{
+	width:85%;
+	height:100%;
+	background-color:#83CDCB;
+	float:left;
+}
+
+#user-data-admin-management{
+	width:100%;
+	background-color:white;
+}
+
+.container{
+	width:100%;
+	
 }

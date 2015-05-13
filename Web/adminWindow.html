@@ -8,13 +8,14 @@
 		<link rel="shortcut icon" href=""/>
 		<meta name="description" content="Swap Your Music Project">
 		<meta name="author" content="JuanMuñoz_IreneBlanco">
-		   <link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css" />
 		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="css/style.css"  />
 		  
 		<!-- Angular-->
 		<script src="js/frameWorks/angular/angular.min.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/frameWorks/angular/ng-currency.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/frameWorks/angular/i18n/angular-locale_es-es.js" type="text/javascript" xml:space="preserve"></script>
     
 		<!-- JQuery-->
 		<script src="js/frameWorks/jQuery/jQuery.js" type="text/javascript" xml:space="preserve"></script>
@@ -31,64 +32,73 @@
 		<script src="js/model/regionObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/bidObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidsParticipationObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/adminWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
 	
 	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
-		<h1>Welcome {{sessionCtrl.loggedUser.getUserName()}}</h1>
 		
-		<div>
-			<div id="management" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
-				<img src="{{sessionCtrl.loggedUser.getImage()}}" width="100" />
-				<a ng-click="flag=1">USERS</a> | <a ng-click="flag=2">ITEMS</a> | <a ng-click="flag=3;adminCtrl.loadBids()">BIDS</a> | <a ng-click="flag=5">SWAPS</a> | <a ng-click="flag=6;adminCtrl.loadWarnings()">WARNINGS</a>  | <a ng-click="sessionCtrl.logOut()">Log out</a>
-				
-			
+		
+		<div id="generalDiv" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
+			<header>
+					Welcome {{sessionCtrl.loggedUser.getUserName()}}
+					<img src="{{sessionCtrl.loggedUser.getImage()}}" width="50" /></br>
+			</header>
+			<div id="adminMenu">					
+					<a ng-click="flag=1">USERS</a> </br>
+					<a ng-click="flag=2">ITEMS</a> </br>
+					<a ng-click="flag=3;adminCtrl.loadBids()">BIDS</a></br>
+					<a ng-click="flag=5">SWAPS</a></br>
+					<a ng-click="flag=6;adminCtrl.loadWarnings()">WARNINGS</a></br>
+					<a ng-click="sessionCtrl.logOut()">Logout</a>
+			</div>	
+			<div id="management" >		
 				FLAG: {{flag}}
 				USERSFLAG: {{usersFlag}}
-				<div id="usersAdministration" ng-show="flag==1 ">	
-					<h2>Users Administration</h2>
-					<div ng-show="usersFlag!=1">
-						
-							<label for="nameToSearch"> Search by user name</label>
-							 <input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadUsers()"/>							
-							<label for="region"> Search by region</label>
-							 <select name="region"  ng-model="adminCtrl.regionToSearch" ng-change="adminCtrl.loadUsers()">
-								<option value="">Select region</option>
-								<option ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
-							</select>
+					<div id="usersAdministration" ng-show="flag==1 ">	
+						<h2>Users Administration</h2>
+						<div ng-show="usersFlag!=1">
 							
-							
-						<button ng-click="usersFlag=1; userAction=1; adminCtrl.prepareRegister()">Add a new user</button>
-						<users-admin-management ></users-admin-management>		
+								<label for="nameToSearch"> Search by user name</label>
+								 <input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadUsers()"/>							
+								<label for="region"> Search by region</label>
+								 <select name="region"  ng-model="adminCtrl.regionToSearch" ng-change="adminCtrl.loadUsers()">
+									<option value="">Select region</option>
+									<option ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+								</select>
+								
+								
+							<button ng-click="usersFlag=1; userAction=1; adminCtrl.prepareRegister()">Add a new user</button>
+							<users-admin-management ></users-admin-management>		
+						</div>
+						<div id="user-data-admin-management" ng-show="usersFlag==1" >
+							<user-data-admin-management></user-data-admin-management>	
+						</div>	
 					</div>
-					<div ng-show="usersFlag==1" >
-						<user-data-admin-management ></user-data-admin-management>	
-					</div>	
-				</div>
-				<div id="warningsAdministration" ng-show="flag==6" >
-					<warnings-admin-management></warnings-admin-management>			
-				</div>
-				
-				<div class="popUp" ng-show="usersFlag==2">
-					<warnings-admin-sending id="warningsAdminSending"></warnings-admin-sending>			
-				</div>
-				
-				<div id="itemsAdministration" ng-show="flag==2">
-					Items Administration			
-				</div>
-				
-				<div id="bidsAdministration" ng-show="flag==3">
-					<bids-admin-management></bids-admin-management>
-				</div>				
-				
-				<div id="swapsAdministration" ng-show="flag==5">
-					Swaps Administration			
-				</div>
-			</div>
-			
+					<div id="warningsAdministration" ng-show="flag==6" >
+						<warnings-admin-management></warnings-admin-management>			
+					</div>
+					
+					<div class="popUp" ng-show="usersFlag==2">
+						<warnings-admin-sending id="warningsAdminSending"></warnings-admin-sending>			
+					</div>
+					
+					<div id="itemsAdministration" ng-show="flag==2">
+						Items Administration			
+					</div>
+					
+					<div id="bidsAdministration" ng-show="flag==3">
+						<bids-admin-management></bids-admin-management>
+					</div>				
+					
+					<div id="swapsAdministration" ng-show="flag==5">
+						Swaps Administration			
+					</div>
+			</div>			
 		</div>
 	</body>
 </html>

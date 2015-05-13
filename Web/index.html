@@ -35,6 +35,8 @@
 	</head>
 	
 	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
+		
+		
 		<div id="loginDiv" ng-show="flag==0">
 			<form name="loginForm" ng-submit="loginForm.$valid && sessionCtrl.login()">
 				<legend>Login</legend>

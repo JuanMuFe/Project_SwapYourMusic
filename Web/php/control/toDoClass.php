@@ -9,10 +9,12 @@ require_once "../model/itemClass.php";
 require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
 require_once "../model/regionClass.php";
+require_once "../model/itemClass.php";
 require_once "../model/provinceClass.php";
 require_once "../model/warningClass.php";
 require_once "../model/warningUsersClass.php";
 require_once "../model/bidClass.php";
+require_once "../model/bidsParticipationClass.php";
 
 	class toDoClass {
 /*
@@ -647,15 +649,61 @@ require_once "../model/bidClass.php";
 				$outPutData[1]=$errors;
 			}else{
 				$bidsArray=array();
+				$itemsArray = array();
 				
 				foreach ($bidsList as $bid){
 					 $bidsArray[]=$bid->getAll();
+					 $itemList = itemClass::findById($bid->getItemID());
+					 foreach ($itemList as $item){
+						$itemsArray[]=$item->getAll();
+					}
 				}				
 				$outPutData[1]=$bidsArray;
+				$outPutData[2]=$itemsArray;
 			}
 			
 			return json_encode($outPutData);
-		}		
+		}	
+		
+/*
+ *@name: searchBidHistory
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchBidHistory($bidID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$bidHistoryList = bidsParticipationClass::findByBidID($bidID);
+			
+			if (count($bidHistoryList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$bidHistoryArray=array();
+				$usersArray = array();
+				
+				foreach ($bidHistoryList as $bidHistory){
+					$bidHistoryArray[]=$bidHistory->getAll();
+					
+					$usersList = userClass::findById($bidHistory->getUserID());
+					foreach ($usersList as $user){
+						$usersArray[]=$user->getAll();
+					}
+					
+				}				
+				$outPutData[1]=$bidHistoryArray;
+				$outPutData[2]=$usersArray;
+			}
+			
+			return json_encode($outPutData);
+		}	
 
 }	
 ?>
