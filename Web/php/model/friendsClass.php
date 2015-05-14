@@ -54,9 +54,9 @@ class friendsClass {
 	 * @params: $friendID ,$userID
 	 * @return: none
 	 */ 
-    public function setAll($userID, $friendID) {
-		$this->setFriendID($friendID);
+    public function setAll($userID, $friendID) {		
 		$this->setUserID($userID);
+		$this->setFriendID($friendID);
     }
     
     //---Databese management section-----------------------
@@ -208,7 +208,7 @@ class friendsClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("DELETE FROM `".friendsClass::$tableName."` where ".friendsClass::$colNameFriendID." = ? and".friendsClass::$colNameUserID." = ?")) {
+		if ($stmt->prepare("delete from `".friendsClass::$tableName."` where `".friendsClass::$colNameFriendID."` = ? and `".friendsClass::$colNameUserID."` = ?")) {
 			$stmt->bind_param("ii",$this->getFriendID(),$this->getUserID());
 			$stmt->execute();
 		}

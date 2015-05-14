@@ -342,7 +342,7 @@ require_once "../model/provinceClass.php";
 			$friendObj = json_decode(stripslashes($friendToDelete));
 		
 			$friend = new friendsClass();	   	
-			$friend->setAll($friendObj->userID ,$friendObj->friendID);		
+			$friend->setAll($friendObj->userID, $friendObj->friendID);		
 			$friend->delete();
 			
 			echo true;

@@ -44,55 +44,65 @@
 	</head>
 	
 	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
-		<div>	
-			<h2>Welcome {{sessionCtrl.user.getUserName()}} !</h2>			
-			<img src="{{sessionCtrl.user.image}}" width="100" />
-			<a ng-click="userPage=1">Profile</a> | <a ng-click="userPage=2">Home</a> | 
-			<a ng-click="userPage=3">Messages</a> | <a ng-click="sessionCtrl.logOut()">Log out</a> 
-		</div>
-		
 		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData();musicCtrl.checkWarnings()">
-			<div id="warningAlert">
-				<a href="#" ng-click="warningDiv =! warningDiv; musicCtrl.readUserWarnings()"><img src="img/warning.png" width="60"/></a>
-			</div>
-			<div ng-show="userPage==1">
-				<nav>
-					<a ng-click="musicCtrl.loadUserItems();userProfile=1;items=2">Items list</a> | <a ng-click="userProfile=2; musicCtrl.loadUserFriends()">Friends list</a> | <a ng-click="userProfile=3">Bids</a> | <a ng-click="userProfile=4">Settings</a>
-				</nav>
-				<p id="userItemsMeesage"></p>
-				<user-items-management id="userItemsManag"></user-items-management>
-				<user-items-modification id="userItemsMod"></user-items-modification>
+			<div id="userMenuBar">	
+				<div id="warningAlert">
+					<a href="#" ng-click="warningDiv =! warningDiv; musicCtrl.readUserWarnings()"><img src="img/warning.png" /></a>
+				</div>	
+				<label style="color:white">Welcome {{sessionCtrl.user.getUserName()}}</label>
+				<img id="userIcon" src="{{sessionCtrl.user.image}}" width="20" />				
+				<a ng-click="sessionCtrl.logOut()"><div width="20" id="logOutImg"></div></a>
+				<a ng-click="userPage=3"><div width="20" id="messageImg"></div></a> 
+				<a ng-click="userPage=2"><div width="20" id="homeImg"></div></a>  
+				<li class="dropdown linksFloat">
+					<a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><div width="20" id="profileImg"></div></a>
+					<ul class="dropdown-menu">
+						<li class="hoverList"><a href="#" ng-click="musicCtrl.loadUserItems();userProfile=1;items=2;userPage=1">Items list</a></li>
+						<li class="hoverList"><a href="#" ng-click="userProfile=2;userPage=1;musicCtrl.loadUserFriends();musicCtrl.showFriendList()">Friends list</a></li>
+						<li class="hoverList"><a href="#" ng-click="userProfile=3;userPage=1">Bids</a></li>
+						<li class="hoverList"><a href="#" ng-click="userProfile=4;userPage=1">Settings</a></li>
+					</ul>
+				</li>				
 				
-				<div ng-show="userProfile==2">
-					<friends-list-form></friends-list-form>
-				</div>
-				
-				<div ng-show="userProfile==3">
-					Bids
-				</div>
-				
-				<div ng-show="userProfile==4"><br />
-					<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
-					<div ng-show="deleteAccount==1">
-						Introduce your password if you want to delete your account: <br />
-						<input type="password" id="passwordToDelete"/><br />
-						<p id="message"></p>
-						<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
+			</div>		
+			<div>	
+				<div ng-show="userPage==1">
+					<p id="userItemsMeesage"></p>
+					<user-items-management id="userItemsManag"></user-items-management>
+					<user-items-modification id="userItemsMod"></user-items-modification>
+					
+					<div ng-show="userProfile==2">
+						<friends-list-form id="friendsListForm"></friends-list-form>						
+						<friend-profile-form id="friendProfileForm"></friend-profile-form>
 					</div>
+					
+					<div ng-show="userProfile==3">
+						Bids
+					</div>
+					
+					<div ng-show="userProfile==4"><br />
+						<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
+						<div ng-show="deleteAccount==1">
+							Introduce your password if you want to delete your account: <br />
+							<input type="password" id="passwordToDelete"/><br />
+							<p id="message"></p>
+							<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
+						</div>
 				</div>
-				
 			</div>			
 			
 			<div ng-show="userPage==2">
 				<home-search-form></home-search-form>
 			</div>
 			
-			<div ng-show="userPage==3">
-				Message
-			</div>
+				<div ng-show="userPage==3">
+					Message
+				</div>
 			
-			<div id="warningsDiv" ng-show="warningDiv">				
-			</div>
-		</div>		
+				<div id="warningsDiv" ng-show="warningDiv">				
+				</div>
+			</div>		
+		</div>
+		
 	</body>
 </html>

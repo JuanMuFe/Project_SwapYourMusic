@@ -1,6 +1,22 @@
 //JQuery code
 $(document).ready(function(){
 	$("#userItemsMod").hide();
+	$("#friendProfileForm").hide();
+	$("#friendItemsMessage").hide();	
+	
+    $(".dropdown").hover(            
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");                
+            },
+            function() {
+                $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");                
+           });
+    
+    
 });
 
 //Angular Code
@@ -68,6 +84,9 @@ $(document).ready(function(){
 		this.usersArray= new Array();
 		this.itemTypesArray= new Array("Vinyl", "Cassete", "CD");
 		this.friendsArray= new Array();
+		this.userFriendsArray= new Array();
+		this.friendItemsArray= new Array();
+		this.friendProfile= new userObj();
 		this.provincesArray= new Array();
 		this.warningsArray= new Array();
 		this.warningsToShowArray= new Array();
@@ -264,7 +283,7 @@ $(document).ready(function(){
 		
 		this.deleteItem= function(itemIDToDelete){
 			if(confirm("Are you sure you want delete this item?")){	
-				for (var i = 0; i <this.itemsArray.length; i++){
+				for (var i = 0; i <this.itemsArray.length; i++){				
 					if(this.itemsArray[i].getItemID()==itemIDToDelete){					
 						var item= new itemObj();						
 						item.construct(this.itemsArray[i].itemID, this.itemsArray[i].userID, this.itemsArray[i].bidID, this.itemsArray[i].itemType,
@@ -393,7 +412,7 @@ $(document).ready(function(){
 			$("#userItemsMod").hide();
 		}
 		
-		this.deleteAccount= function(){
+		this.deleteAccount= function(){0
 			var passToConfirm= $("#passwordToDelete").val();
 			
 			if(window.md5(passToConfirm)==this.user.password){	
@@ -459,6 +478,7 @@ $(document).ready(function(){
 		this.loadUserFriends= function(){
 			var outPutdata= new Array();
 			this.friendsArray= new Array();
+			this.userFriendsArray= new Array();
 			$.ajax({
 				  url: 'php/control/control.php',  
 				  type: 'POST',  
@@ -477,7 +497,8 @@ $(document).ready(function(){
 			if(outPutdata[0]){
 				for (var i = 0; i < outPutdata[1].length; i++){							
 					this.friend= new friendsObj();
-					this.friend.construct(outPutdata[1][i].userID, outPutdata[1][i].friendID);											
+					this.friend.construct(outPutdata[1][i].userID, outPutdata[1][i].friendID);
+					this.userFriendsArray.push(this.friend);											
 				}
 				
 				for (var i = 0; i < outPutdata[2].length; i++){							
@@ -516,33 +537,93 @@ $(document).ready(function(){
 		}
 		
 		this.deleteFriend= function(friendToDelete){
-			var friendToDel;
-			for (var i = 0; i < this.friend.length; i++){
-				if(this.friend[i].getUserID()==this.friendsArray[friendToDelete].userID){
-					friendToDel=this.friend[i];
+			if(confirm("Are you sure you want to delete this friend?")){
+				var friendToDel= new friendsObj();
+				for (var i = 0; i < this.userFriendsArray.length; i++){		
+					if(this.userFriendsArray[i].getFriendID() == this.friendsArray[friendToDelete].userID){
+						friendToDel.construct(this.userFriendsArray[i].getUserID(), this.userFriendsArray[i].getFriendID());
+					}					
 				}
-			}
-			
-			var success;
-			$.ajax({
-				url: 'php/control/control.php',  
-				type: 'POST',  
-				async: true,   
-				data: 'action=15&friendToDelete='+JSON.stringify(friendToDel),
-				dataType: "json", 
-				success: function (response) { 
-				    success = response;
-				},
-				error: function (xhr, ajaxOptions, thrownError){
-					alert("There has been and error while connecting to server");
-					console.log(xhr.status+"\n"+thrownError);
-				}	
-			});
-			if(success) alert("Friend deleted correctly");
+				friendToDel = angular.copy(friendToDel);
+				var deleted;
+				$.ajax({
+					url: 'php/control/control.php',  
+					type: 'POST',  
+					async: false,   
+					data: 'action=15&friendToDelete='+JSON.stringify(friendToDel),
+					dataType: "json", 
+					success: function (response) { 
+						deleted = response;
+					},
+					error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+					}	
+				});
+				if(deleted){					 
+					 $scope.userProfile=2;
+					 this.loadUserFriends();
+					 $("#friendsErrorSuccessMessage").html("Friend deleted correctly");
+				}
+			}			
 		}	
+		
+		this.showFriendList= function(){
+			$("#friendsListForm").fadeIn(500);
+			$("#friendProfileForm").hide();
+		}
+		
+		this.loadFriendProfile= function(friendToVisit){
+			this.friendProfile= new userObj();
+			$("#friendsListForm").hide();
+			$("#friendProfileForm").fadeIn(500);
+			$("#profileUserNav").hide(500);
+			$("#welcomeMessage").hide(500);
+			
+			this.friendProfile= new userObj();
+			this.friendProfile.construct(this.friendsArray[friendToVisit].getUserID(), this.friendsArray[friendToVisit].getUserType(), 
+								this.friendsArray[friendToVisit].getUserName(), this.friendsArray[friendToVisit].getPassword(), 
+								this.friendsArray[friendToVisit].getEmail(), this.friendsArray[friendToVisit].getRegisterDate(), 
+								this.friendsArray[friendToVisit].getUnsubscribeDate(), this.friendsArray[friendToVisit].getImage(), 
+								this.friendsArray[friendToVisit].getProvinceID());
+			
+			//calls to AJAX in order to search friend items
+			var outPutdata= new Array();
+			this.friendItemsArray= new Array();
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=2&userID='+this.friendsArray[friendToVisit].getUserID(), 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					if(outPutdata[1][i].available==1){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
+										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+										outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
+						this.friendItemsArray.push(item);					
+					}									
+				}			
+			}else{
+				$("#friendItemsMessage").html("Still it does not have any item added");
+				$("#friendItemsMessage").fadeIn(500);
+			}
+		}
 			
 		this.checkWarnings= function(){
 			var outPutdata= new Array();
+			var warningsCount=0;
 			$.ajax({
 				  url: 'php/control/control.php',  
 				  type: 'POST',  
@@ -564,9 +645,14 @@ $(document).ready(function(){
 					if(outPutdata[1][i].read==0){
 						this.warningsUser = new warningUsersObj();
 						this.warningsUser.construct(outPutdata[1][i].warningID, outPutdata[1][i].userID, outPutdata[1][i].read);	
-						this.warningsArray.push(this.warningsUser);	
-					}else $("#warningAlert").hide();													
-				}	
+						this.warningsArray.push(this.warningsUser);
+						warningsCount++;
+					}											
+				}
+				
+				if(warningsCount==0){
+					$("#warningAlert").hide();	
+				}
 				
 				var outPutdata= new Array();								
 				$.ajax({
@@ -622,7 +708,7 @@ $(document).ready(function(){
 						alert("There has been and error while connecting to server");
 						console.log(xhr.status+"\n"+thrownError);
 				  }	
-			});	
+			});				 
 		}		
 		
 	});
@@ -669,6 +755,17 @@ $(document).ready(function(){
 			
 		  },
 		  controllerAs: 'friendsListForm'
+		};
+	});
+	
+	swapYourMusicApp.directive("friendProfileForm", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/friend-profile-form.html",
+		  controller:function(){
+			
+		  },
+		  controllerAs: 'friendProfileForm'
 		};
 	});
 	
@@ -767,5 +864,4 @@ function filesManagementToModItems(itemToMod){
     });
     
     return serverFileNames;
-	
 }

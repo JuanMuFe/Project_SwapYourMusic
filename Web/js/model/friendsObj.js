@@ -7,8 +7,8 @@ function friendsObj ()
 	//Methods declaration
 	this.construct = function (userID, friendID)
 	{
-		this.setFriendID(friendID);
 		this.setUserID(userID);
+		this.setFriendID(friendID);		
 	}
 	
 	//getters and setters
