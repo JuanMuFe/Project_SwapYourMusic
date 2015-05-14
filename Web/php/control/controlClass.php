@@ -67,9 +67,11 @@ require_once "toDoClass.php";
 						break;
 					case 64:	echo toDoClass::modifyWarning($this->params['JSONData']);
 						break;
-					case 65:	echo toDoClass::searchBids();
+					case 65:	echo toDoClass::searchBids($this->params['nameToSearch']);
 							break;
 					case 66:	echo toDoClass::searchBidHistory($this->params['bidID']);
+							break;
+					case 67:	echo toDoClass::searchWarningsByUser($this->params['userID']);
 							break;
 
 							

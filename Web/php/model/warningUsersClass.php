@@ -55,7 +55,7 @@ class warningUsersClass {
 		$data["userID"] = $this->getUserID();
 		$data["read"] = $this->getRead();
 
-	return $data;
+		return $data;
     }
 
 /*
@@ -114,7 +114,7 @@ class warningUsersClass {
        	$entity = new warningUsersClass();
 		$entity->setWarningID($warningID);
 		$entity->setUserID($userID);
-		$entity->setUserID($read);
+		$entity->setRead($read);
 
 
 		return $entity;
@@ -130,19 +130,19 @@ class warningUsersClass {
 	 * @return: objects collection
 	 */ 
     public static function findByQuery( $cons ) {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-    		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	
-	//Run the query
-	$res = $conn->query($cons);
-	
-	if ( $conn != null ) $conn->close();
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+				printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		
+		//Run the query
+		$res = $conn->query($cons);
+		
+		if ( $conn != null ) $conn->close();
 
-	return warningUsersClass::fromResultSetList( $res );
+		return warningUsersClass::fromResultSetList( $res );
     }
 
     /*
@@ -155,9 +155,9 @@ class warningUsersClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByUserId( $userID ) {
-	$cons = "select * from `".warningUsersClass::$tableName."` where ".warningUsersClass::$colNameUserID." = \"".$userID."\"";
+		$cons = "select * from `".warningUsersClass::$tableName."` where ".warningUsersClass::$colNameUserID." = \"".$userID."\"";
 
-	return warningUsersClass::findByQuery( $cons );
+		return warningUsersClass::findByQuery( $cons );
     }
 
  
@@ -251,16 +251,45 @@ class warningUsersClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".warningUsersClass::$tableName."` set ".warningUsersClass::$colNameWarningID." = ?,".warningUsersClass::$colNameUserID." = ? where ".warningUsersClass::$colNameWarningID." =? and".warningUsersClass::$colNameUserID." = ?") ) {
-			$stmt->bind_param("iiii",$this->getWarningID(), $this->getUserID(),$this->getWarningID(),$this->getUserID() );
+		if ($stmt->prepare("update `".warningUsersClass::$tableName."` set ".warningUsersClass::$colNameWarningID." = ?,".warningUsersClass::$colNameUserID." = ?,".warningUsersClass::$colNameRead." = ? where ".warningUsersClass::$colNameUserID." = ?") ) {
+			$stmt->bind_param("iiii",$this->getWarningID(), $this->getUserID(),$this->getRead(), $this->getUserID());
 			//executar consulta
-			$stmt->execute();;
+			$stmt->execute();
 		}
 		if ( $conn != null ) $conn->close();
 
     }
     
-    
+    /*
+     * @userUserID: updateRead()
+	 * @author: Irene Blanco
+	 * @version: 1.0
+	 * @userID: this function updates the read column into the database
+     * @date: 27/03/2015
+	 * @params: none
+	 * @return: none
+	 */ 
+	 
+	 public function updateRead() {
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+    		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+    		exit();
+		}
+		
+		//Preparing the sentence
+		//return $this->toString();
+		$stmt = $conn->stmt_init();		
+		if ($stmt->prepare("update `".warningUsersClass::$tableName."` set `".warningUsersClass::$colNameRead."` = ? where `".warningUsersClass::$colNameUserID."` = ? and `".warningUsersClass::$colNameWarningID."` = ?")) {
+		//if($stmt->prepare("update `warnings_users` set `read` = 1 where `userID` = 11")) {	
+			$stmt->bind_param("iii", $this->getRead(), $this->getUserID(), $this->getWarningID());
+			//executar consulta
+			$stmt->execute();
+		}
+		if ( $conn != null ) $conn->close();
+
+    }
     
     /*
      * @userUserID: toString()

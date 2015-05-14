@@ -34,6 +34,7 @@
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/warningUsersObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/bidObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/bidsParticipationObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/adminWindow.js" type="text/javascript" xml:space="preserve"></script>
@@ -83,7 +84,7 @@
 						<warnings-admin-management></warnings-admin-management>			
 					</div>
 					
-					<div class="popUp" ng-show="usersFlag==2">
+					<div class="popUp" ng-show="usersFlag==2 || usersFlag==6">
 						<warnings-admin-sending id="warningsAdminSending"></warnings-admin-sending>			
 					</div>
 					
@@ -92,6 +93,9 @@
 					</div>
 					
 					<div id="bidsAdministration" ng-show="flag==3">
+						<label for="nameToSearch"> Search by user name</label>
+						<input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadBids()"/>							
+								
 						<bids-admin-management></bids-admin-management>
 					</div>				
 					

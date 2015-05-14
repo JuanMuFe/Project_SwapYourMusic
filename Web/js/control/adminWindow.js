@@ -71,6 +71,8 @@
 		this.selectedWarning = 1;
 		this.warning = new warningObj();
 		this.description;
+		this.userWarningsArray = new Array();
+		this.userWarningsIDArray = new Array();
 		
 		this.allBidsArray = new Array();
 		this.bidsHistoryArray = new Array();
@@ -105,6 +107,7 @@
 			this.usersArray = new Array();
 			this.provincesArray = new Array();
 			$scope.userAction=2;
+			this.usersArray = new Array();
 	
 			if(this.nameToSearch!=""||this.regionToSearch!="") {			
 				
@@ -603,11 +606,61 @@
 				if(!error)
 				{
 					alert("The warning has been sent.")
-					$scope.usersFlag = 0;
-					this.loadWarnings();
-					
+					$scope.usersFlag = 2;
+					$scope.selectedWarning = 1;
+					this.loadUserWarnings();
 				}
 			}
+			
+/*
+ *@name: loadUserWarnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This functionsends the selected warning to the user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.loadUserWarnings = function(){
+			
+
+			this.userWarningsArray = new Array();
+			this.userWarningsIDArray = new Array();
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=67&userID='+this.user.getUserID(),
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var warningUser = new warningUsersObj();
+					warningUser.construct(outPutData[1][i].warningID, outPutData[1][i].userID, outPutData[1][i].read);					
+					this.userWarningsIDArray.push(warningUser);
+				}
+				
+				for (var i = 0; i < outPutData[2].length; i++)
+				{
+					var warning = new warningObj();
+					warning.construct(outPutData[2][i].warningID, outPutData[2][i].description, outPutData[2][i].active);					
+					this.userWarningsArray.push(warning);
+				}			
+					
+			}
+							
+		}
 						
 		
 /*
@@ -792,7 +845,6 @@
 */
 		this.loadBids = function(){
 			var outPutData= new Array();
-			
 			this.allBidsArray = new Array();
 						
 			$.ajax({
@@ -822,7 +874,16 @@
 					var item = new itemObj();
 					item.construct(outPutData[2][i].itemID, outPutData[2][i].userID, outPutData[2][i].bidID, outPutData[2][i].itemType, outPutData[2][i].title, outPutData[2][i].artist, outPutData[2][i].releaseYear, outPutData[2][i].genreID, outPutData[2][i].conditionID, outPutData[2][i].image, outPutData[2][i].available, outPutData[2][i].uploadDate);
 					this.itemsArray.push(item);
-				}	
+				}
+				for (var i = 0; i < outPutData[3].length; i++)
+				{
+					var user = new userObj();
+						user.construct(outPutData[3][i].userID, outPutData[3][i].userType, outPutData[3][i].userName, outPutData[3][i].password,
+										outPutData[3][i].email, outPutData[3][i].registerDate, outPutData[3][i].unsubscribeDate, outPutData[3][i].image,
+										outPutData[3][i].provinceID);		
+						
+					this.usersArray.push(user);					
+				}				
 			}			
 		}
 		
@@ -840,6 +901,7 @@
 
 			$scope.usersFlag=4;
 			this.bidsHistoryArray = new Array();
+			this.usersArray = new Array();
 			
 			//loading all the movements on the selected bid
 			var bidIDToSearch = this.allBidsArray[index].getBidID();
@@ -872,7 +934,7 @@
 				{
 					var user = new userObj();
 						user.construct(outPutData[2][i].userID, outPutData[2][i].userType, outPutData[2][i].userName, outPutData[2][i].password,
-										outPutData[2][i].email, outPutData[1][i].registerDate, outPutData[2][i].unsubscribeDate, outPutData[2][i].image,
+										outPutData[2][i].email, outPutData[2][i].registerDate, outPutData[2][i].unsubscribeDate, outPutData[2][i].image,
 										outPutData[2][i].provinceID);		
 						
 					this.usersArray.push(user);					

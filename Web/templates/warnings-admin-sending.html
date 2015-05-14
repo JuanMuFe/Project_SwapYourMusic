@@ -1,11 +1,34 @@
-<h2>Sending a warning to {{adminCtrl.user.userName}}</h2>
 
-<form name="warningForm" ng-submit="adminCtrl.sendWarning()"novalidate>
-	Select the warning you want to send:</br>
-	<span ng-repeat="warning in adminCtrl.allWarningsArray"> <input ng-checked="{{warning.warningID==1}}" ng-model="adminCtrl.selectedWarning" type="radio" name="warningType" value="{{warning.warningID}}"> {{warning.description}}</br></span>
-	<button  class="btn btn-success" >Submit</button>
-	<input class="btn btn-default btn-primary" type="button" value="Cancel" ng-click="usersFlag=0"> 
-</form>
+<div id="seeWarnings">
+	<img class="closePopUp" src="img/delete30.png" width="15" ng-click="usersFlag=0"/>
+	
+	<div ng-if="adminCtrl.userWarningsArray.length==0">
+		<h2>{{adminCtrl.user.userName}} has no warnings.</h2>
+	</div>
+	<div ng-if="adminCtrl.userWarningsArray.length!=0">
+		<h2>{{adminCtrl.user.userName}}'s warnings</h2>
+		<table class="table table-hover" >
+				<tr><th>Message</th><th>Read</th></tr>
+				<tr ng-repeat="warning in adminCtrl.userWarningsArray">
+					<td>{{warning.description}}</td>
+					<td ng-show="{{adminCtrl.userWarningsIDArray[$index].read==0}}">No</td>
+					<td ng-show="{{adminCtrl.userWarningsIDArray[$index].read!=0}}">Yes</td>
+				</tr>	
+		</table>
+	</div>
+	<button  class="btn btn-success" ng-click="usersFlag=6; adminCtrl.loadWarnings()" >Send new warning</button>
+</div>
 
+
+
+<div id="sendWarning" ng-show="usersFlag==6">
+	<h2>Sending a warning to {{adminCtrl.user.userName}}</h2>
+	<form name="warningForm" ng-submit="adminCtrl.sendWarning()"novalidate>
+		Select the warning you want to send:</br>
+		<span ng-repeat="warning in adminCtrl.allWarningsArray"> <input ng-checked="{{warning.warningID==1}}" ng-model="adminCtrl.selectedWarning" type="radio" name="warningType" value="{{warning.warningID}}"> {{warning.description}}</br></span>
+		<button  class="btn btn-success" >Submit</button>
+		<input class="btn btn-default btn-primary" type="button" value="Cancel" ng-click="usersFlag=2"> 
+	</form>
+</div>
 
 

@@ -214,6 +214,21 @@ class bidClass {
 
 	return bidClass::findByQuery( $cons );
     }
+        /*
+     * @userStartPrice: findByItemId()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @duration: this function runs a query and returns an object array
+     * @startDate: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByItemId( $itemID ) {
+	$cons = "select * from `".bidClass::$tableName."` where ".bidClass::$colNameItemID." = \"".$itemID."\"";
+
+	return bidClass::findByQuery( $cons );
+    }
+    
 
  
     /*

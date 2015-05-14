@@ -18,7 +18,7 @@
 			<td>{{adminCtrl.provincesArray[$index].name}}</td>
 			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
 			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteUser($index)"/></td>
-			<td><img src="img/triangle38.png" width="20" ng-click="adminCtrl.warnings($index); adminCtrl.loadWarnings()"/></td>
+			<td><img src="img/triangle38.png" width="20" ng-click="adminCtrl.warnings($index); adminCtrl.loadUserWarnings()"/></td>
 		</tr>
 	
 	</table>

@@ -636,30 +636,46 @@ require_once "../model/bidsParticipationClass.php";
  *@return: $outPutData -> array with all user data.
  *
 */
-		public function searchBids(){
+		public function searchBids($nameToSearch){
 
 			$outPutData = array();
 			$errors = array();
 			$outPutData[0]=true;
+
+			$userList = userClass::findClientLikeUserName($nameToSearch);
 			
-			$bidsList = bidClass::findAll();
 			
-			if (count($bidsList)==0){
+			if (count($userList)==0){
 				$outPutData[0]=false;
 				$outPutData[1]=$errors;
 			}else{
 				$bidsArray=array();
 				$itemsArray = array();
+				$usersArray = array();
+				
+				foreach ($userList as $user){
+						$usersArray[]=$user->getAll();
+						$itemList = itemClass::findByUserId($user->g);
+					}
+				
+				
+				
+				
 				
 				foreach ($bidsList as $bid){
 					 $bidsArray[]=$bid->getAll();
 					 $itemList = itemClass::findById($bid->getItemID());
 					 foreach ($itemList as $item){
 						$itemsArray[]=$item->getAll();
+						$userList = userClass::findById($item->getUserID());
+						foreach ($userList as $user){
+						$usersArray[]=$user->getAll();
+						}
 					}
 				}				
 				$outPutData[1]=$bidsArray;
 				$outPutData[2]=$itemsArray;
+				$outPutData[3]=$usersArray;
 			}
 			
 			return json_encode($outPutData);
@@ -704,6 +720,48 @@ require_once "../model/bidsParticipationClass.php";
 			
 			return json_encode($outPutData);
 		}	
+		
+/*
+ *@name: searchClientUsersNameLike
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchWarningsByUser ($userID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$userWarningsList = warningUsersClass::findByUserId($userID);
+			
+			if (count($userWarningsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$userWarningsArray=array();
+				$warningsArray = array();
+				
+				foreach ($userWarningsList as $userWarning){
+					 $userWarningsArray[]=$userWarning->getAll();
+					 
+					 $warningsList=warningClass::findById($userWarning->getWarningID());
+					 foreach ($warningsList as $warning){
+						$warningsArray[]=$warning->getAll();
+					}
+				}	
+							
+				$outPutData[1]=$userWarningsArray;
+				$outPutData[2]=$warningsArray;
+
+			}
+			
+			return json_encode($outPutData);
+		}
+		
 
 }	
 ?>
