@@ -76,9 +76,12 @@
 		
 		this.allBidsArray = new Array();
 		this.bidsHistoryArray = new Array();
+		this.viewBidItem = new bidViewObj();
 		
 		this.itemsArray = new Array();
 		this.item = new itemObj();
+		this.genresArray = new Array();
+		this.conditionsArray = new Array();
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
@@ -89,6 +92,8 @@
 		$scope.userNameValid = true;
 		$scope.emailValid = true;
 		$scope.noUsers = true;
+		
+		$scope.bidIndex = 0;
 		
 
 		
@@ -861,31 +866,37 @@
 				  }					  
 			});
 			
-			if(outPutData[0]){
-				for (var i = 0; i < outPutData[1].length; i++)
-				{
-					var bid = new bidObj();
-					bid.construct(outPutData[1][i].bidID, outPutData[1][i].itemID, outPutData[1][i].startPrice, outPutData[1][i].actualPrice, outPutData[1][i].duration, outPutData[1][i].startDate, outPutData[1][i].finishDate);					
-					this.allBidsArray.push(bid);
-				}
+			if(outPutData[0]){		
+				for (var i = 0; i < outPutData[1].length; i++){
+					var bidView = new bidViewObj();
+					bidView.construct (outPutData[1][i].userID, outPutData[1][i].bidID, outPutData[1][i].userName, outPutData[1][i].startPrice, outPutData[1][i].actualPrice, outPutData[1][i].duration, outPutData[1][i].startDate,outPutData[1][i].finishDate, outPutData[1][i].itemType, outPutData[1][i].title, outPutData[1][i].artist, outPutData[1][i].releaseYear, outPutData[1][i].image, outPutData[1][i].available, outPutData[1][i].uploadDate);	
+					
+				this.allBidsArray.push(bidView);
+				}							
 							
-				for (var i = 0; i < outPutData[2].length; i++)
-				{
-					var item = new itemObj();
-					item.construct(outPutData[2][i].itemID, outPutData[2][i].userID, outPutData[2][i].bidID, outPutData[2][i].itemType, outPutData[2][i].title, outPutData[2][i].artist, outPutData[2][i].releaseYear, outPutData[2][i].genreID, outPutData[2][i].conditionID, outPutData[2][i].image, outPutData[2][i].available, outPutData[2][i].uploadDate);
-					this.itemsArray.push(item);
-				}
-				for (var i = 0; i < outPutData[3].length; i++)
-				{
-					var user = new userObj();
-						user.construct(outPutData[3][i].userID, outPutData[3][i].userType, outPutData[3][i].userName, outPutData[3][i].password,
-										outPutData[3][i].email, outPutData[3][i].registerDate, outPutData[3][i].unsubscribeDate, outPutData[3][i].image,
-										outPutData[3][i].provinceID);		
-						
-					this.usersArray.push(user);					
-				}				
-			}			
+			}
 		}
+/*
+ *@name: filterBids
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.filterBids = function(){
+			
+			this.loadBids();
+			var filteredBidsArray = new Array();
+			
+			for (var i = 0; i < this.allBidsArray.length; i++){
+				if ( this.allBidsArray[i].userName.toLowerCase().indexOf( this.nameToSearch.toLowerCase() ) > -1 ) {
+					  filteredBidsArray.push(this.allBidsArray[i]);
+				} 
+			}
+			this.allBidsArray = filteredBidsArray;							
+		}				
 		
 /*
  *@name: showStory
@@ -900,6 +911,7 @@
 		this.showHistory = function(index){
 
 			$scope.usersFlag=4;
+			
 			this.bidsHistoryArray = new Array();
 			this.usersArray = new Array();
 			
@@ -955,7 +967,7 @@
 */				
 		this.showItemInfo = function(index){
 			$scope.usersFlag = 5;
-			this.item = this.itemsArray[index];
+			this.viewBidItem = this.allBidsArray[index];
 		}
 /*
  *@name: hideItemInfo
@@ -969,6 +981,109 @@
 */				
 		this.hideItemInfo = function(){
 			$scope.usersFlag = 0;
+		}
+		
+		
+/*
+ *@name: loadItems
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.loadItems = function(){
+					
+			//calls to AJAX in order to search all genres
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=3', 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					this.genre = new genreObj();
+					this.genre.construct(outPutdata[1][i].genreID, outPutdata[1][i].name);	
+					this.genresArray.push(this.genre);					
+				}			
+			}
+			else showErrors(outPutdata[1]);
+			
+			//calls to AJAX in order to search all conditions
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=4', 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					this.condition = new conditionObj();
+					this.condition.construct(outPutdata[1][i].conditionID, outPutdata[1][i].name);	
+					this.conditionsArray.push(this.condition);					
+				}			
+			}
+			else showErrors(outPutdata[1]);
+			
+			//calls to AJAX in order to search all items to put in home
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=68',
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
+						this.itemsArray.push(item);															
+				}	
+				
+				for (var i = 0; i < outPutdata[2].length; i++){
+						var user= new userObj();
+						user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
+									   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image,
+									   outPutdata[2][i].provinceID);
+						this.usersArray.push(user);
+					
+				}	
+			}
+			else showErrors(outPutdata[1]);
+		
 		}
 		
 	});
@@ -1058,6 +1173,17 @@
 
 		  },
 		  controllerAs: 'bidsAdminManagement'
+		};
+	});
+	
+	swapYourMusicApp.directive("itemsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/items-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'itemsAdminManagement'
 		};
 	});
 	

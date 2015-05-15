@@ -22,7 +22,7 @@
 
 
 <div id="sendWarning" ng-show="usersFlag==6">
-	<h2>Sending a warning to {{adminCtrl.user.userName}}</h2>
+	<h2>Sending a warning</h2>
 	<form name="warningForm" ng-submit="adminCtrl.sendWarning()"novalidate>
 		Select the warning you want to send:</br>
 		<span ng-repeat="warning in adminCtrl.allWarningsArray"> <input ng-checked="{{warning.warningID==1}}" ng-model="adminCtrl.selectedWarning" type="radio" name="warningType" value="{{warning.warningID}}"> {{warning.description}}</br></span>

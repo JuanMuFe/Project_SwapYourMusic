@@ -33,10 +33,13 @@
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/genreObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/conditionObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/warningUsersObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/bidObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/bidsParticipationObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidViewObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/adminWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
@@ -46,20 +49,20 @@
 		
 		<div id="generalDiv" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
 			<header>
+				<img id="logo" src="img/logo.png"/>
+				<a ng-click="sessionCtrl.logOut()"><div id="logoutIcon" width="20"></div></a>
 					Welcome {{sessionCtrl.loggedUser.getUserName()}}
-					<img src="{{sessionCtrl.loggedUser.getImage()}}" width="50" /></br>
+					<img src="{{sessionCtrl.loggedUser.getImage()}}" width="50" />
+					
 			</header>
 			<div id="adminMenu">					
-					<a ng-click="flag=1">USERS</a> </br>
-					<a ng-click="flag=2">ITEMS</a> </br>
-					<a ng-click="flag=3;adminCtrl.loadBids()">BIDS</a></br>
-					<a ng-click="flag=5">SWAPS</a></br>
-					<a ng-click="flag=6;adminCtrl.loadWarnings()">WARNINGS</a></br>
-					<a ng-click="sessionCtrl.logOut()">Logout</a>
+					<div id="menuItem" ng-click="flag=1"><img src="img/profile.png"/> USERS</div> </br>
+					<div id="menuItem" ng-click="flag=2;adminCtrl.loadItems()"><img src="img/items.png"/> ITEMS</div> </br>
+					<div id="menuItem" ng-click="flag=3;adminCtrl.loadBids()"><img src="img/bid.png"/> BIDS</div></br>
+					<div id="menuItem" ng-click="flag=5"><img src="img/trade.png"> SWAPS</div></br>
+					<div id="menuItem" ng-click="flag=6;adminCtrl.loadWarnings()"><img src="img/warnings.png"/> WARNINGS</div></br>					
 			</div>	
 			<div id="management" >		
-				FLAG: {{flag}}
-				USERSFLAG: {{usersFlag}}
 					<div id="usersAdministration" ng-show="flag==1 ">	
 						<h2>Users Administration</h2>
 						<div ng-show="usersFlag!=1">
@@ -89,12 +92,14 @@
 					</div>
 					
 					<div id="itemsAdministration" ng-show="flag==2">
-						Items Administration			
+						<h2>Items Administration</h2>	
+						<items-admin-management></items-admin-management>				
 					</div>
 					
 					<div id="bidsAdministration" ng-show="flag==3">
+						<h2>Bids management</h2>
 						<label for="nameToSearch"> Search by user name</label>
-						<input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadBids()"/>							
+						<input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.filterBids()"/>	
 								
 						<bids-admin-management></bids-admin-management>
 					</div>				

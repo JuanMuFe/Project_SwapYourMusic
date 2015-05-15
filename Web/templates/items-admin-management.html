@@ -1,0 +1,19 @@
+<table class="table table-hover">
+		<tr><th>Image</th><th>Title</th><th>Artist</th><th>ReleaseYear</th><th>ItemType</th><th>Genre</th><th>Condition</th><th>UploadDate</th><th>Available</th><th>Owner</th><th></th><th></th></tr>
+		<tr ng-repeat="item in adminCtrl.itemsArray">
+			<td><img src="{{item.image}}" width="50"/></td>
+			<td>{{item.title}}</td>
+			<td>{{item.artist}}</td>
+			<td>{{item.releaseYear}}</td>
+			<td>{{item.itemType}}</td>
+			<td>{{adminCtrl.genresArray[item.getGenreID()].name}}</td>
+			<td>{{adminCtrl.conditionsArray[item.getConditionID()].name}}</td>
+			<td>{{item.uploadDate}}</td>
+			<td ng-if="item.available!==1">Yes</td>
+			<td ng-if="item.available==0">No</td>
+			<td>{{adminCtrl.usersArray[$index].userName}}</td>
+			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
+			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteUser($index)"/></td>
+		</tr>
+	
+</table>
