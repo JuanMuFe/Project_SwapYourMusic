@@ -180,8 +180,8 @@ class friendsClass {
 	//return $this->toString();
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".friendsClass::$tableName."(`friendID`,`userID`) values (?,?)" )) {
-		$stmt->bind_param("ii",$this->getFriendID(), $this->getUserID());
+	if ($stmt->prepare("insert into ".friendsClass::$tableName."(`userID`,`friendID`) values (?,?)" )) {
+		$stmt->bind_param("ii",$this->getUserID(), $this->getFriendID());
 		//executar consulta
 		$stmt->execute();
 	    }

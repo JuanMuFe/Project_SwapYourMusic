@@ -44,7 +44,8 @@
 	</head>
 	
 	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
-		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData();musicCtrl.checkWarnings()">
+		<div id="blackDiv"></div>
+		<div ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.accessMainData();musicCtrl.checkWarnings();musicCtrl.loadUserFriends()">
 			<div id="userMenuBar">	
 				<div id="warningAlert">
 					<a href="#" ng-click="warningDiv =! warningDiv; musicCtrl.readUserWarnings()"><img src="img/warning.png" /></a>
@@ -53,14 +54,20 @@
 				<img id="userIcon" src="{{sessionCtrl.user.image}}" width="20" />				
 				<a ng-click="sessionCtrl.logOut()"><div width="20" id="logOutImg"></div></a>
 				<a ng-click="userPage=3"><div width="20" id="messageImg"></div></a> 
-				<a ng-click="userPage=2"><div width="20" id="homeImg"></div></a>  
+				<a ng-click="userPage=2;musicCtrl.showHome()"><div width="20" id="homeImg"></div></a>  
 				<li class="dropdown linksFloat">
 					<a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown"><div width="20" id="profileImg"></div></a>
 					<ul class="dropdown-menu">
 						<li class="hoverList"><a href="#" ng-click="musicCtrl.loadUserItems();userProfile=1;items=2;userPage=1">Items list</a></li>
-						<li class="hoverList"><a href="#" ng-click="userProfile=2;userPage=1;musicCtrl.loadUserFriends();musicCtrl.showFriendList()">Friends list</a></li>
+						<li class="hoverList"><a href="#" ng-click="userProfile=2;userPage=1;friends=1;musicCtrl.showFriendList()">Friends list</a></li>
 						<li class="hoverList"><a href="#" ng-click="userProfile=3;userPage=1">Bids</a></li>
-						<li class="hoverList"><a href="#" ng-click="userProfile=4;userPage=1">Settings</a></li>
+						<li class="hoverList dropdown">
+							<a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" ng-click="userProfile=4;userPage=1">Settings</a>
+							<ul class="dropdown-menu">
+								<li class="hoverList"><a>Change data</a></li>
+								<li class="hoverList"><a>Delete account</a></li>
+							</ul>						
+						</li>
 					</ul>
 				</li>				
 				
@@ -81,7 +88,7 @@
 					</div>
 					
 					<div ng-show="userProfile==4"><br />
-						<nav><a>Change basic data</a> | <a ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
+						<nav><a class="linkStyle">Change basic data</a> | <a class="linkStyle" ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
 						<div ng-show="deleteAccount==1">
 							Introduce your password if you want to delete your account: <br />
 							<input type="password" id="passwordToDelete"/><br />
@@ -92,7 +99,7 @@
 			</div>			
 			
 			<div ng-show="userPage==2">
-				<home-search-form></home-search-form>
+				<home-search-form id="homeSearchForm"></home-search-form>
 			</div>
 			
 				<div ng-show="userPage==3">

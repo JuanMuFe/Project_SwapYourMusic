@@ -1,7 +1,6 @@
 //JQuery code
 $(document).ready(function(){
 	$("#userItemsMod").hide();
-	$("#friendProfileForm").hide();
 	$("#friendItemsMessage").hide();	
 	
     $(".dropdown").hover(            
@@ -75,6 +74,7 @@ $(document).ready(function(){
 		this.friend= new friendsObj();
 		$scope.imagesArray= new Array();
 		$scope.warningRead=0;
+		$scope.addFriendIcon=1;
 		
 		//Data from DDBB
 		this.itemsArray= new Array(); 
@@ -87,6 +87,7 @@ $(document).ready(function(){
 		this.userFriendsArray= new Array();
 		this.friendItemsArray= new Array();
 		this.friendProfile= new userObj();
+		this.arrayToSeeProfile= new Array();
 		this.provincesArray= new Array();
 		this.warningsArray= new Array();
 		this.warningsToShowArray= new Array();
@@ -255,6 +256,7 @@ $(document).ready(function(){
 			this.item.setAvailable(1);
 			this.item.setImage(itemImage[0]);
 			this.item.setUploadDate(currentDateHour);
+			this.item.setBidID(null);
 			
 			this.item = angular.copy(this.item);
 			var idItem;
@@ -289,7 +291,7 @@ $(document).ready(function(){
 						item.construct(this.itemsArray[i].itemID, this.itemsArray[i].userID, this.itemsArray[i].bidID, this.itemsArray[i].itemType,
 										this.itemsArray[i].title,this.itemsArray[i].artist,this.itemsArray[i].releaseYear,
 										this.itemsArray[i].genreID,this.itemsArray[i].conditionID,this.itemsArray[i].image,
-										this.itemsArray[i].available);
+										this.itemsArray[i].available, this.itemsArray[i].uploadDate);
 						item.setAvailable(0);
 					}
 				}
@@ -357,8 +359,38 @@ $(document).ready(function(){
 					$("#searchMessage").html("No items have been found into the databse");
 					$("#searchMessage").fadeIn(500);	
 				}					
-			}			
-		}			
+			}else this.loadHomeItems();				
+		}
+		
+		this.loadHomeItems= function(){
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=8&limitNumber='+10,   // limitNumber=10 is the number of items that the admin wants to appear in the home
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
+						this.itemsArrayHome.push(item);
+					}										
+				}
+			}
+		}	
 		
 		
 		this.createModItemForm= function(item){
@@ -389,21 +421,29 @@ $(document).ready(function(){
 				this.item.setConditionID($("#conditionMod").find('option:selected').attr('value'));	
 				this.item.setAvailable(1);				
 				
-				this.item = angular.copy(this.item);	
-				
+				this.item = angular.copy(this.item);
+				var itemsToModArray= new Array();
+				itemsToModArray.push(this.item);
+				var success;
 				$.ajax({
 					url: 'php/control/control.php',
 					type: 'POST',
 					async: true,
-					data: 'action=7&JSONItemToMod='+JSON.stringify(this.item),
+					data: 'action=7&JSONItemToMod='+JSON.stringify(itemsToModArray),
 					dataType: "json",
 					success: function (response) { 
-						  alert("Item correctly modified in the system");
+						  success=response;
 					},
 					error: function (xhr, ajaxOptions, thrownError) {
 						alert(xhr.status+"\n"+thrownError);
 					}	
-				});			
+				});
+				
+				if(success){
+					alert("Item modified correctly.");
+					$("#userItemsManag").fadeIn(1000);			
+					$("#userItemsMod").hide();
+				}			
 			}
 		}
 		
@@ -573,19 +613,38 @@ $(document).ready(function(){
 			$("#friendProfileForm").hide();
 		}
 		
-		this.loadFriendProfile= function(friendToVisit){
-			this.friendProfile= new userObj();
-			$("#friendsListForm").hide();
-			$("#friendProfileForm").fadeIn(500);
-			$("#profileUserNav").hide(500);
-			$("#welcomeMessage").hide(500);
+		this.loadUserProfile= function(friendToVisit, action){			
+			this.friendProfile= new userObj();			
+			this.arrayToSeeProfile= new Array();
+			$scope.addFriendIcon=1;
 			
-			this.friendProfile= new userObj();
-			this.friendProfile.construct(this.friendsArray[friendToVisit].getUserID(), this.friendsArray[friendToVisit].getUserType(), 
-								this.friendsArray[friendToVisit].getUserName(), this.friendsArray[friendToVisit].getPassword(), 
-								this.friendsArray[friendToVisit].getEmail(), this.friendsArray[friendToVisit].getRegisterDate(), 
-								this.friendsArray[friendToVisit].getUnsubscribeDate(), this.friendsArray[friendToVisit].getImage(), 
-								this.friendsArray[friendToVisit].getProvinceID());
+			if(action==1){
+				this.arrayToSeeProfile=this.usersArray;
+			}else this.arrayToSeeProfile=this.friendsArray;
+			
+			for (var i = 0; i < this.arrayToSeeProfile.length; i++){
+				if(this.arrayToSeeProfile[i].getUserID()==friendToVisit){		
+					this.friendProfile.construct(this.arrayToSeeProfile[i].getUserID(), this.arrayToSeeProfile[i].getUserType(), 
+												 this.arrayToSeeProfile[i].getUserName(), this.arrayToSeeProfile[i].getPassword(), 
+											 	 this.arrayToSeeProfile[i].getEmail(), this.arrayToSeeProfile[i].getRegisterDate(), 
+											 	 this.arrayToSeeProfile[i].getUnsubscribeDate(), this.arrayToSeeProfile[i].getImage(), 
+												 this.arrayToSeeProfile[i].getProvinceID());
+					
+					for (var j = 0; j < this.friendsArray.length; j++){
+						if(this.arrayToSeeProfile[i].getUserID()==this.friendsArray[j].getUserID()){
+							$scope.addFriendIcon=0;
+						}
+					}												
+				}
+			}		
+			
+			
+			
+			$scope.userPage=1
+			$scope.userProfile=2;
+			$scope.friends=2;
+			$("#friendProfileForm").fadeIn(500);
+			$("#friendItemsMessage").hide();	
 			
 			//calls to AJAX in order to search friend items
 			var outPutdata= new Array();
@@ -594,7 +653,7 @@ $(document).ready(function(){
 				  url: 'php/control/control.php',  
 				  type: 'POST',  
 				  async: false,   
-				  data: 'action=2&userID='+this.friendsArray[friendToVisit].getUserID(), 
+				  data: 'action=2&userID='+friendToVisit, 
 				  dataType: "json", 
 				  success: function (response) { 
 					  outPutdata = response;
@@ -619,6 +678,28 @@ $(document).ready(function(){
 				$("#friendItemsMessage").html("Still it does not have any item added");
 				$("#friendItemsMessage").fadeIn(500);
 			}
+		}
+		
+		this.addFriend= function(idFriendToAdd){
+			
+			var success;
+			$.ajax({
+				url: 'php/control/control.php',  
+				type: 'POST',  
+				async: false,   
+				data: 'action=16&userID='+this.user.getUserID()+"&idFriendToAdd="+idFriendToAdd,
+				dataType: "json", 
+				success: function (response) { 
+					success = response;
+				},
+				error: function (xhr, ajaxOptions, thrownError){
+					alert("There has been and error while connecting to server");
+					console.log(xhr.status+"\n"+thrownError);
+				}	
+			});
+			
+			if(success) alert("Friend added correctly");
+			
 		}
 			
 		this.checkWarnings= function(){
@@ -709,7 +790,11 @@ $(document).ready(function(){
 						console.log(xhr.status+"\n"+thrownError);
 				  }	
 			});				 
-		}		
+		}	
+		
+		this.showHome= function(){
+			$("homeSearchForm").fadeIn(500);
+		}	
 		
 	});
 	

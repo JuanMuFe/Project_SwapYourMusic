@@ -1,46 +1,44 @@
-<form name="homeSearchForm" ng-submit="homeSearchForm.$valid && musicCtrl.searchItems()" novalidate>
-	<h2>Some user items</h2><br/>
-	You can search items by:<br/>
-	Item type:
-	<select id="itemType" ng-model="musicCtrl.item.itemType" ng-change="musicCtrl.searchItems()">
-		<option value="">Item type</option>
-		<option ng-repeat="itemType in musicCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}<option>
-	</select>
+	<div id="searchBox">
+		You can search items by:<br/>
+		Item type:
+		<select id="itemType" ng-model="musicCtrl.item.itemType" ng-change="musicCtrl.searchItems()">
+			<option value="">Item type</option>
+			<option ng-repeat="itemType in musicCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}<option>
+		</select>
+			
+		Genre:
+		<select ng-model="musicCtrl.item.genreID" ng-change="musicCtrl.searchItems()">
+			<option value="">Genre</option>
+			<option ng-repeat="genres in musicCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
+		</select>
 		
-	Genre:
-	<select ng-model="musicCtrl.item.genreID" ng-change="musicCtrl.searchItems()">
-		<option value="" selected>Genre</option>
-		<option ng-repeat="genres in musicCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
-	</select>
-	
-	Or artist:
-	<input type="text" id="artistToSearch" ng-model="musicCtrl.item.artist" value="" ng-change="musicCtrl.searchItems()"/>
-	<br /><br /><br />
-	
+		Or artist:
+		<input type="text" id="artistToSearch" ng-disabled="searchingByGenre==1" ng-model="musicCtrl.item.artist" value="" ng-change="musicCtrl.searchItems()"/>
+	</div>	<br />
 	<p id="searchMessage"></p>
-	<div ng-repeat="itemHome in musicCtrl.itemsArrayHome">
-		<img ng-src="{{itemHome.image}}" width="200px"/><br />
-		{{itemHome.getArtist()}} - {{itemHome.getTitle()}}<br />
-		{{itemHome.getReleaseYear()}}				
-		<a href="#" id="contact{{$index}}" title="View more" ng-click="itemInformation =! itemInformation">View more</a>
-		<a href="#" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
-		<a href="#" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a>			
-		<br/><br />
-		
-		<div id="moreInformationDiv" ng-show="itemInformation">
-			<img ng-src="{{itemHome.image}}" width="250px"/><br />
-			<b>Artist:</b> {{itemHome.getArtist()}} <br />
-			<b>Title:</b> {{itemHome.getTitle()}} <br />
-			<b>Genre:</b> {{musicCtrl.genresArray[itemHome.getGenreID()].name}} <br/>
-			<b>Item type:</b> {{itemHome.getItemType()}}<br />
-			<b>Release year:</b> {{itemHome.getReleaseYear()}}<br/>		
-			<b>Condition:</b> {{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}<br />
-			<b>User:</b> <a href="#">{{musicCtrl.usersArray[$index].userName}} <img src="{{musicCtrl.usersArray[$index].image}}" width="40px"/></a><br />
-			<a href="#" title="Bid up" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
-			<a href="#" title="Start trade" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a><br />
-			<button ng-click="itemInformation =! itemInformation">Close</button>			
-		</div>		
+	<div id="itemsDiv">
+		<div ng-repeat="itemHome in musicCtrl.itemsArrayHome" id="homeItems">		
+			<img ng-src="{{itemHome.image}}" width="200px"/><br />
+			{{itemHome.getArtist()}} - {{itemHome.getTitle()}}<br />
+			{{itemHome.getReleaseYear()}}				
+			<a href="#" id="contact{{$index}}" title="View more" ng-click="itemInformation =! itemInformation">View more</a><br/>
+			<a href="#" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="31px"/></a>
+			<a href="#" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a>			
+			<br/><br />	
+				
+			<div id="moreInformationDiv" ng-show="itemInformation">
+				<img ng-src="{{itemHome.image}}" width="250px"/><br />
+				<b>Artist:</b> {{itemHome.getArtist()}} <br />
+				<b>Title:</b> {{itemHome.getTitle()}} <br />
+				<b>Genre:</b> {{musicCtrl.genresArray[itemHome.getGenreID()].name}} <br/>
+				<b>Item type:</b> {{itemHome.getItemType()}}<br />
+				<b>Release year:</b> {{itemHome.getReleaseYear()}}<br/>		
+				<b>Condition:</b> {{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}<br />
+				<b>User:</b> <a ng-click="musicCtrl.loadUserProfile(musicCtrl.usersArray[$index].getUserID(), 1)" href="#">{{musicCtrl.usersArray[$index].userName}} <img src="{{musicCtrl.usersArray[$index].image}}" width="40px"/></a><br />
+				<a href="#" title="Bid up" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
+				<a href="#" title="Start trade" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a><br />
+				<button ng-click="itemInformation =! itemInformation">Close</button>			
+			</div>	
+		</div>	
 	</div>
 	
-	
-</form>

@@ -62,7 +62,10 @@ require_once "toDoClass.php";
 							 break;	
 					
 					case 15: echo toDoClass::deleteFriend($this->params['action'], $this->params['friendToDelete']);
-							 break;								
+							 break;
+					
+					case 16: echo toDoClass::addFriend($this->params['action'], $this->params['userID'], $this->params['idFriendToAdd']);
+							 break;							
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

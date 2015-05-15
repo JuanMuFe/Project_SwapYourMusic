@@ -1,11 +1,10 @@
-<form name="friendProfileForm">
-	
+<div ng-show="friends==2">
 	<div id="friendBasicData"><br/>
 		<img src="{{musicCtrl.friendProfile.image}}" width="150px"/><br />
 		<label>{{musicCtrl.friendProfile.userName}}</label>	<br/>		
 		<label>Location: {{musicCtrl.provincesArray[musicCtrl.friendProfile.provinceID].name}}</label><br />
 		<label>Email: {{musicCtrl.friendProfile.email}}</label><br />
-		<a href="#" id="addFriend" title="Add as friend"><img src="img/addFriend.png" /></a>	
+		<a href="#" ng-if="addFriendIcon==1" id="addFriend" ng-click="musicCtrl.addFriend(musicCtrl.friendProfile.userID)" title="Add as friend"><img src="img/addFriend.png" /></a>	
 	</div>
 	
 	<div id="friendItemsDiv">
@@ -19,11 +18,9 @@
 			<b>Item type:</b> {{item.getItemType()}}<br />
 			<b>Release year:</b> {{item.getReleaseYear()}}<br/>		
 			<b>Condition:</b> {{musicCtrl.conditionsArray[item.getConditionID()].name}}<br />
-			<a href="#" title="Bid up" ng-if="item.bidID!=null"><img src="img/bid.png" width="40px"/></a>
-			<a href="#" title="Start trade" ng-if="item.bidID==null"><img src="img/trade.png"  /></a><br />
-			
+			<a href="#" title="Bid up" ng-if="item.bidID!=null"><img src="img/bid.png" width="31px"/></a>
+			<a href="#" title="Start trade" ng-if="item.bidID==null"><img src="img/trade.png" /></a><br />			
 		</div>
-	</div>
 		
-	
-</form>
+	</div>
+</div>	

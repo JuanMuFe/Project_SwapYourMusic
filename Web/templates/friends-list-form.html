@@ -1,10 +1,10 @@
-<div>
+<div ng-show="friends==1">
 	<p id="friendsErrorSuccessMessage"></p>
-	<div ng-repeat="friend in musicCtrl.friendsArray" style="border:1px solid black;background-color:skyblue">
+	<div ng-repeat="friend in musicCtrl.friendsArray" id="friendsDiv">
 		<img src="{{friend.image}}" width="100"/> <br/>
-		Name: {{friend.userName}}<br/>
-		Location: {{musicCtrl.provincesArray[friend.getProvinceID()].name}}<br />
-		<a href="#" title="Visit profile" ng-click="musicCtrl.loadFriendProfile($index)" style="position:relative; left:13%; top:-100px;"><img src="img/goProfile.png" /></a></br>
-		<a href="#" title="Delete friend" ng-click="musicCtrl.deleteFriend($index)" style="position:relative; left:13%; top:-75px;"><img src="img/delFriend.png" /></a>		
+		<b>Name: </b>{{friend.userName}}<br/>
+		<b>Location: </b>{{musicCtrl.provincesArray[friend.getProvinceID()].name}}<br />
+		<a href="#" title="Visit profile" ng-click="musicCtrl.loadUserProfile(friend.getUserID(), 2)" style="position:relative;left:20%"><img src="img/goProfile.png" /></a>
+		<a href="#" title="Delete friend" ng-click="musicCtrl.deleteFriend($index)" style="position:relative; left:30%"><img src="img/delFriend.png" /></a>		
 	</div>
 </div>

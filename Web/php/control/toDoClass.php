@@ -124,7 +124,7 @@ require_once "../model/provinceClass.php";
 			$itemObject = json_decode(stripslashes($JSONData));
 			
 			$item = new itemClass();
-			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
 							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->create();				
 			echo true;
@@ -134,7 +134,7 @@ require_once "../model/provinceClass.php";
 			$itemObject= json_decode(stripslashes($JSONData));
 			$item= new itemClass();
 			
-			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
 							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->delete();				
 			echo true;
@@ -345,6 +345,14 @@ require_once "../model/provinceClass.php";
 			$friend->setAll($friendObj->userID, $friendObj->friendID);		
 			$friend->delete();
 			
+			echo true;
+		}
+		
+		public function addFriend($action, $userID, $idFriendToAdd){
+			
+			$userFriend = new friendsClass();
+			$userFriend->setAll($userID, $idFriendToAdd);
+			$userFriend->create();				
 			echo true;
 		}
 	}

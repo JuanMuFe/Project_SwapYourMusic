@@ -1,3 +1,7 @@
+body{
+	background-color: #04B4AE;/*turq*/
+}
+
 #warningAlert{
 	position: relative;
 	float: right;
@@ -13,16 +17,23 @@
 	border: 1px solid black;
 	padding: 1%;
 	color: white;
-	background-color:#626262;
+	background-color:#626262; /*grey oscuro*/
 }
 
 #moreInformationDiv{
 	position: fixed;
 	left: 30%;
 	top: 35%;
-	border: 1px solid black;
+	box-shadow: 10px 9px 24px -6px black;
 	padding: 2%;
 	text-align: center;
+	background-color: white;
+}
+
+#blackDiv{
+	background-color: black;
+	opacity: 0.5%;
+	width: 100%;
 }
 
 #userMenuBar{
@@ -92,23 +103,21 @@
 	background-image: url("../img/homeV.png");
 }
 
-
-#userMenuBar > a:hover{
-	
-}
-
 li{	
 	list-style:none;
 }
 
-
 .linksFloat{
-	float:right;
-	
+	float:right;	
+}
+
+.linksFloatLeft{
+	float:left;	
+	right: 55%;
 }
     
 .dropdown-menu{
-	background-color: #C0C0C0;
+	background-color: #C0C0C0; /*grey*/
 }
 
 header{
@@ -130,28 +139,71 @@ header{
 	text-align: center;
 	left: 1%;
 	padding: .5%;
-	background-color: turquoise;
+	background-color: white; 
+}
+
+#friendsDiv{
+	padding: 2%;
+	position: relative;
+	background-color: white; 
+	border: 1px solid #626262;
+	width: 40%;
+	left: 1%;
+	margin-bottom: 1%;
 }
 
 #friendItems{
-	position: relative;
-	left: 2%;
-	border: 1px solid turquoise;
-	padding: 2%;
-	width: 18%;	
+	float: left;
+	padding: 1%;
+	margin-bottom: 3%;
+	border: 1px solid #626262;
+	width: 25%;	
 	text-align: center;
-	display: block;
-	margin-right: 1%;
+	margin-right: 5%;	
+	background-color: white;
+}
+
+#homeItems{
+	float: left;
+	padding: 1%;
+	margin-bottom: 3%;
+	border: 1px solid #626262;
+	height: 300px;
+	width: 28%;		
+	text-align: center;
+	margin-right: 3%;
+	background-color: white;	
+}
+
+#itemsDiv{
+	position: relative;
+	left: 3%;
+	width: 75%;	
+	
 }
 
 #friendItemsDiv{
 	position: relative;
 	left: 25%;
-	background-color: skyblue;
 	width: 75%;
 }
 
 #friendItemsMessage{
 	position: relative;
 	left: 25%;	
+}
+
+#searchBox{
+	position: relative;
+	left: 3%;
+	width: 67.5%;
+	background-color: #C0C0C0;
+	padding: 2%;
+	margin-top: 2%;
+}
+
+.linkStyle{
+	text-decoration: none;
+	width: 
+	background-color:
 }
