@@ -1,19 +1,20 @@
 //JQuery code
 $(document).ready(function(){
 	$("#userItemsMod").hide();
-	$("#friendItemsMessage").hide();	
+	$("#friendItemsMessage").hide();
+	$("#startTradeForm").hide();
 	
     $(".dropdown").hover(            
-            function() {
-                $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
-                $(this).toggleClass('open');
-                $('b', this).toggleClass("caret caret-up");                
-            },
-            function() {
-                $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
-                $(this).toggleClass('open');
-                $('b', this).toggleClass("caret caret-up");                
-           });
+         function() {
+             $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
+             $(this).toggleClass('open');
+             $('b', this).toggleClass("caret caret-up");                
+         },
+         function() {
+             $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
+             $(this).toggleClass('open');
+             $('b', this).toggleClass("caret caret-up");                
+    });
     
     
 });
@@ -75,6 +76,9 @@ $(document).ready(function(){
 		$scope.imagesArray= new Array();
 		$scope.warningRead=0;
 		$scope.addFriendIcon=1;
+		this.demandedItem= new itemObj();
+		this.offeredItem= new itemObj();
+		this.swapItem= new swapObj();
 		
 		//Data from DDBB
 		this.itemsArray= new Array(); 
@@ -258,29 +262,36 @@ $(document).ready(function(){
 			this.item.setUploadDate(currentDateHour);
 			this.item.setBidID(null);
 			
-			this.item = angular.copy(this.item);
-			var idItem;
-			
-			$.ajax({
-				  url: 'php/control/control.php',
-				  type: 'POST',
-				  async: false,
-				  data: 'action=5&JSONData='+JSON.stringify(this.item),
-				  dataType: "json",
-				  success: function (response) { 
-					  idItem = response;
-					  alert("Item inserted correctly");
-				  },
-				  error: function (xhr, ajaxOptions, thrownError) {
-						alert(xhr.status+"\n"+thrownError);
-				  }	
-			});	
-			
-			if(idItem!=null){
-				$scope.userPage=2;
-				this.item= new itemObj();
-				this.loadUserItems();	
-			} 	
+			var dateToGetYear = new Date();
+			var year = dateToGetYear.getFullYear();
+				
+			if(this.item.getReleaseYear()>year){
+				alert("You must introduce a valid release year");
+			}else{
+				this.item = angular.copy(this.item);
+				var idItem;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=5&JSONData='+JSON.stringify(this.item),
+					  dataType: "json",
+					  success: function (response) { 
+						  idItem = response;
+						  alert("Item inserted correctly");
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+					  }	
+				});	
+				
+				if(idItem!=null){
+					$scope.userPage=2;
+					this.item= new itemObj();
+					this.loadUserItems();	
+				} 
+			}			
 		}
 		
 		this.deleteItem= function(itemIDToDelete){
@@ -403,10 +414,14 @@ $(document).ready(function(){
 		
 		this.modifyItem= function(){			
 			if(confirm("Are you sure you want modify this item/s?")){
-				var imagesNames = filesManagementToModItems(this.item);
 				
-				//New files modification				
-				this.item.setImage(imagesNames[0]);
+				var imageItem = $("#imageMod")[0].files[0];
+				
+				if(imageItem!= undefined){
+					var imagesNames = filesManagementToModItems(this.item);
+					//New files modification				
+					this.item.setImage(imagesNames[0]);
+				}				
 				
 				var dateToGetYear = new Date();
 				var year = dateToGetYear.getFullYear();
@@ -414,11 +429,7 @@ $(document).ready(function(){
 				if(this.item.getReleaseYear()>year){
 					alert("You must introduce a valid release year");
 				}																	
-				
-				//Item type, genreID and conditionID modification				
-				this.item.setItemType($("#itemTypeMod").find('option:selected').attr('value'));	
-				this.item.setGenreID($("#genreMod").find('option:selected').attr('value'));	
-				this.item.setConditionID($("#conditionMod").find('option:selected').attr('value'));	
+							
 				this.item.setAvailable(1);				
 				
 				this.item = angular.copy(this.item);
@@ -428,7 +439,7 @@ $(document).ready(function(){
 				$.ajax({
 					url: 'php/control/control.php',
 					type: 'POST',
-					async: true,
+					async: false,
 					data: 'action=7&JSONItemToMod='+JSON.stringify(itemsToModArray),
 					dataType: "json",
 					success: function (response) { 
@@ -452,7 +463,7 @@ $(document).ready(function(){
 			$("#userItemsMod").hide();
 		}
 		
-		this.deleteAccount= function(){0
+		this.deleteAccount= function(){
 			var passToConfirm= $("#passwordToDelete").val();
 			
 			if(window.md5(passToConfirm)==this.user.password){	
@@ -790,11 +801,63 @@ $(document).ready(function(){
 						console.log(xhr.status+"\n"+thrownError);
 				  }	
 			});				 
-		}	
+		}
 		
-		this.showHome= function(){
-			$("homeSearchForm").fadeIn(500);
-		}	
+		this.loadStartTradeForm	= function(itemDemanded){
+			this.loadUserItems();
+			this.demandedItem= new itemObj();
+			this.demandedItem= this.friendItemsArray[itemDemanded];
+			$("#startTradeForm").fadeIn(500);		
+		}
+				
+		this.selectItem= function(numItem){
+			this.offeredItem= new itemObj();
+			this.offeredItem= this.itemsArray[numItem];
+						
+			for (var i = 0; i < this.itemsArray.length; i++){
+				$("#ownItemDiv"+i).css({background: "white", border:"1px solid #626262"});				
+			}			
+			$("#ownItemDiv"+numItem).css({background: "#CEF6CE", border:"1px solid #2EFE2E"});
+								
+		}
+		
+		this.startTradeWithItem= function(){
+			var now = new Date();
+
+			var month = now.getMonth()+1;
+			var day = now.getDate();
+				if(day<10) day= "0"+day;
+				if(month<10) month= "0"+month;					
+			var year = now.getFullYear();
+			var currentDate= year+"-"+month+"-"+day;
+			
+			this.swapItem= new swapObj();
+			this.swapItem.setSwapID(0);
+			this.swapItem.setStartDate(currentDate);
+			this.swapItem.setFinishDate("0000-00-00");
+			this.swapItem.setSuccess(0);
+			
+			$.ajax({
+			  url: 'php/control/control.php',
+			  type: 'POST',
+			  async: false,
+			  data: 'action=17&JSONData='+JSON.stringify(this.swapItem)+"&offeredItemID="+this.offeredItem.getItemID()+"&demandedItemID="+this.demandedItem.getItemID(),
+			  dataType: "json",
+			  success: function (response) { 
+				  alert("Request correctly sent");
+			  },
+			  error: function (xhr, ajaxOptions, thrownError) {
+				  alert(xhr.status+"\n"+thrownError);
+			  }	
+			});	
+			
+		}
+		
+		this.hideTradeForm= function(){
+			$("#startTradeForm").hide();
+		}
+		
+						
 		
 	});
 	
@@ -851,6 +914,17 @@ $(document).ready(function(){
 			
 		  },
 		  controllerAs: 'friendProfileForm'
+		};
+	});
+	
+	swapYourMusicApp.directive("startTradeForm", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/start-trade-form.html",
+		  controller:function(){
+			
+		  },
+		  controllerAs: 'startTradeForm'
 		};
 	});
 	

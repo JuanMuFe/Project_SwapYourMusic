@@ -65,7 +65,10 @@ require_once "toDoClass.php";
 							 break;
 					
 					case 16: echo toDoClass::addFriend($this->params['action'], $this->params['userID'], $this->params['idFriendToAdd']);
-							 break;							
+							 break;	
+					
+					case 17: echo toDoClass::insertSwap($this->params['action'], $this->params['JSONData'], $this->params['offeredItemID'], $this->params['demandedItemID']);
+							 break;						
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

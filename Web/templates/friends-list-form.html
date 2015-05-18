@@ -1,7 +1,7 @@
 <div ng-show="friends==1">
 	<p id="friendsErrorSuccessMessage"></p>
 	<div ng-repeat="friend in musicCtrl.friendsArray" id="friendsDiv">
-		<img src="{{friend.image}}" width="100"/> <br/>
+		<img src="{{friend.image}}" width="20%"/> <br/>
 		<b>Name: </b>{{friend.userName}}<br/>
 		<b>Location: </b>{{musicCtrl.provincesArray[friend.getProvinceID()].name}}<br />
 		<a href="#" title="Visit profile" ng-click="musicCtrl.loadUserProfile(friend.getUserID(), 2)" style="position:relative;left:20%"><img src="img/goProfile.png" /></a>

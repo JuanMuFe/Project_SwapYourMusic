@@ -82,7 +82,7 @@ class swapClass {
 	 * @return: none
 	 */ 
     public function setAll($swapID ,$startDate, $finishDate, $success) {
-		$this->setRegionID($swapID);
+		$this->setSwapID($swapID);
 		$this->setStartDate($startDate);
 		$this->setFinishDate($finishDate);
 		$this->setSuccess($success);
@@ -206,22 +206,25 @@ class swapClass {
 	 * @return: none
 	 */ 
     public function create() {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	//return $this->toString();
-	//Preparing the sentence
-	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".swapClass::$tableName."(`swapID`,`startDate`, `finishDate`, `success`) values (?,?,?,?)" )) {
-		$stmt->bind_param("issi",$this->getSwapID(), $this->getStartDate(), $this->getFinishDate(), $this->getSuccess());
-		//executar consulta
-		$stmt->execute();
-	    }
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		//return $this->toString();
+		//Preparing the sentence
+		$stmt = $conn->stmt_init();
+		if ($stmt->prepare("insert into ".swapClass::$tableName."(`swapID`,`startDate`, `finishDate`, `success`) values (?,?,?,?)" )) {
+			$stmt->bind_param("issi",$this->getSwapID(), $this->getStartDate(), $this->getFinishDate(), $this->getSuccess());
+			//executar consulta
+			$stmt->execute();
+			
+			$this->setSwapID($conn->insert_id);
+		}
 	    
 	    if ( $conn != null ) $conn->close();
+	    return $this->getSwapID();
 	}
 
 	/*

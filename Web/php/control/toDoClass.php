@@ -12,6 +12,8 @@ require_once "../model/warningUsersClass.php";
 require_once "../model/warningClass.php";
 require_once "../model/friendsClass.php";
 require_once "../model/provinceClass.php";
+require_once "../model/swapClass.php";
+require_once "../model/applicationsClass.php";
 
 	class toDoClass {
 /*
@@ -125,7 +127,7 @@ require_once "../model/provinceClass.php";
 			
 			$item = new itemClass();
 			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
+						$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->create();				
 			echo true;
 		}
@@ -354,6 +356,35 @@ require_once "../model/provinceClass.php";
 			$userFriend->setAll($userID, $idFriendToAdd);
 			$userFriend->create();				
 			echo true;
+		}
+		
+		public function insertSwap($action, $JSONData, $offeredItemID, $demandedItemID){
+			$swapObj= json_decode(stripcslashes($JSONData));
+			
+			$swap= new swapClass();
+			$swap->setAll($swapObj->swapID, $swapObj->startDate, $swapObj->finishDate, $swapObj->success);
+			$swapIDReturned= $swap->create();
+			
+			$application= new applicationsClass();
+			$application->setAll($swapIDReturned, $offeredItemID, $demandedItemID);
+			$application->create();
+			
+			$offeredItem= new itemClass();
+			$offeredItemData= $offeredItem->findById($offeredItemID);
+			
+			$offeredItemUser= new userClass();
+			$userOffered= $offeredItemUser->findById($offeredItemData[0]->getUserID());
+			
+			$demandedItem= new itemClass();
+			$demandedItemData= $demandedItem->findById($demandedItemID);
+						
+			$demandedItemUser= new userClass();
+			$userDemanded= $demandedItemUser->findById($demandedItemData[0]->getUserID());
+			
+			//con itemID buscar: item name, artista, userID y con este nombre usuario   item= cd ...
+			
+			echo $contentMessage= "Hi ".$userDemanded[0]->getUserName().", ".$userOffered[0]->getUserName()." wants to exchange your ".$demandedItemData[0]->getItemType()." titled ".$demandedItemData[0]->getTitle()." by ".$demandedItemData[0]->getArtist()." for his item ".$offeredItemData[0]->getTitle()." by ".$offeredItemData[0]->getArtist()."";
+			
 		}
 	}
 	

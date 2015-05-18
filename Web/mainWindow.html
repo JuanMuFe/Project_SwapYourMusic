@@ -39,6 +39,7 @@
 		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/model/friendsObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/swapObj.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/mainWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
@@ -61,13 +62,7 @@
 						<li class="hoverList"><a href="#" ng-click="musicCtrl.loadUserItems();userProfile=1;items=2;userPage=1">Items list</a></li>
 						<li class="hoverList"><a href="#" ng-click="userProfile=2;userPage=1;friends=1;musicCtrl.showFriendList()">Friends list</a></li>
 						<li class="hoverList"><a href="#" ng-click="userProfile=3;userPage=1">Bids</a></li>
-						<li class="hoverList dropdown">
-							<a class="dropdown-toggle" data-toggle="dropdown" data-hover="dropdown" ng-click="userProfile=4;userPage=1">Settings</a>
-							<ul class="dropdown-menu">
-								<li class="hoverList"><a>Change data</a></li>
-								<li class="hoverList"><a>Delete account</a></li>
-							</ul>						
-						</li>
+						<li class="hoverList"><a href="#" ng-click="userProfile=4;userPage=1">Settings</a></li>							
 					</ul>
 				</li>				
 				
@@ -88,24 +83,26 @@
 					</div>
 					
 					<div ng-show="userProfile==4"><br />
-						<nav><a class="linkStyle">Change basic data</a> | <a class="linkStyle" ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
+						<nav><a class="linkStyle">Change basic data</a><a class="linkStyle" ng-click="deleteAccount=1; musicCtrl.loadUserItems()">Delete account</a></nav>
 						<div ng-show="deleteAccount==1">
 							Introduce your password if you want to delete your account: <br />
 							<input type="password" id="passwordToDelete"/><br />
 							<p id="message"></p>
 							<input type="button" value="Delete account" ng-click="musicCtrl.deleteAccount()" />
 						</div>
-				</div>
-			</div>			
+					</div>
+				</div>			
 			
-			<div ng-show="userPage==2">
-				<home-search-form id="homeSearchForm"></home-search-form>
-			</div>
+				<div ng-show="userPage==2">
+					<home-search-form id="homeSearchForm"></home-search-form>				
+				</div>
+		
+				<start-trade-form id="startTradeForm"></start-trade-form>
 			
 				<div ng-show="userPage==3">
 					Message
 				</div>
-			
+				
 				<div id="warningsDiv" ng-show="warningDiv">				
 				</div>
 			</div>		

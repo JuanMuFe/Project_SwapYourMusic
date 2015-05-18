@@ -1,0 +1,14 @@
+	<div id="startTradeDiv">		
+		<h3>Select one of your items to start trade!</h3>
+		<div id="itemsDiv">
+			<div ng-repeat="item in musicCtrl.itemsArray" class="ownItemDiv" id="ownItemDiv{{$index}}" ng-click="musicCtrl.selectItem($index)">
+				<img ng-src="{{item.image}}" width="35%"/><br/>
+				<b>Item type:</b> {{item.getItemType()}}<br />
+				<b>Title: </b>{{item.getTitle()}}<br />
+				<b>Artist: </b>{{item.getArtist()}}<br />	
+			</div>		
+			
+			<input type="submit" value="Start trade" ng-click="musicCtrl.startTradeWithItem()" />
+			<input type="button" value="Cancel" ng-click="musicCtrl.hideTradeForm()" />
+		</div>
+	</div>

@@ -1,6 +1,6 @@
 <div ng-show="friends==2">
 	<div id="friendBasicData"><br/>
-		<img src="{{musicCtrl.friendProfile.image}}" width="150px"/><br />
+		<img src="{{musicCtrl.friendProfile.image}}" width="45%"/><br />
 		<label>{{musicCtrl.friendProfile.userName}}</label>	<br/>		
 		<label>Location: {{musicCtrl.provincesArray[musicCtrl.friendProfile.provinceID].name}}</label><br />
 		<label>Email: {{musicCtrl.friendProfile.email}}</label><br />
@@ -11,7 +11,7 @@
 		<p id="friendItemsMessage"></p>
 		
 		<div id="friendItems" ng-repeat="item in musicCtrl.friendItemsArray">
-			<img src="{{item.image}}" width="150px" /><br />
+			<img src="{{item.image}}" width="70%" /><br />
 			<b>Artist:</b> {{item.getArtist()}} <br />
 			<b>Title:</b> {{item.getTitle()}} <br />
 			<b>Genre:</b> {{musicCtrl.genresArray[item.getGenreID()].name}} <br/>
@@ -19,8 +19,7 @@
 			<b>Release year:</b> {{item.getReleaseYear()}}<br/>		
 			<b>Condition:</b> {{musicCtrl.conditionsArray[item.getConditionID()].name}}<br />
 			<a href="#" title="Bid up" ng-if="item.bidID!=null"><img src="img/bid.png" width="31px"/></a>
-			<a href="#" title="Start trade" ng-if="item.bidID==null"><img src="img/trade.png" /></a><br />			
-		</div>
-		
+			<a href="#" title="Start trade" ng-if="item.bidID==null" ng-click="musicCtrl.loadStartTradeForm($index)"><img src="img/trade.png" /></a><br />			
+		</div>		
 	</div>
 </div>	

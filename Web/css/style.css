@@ -204,6 +204,38 @@ header{
 
 .linkStyle{
 	text-decoration: none;
-	width: 
-	background-color:
+	padding: 1%;
+	background-color: #626262;
+	position: relative;
+	left: 83%;
+	top: -13px;	
+	border: 1px solid #626262;
 }
+
+.linkStyle:hover{
+	background-color:  #C0C0C0;
+	border: 1px solid #626262;
+	text-decoration: none;
+}
+
+#startTradeDiv{
+	z-index:1;
+	position: fixed;
+	left: 30%;
+	top: 35%;
+	box-shadow: 10px 9px 24px -6px black;
+	padding: 2%;
+	text-align: center;
+	background-color: white;
+}
+
+.ownItemDiv{
+	float: left;
+	padding: 1%;
+	border: 1px solid #626262;
+	width: 25%;	
+	text-align: center;
+	margin-right: 5%;	
+	background-color: white;
+}
+

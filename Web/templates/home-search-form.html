@@ -18,12 +18,12 @@
 	<p id="searchMessage"></p>
 	<div id="itemsDiv">
 		<div ng-repeat="itemHome in musicCtrl.itemsArrayHome" id="homeItems">		
-			<img ng-src="{{itemHome.image}}" width="200px"/><br />
+			<img ng-src="{{itemHome.image}}" width="80%"/><br />
 			{{itemHome.getArtist()}} - {{itemHome.getTitle()}}<br />
 			{{itemHome.getReleaseYear()}}				
 			<a href="#" id="contact{{$index}}" title="View more" ng-click="itemInformation =! itemInformation">View more</a><br/>
 			<a href="#" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="31px"/></a>
-			<a href="#" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a>			
+			<a href="#" ng-if="itemHome.bidID==null" ng-click="musicCtrl.loadStartTradeForm()"><img src="img/trade.png"  /></a>			
 			<br/><br />	
 				
 			<div id="moreInformationDiv" ng-show="itemInformation">
@@ -36,7 +36,7 @@
 				<b>Condition:</b> {{musicCtrl.conditionsArray[itemHome.getConditionID()].name}}<br />
 				<b>User:</b> <a ng-click="musicCtrl.loadUserProfile(musicCtrl.usersArray[$index].getUserID(), 1)" href="#">{{musicCtrl.usersArray[$index].userName}} <img src="{{musicCtrl.usersArray[$index].image}}" width="40px"/></a><br />
 				<a href="#" title="Bid up" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="40px"/></a>
-				<a href="#" title="Start trade" ng-if="itemHome.bidID==null"><img src="img/trade.png"  /></a><br />
+				<a href="#" title="Start trade" ng-if="itemHome.bidID==null"><img src="img/trade.png" /></a><br />
 				<button ng-click="itemInformation =! itemInformation">Close</button>			
 			</div>	
 		</div>	
