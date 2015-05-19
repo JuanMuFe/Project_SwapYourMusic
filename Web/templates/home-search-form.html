@@ -23,7 +23,7 @@
 			{{itemHome.getReleaseYear()}}				
 			<a href="#" id="contact{{$index}}" title="View more" ng-click="itemInformation =! itemInformation">View more</a><br/>
 			<a href="#" ng-if="itemHome.bidID!=null"><img src="img/bid.png" width="31px"/></a>
-			<a href="#" ng-if="itemHome.bidID==null" ng-click="musicCtrl.loadStartTradeForm()"><img src="img/trade.png"  /></a>			
+			<a href="#" ng-if="itemHome.bidID==null" ng-click="musicCtrl.loadStartTradeForm($index, 1)"><img src="img/trade.png"  /></a>			
 			<br/><br />	
 				
 			<div id="moreInformationDiv" ng-show="itemInformation">

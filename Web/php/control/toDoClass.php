@@ -14,6 +14,7 @@ require_once "../model/friendsClass.php";
 require_once "../model/provinceClass.php";
 require_once "../model/swapClass.php";
 require_once "../model/applicationsClass.php";
+require_once "../model/directMessageClass.php";
 
 	class toDoClass {
 /*
@@ -381,10 +382,13 @@ require_once "../model/applicationsClass.php";
 			$demandedItemUser= new userClass();
 			$userDemanded= $demandedItemUser->findById($demandedItemData[0]->getUserID());
 			
-			//con itemID buscar: item name, artista, userID y con este nombre usuario   item= cd ...
+			$contentMessage= "Hi ".$userDemanded[0]->getUserName().", ".$userOffered[0]->getUserName()." wants to exchange your ".$demandedItemData[0]->getItemType()." titled ".$demandedItemData[0]->getTitle()." by ".$demandedItemData[0]->getArtist()." for his item titled ".$offeredItemData[0]->getTitle()." by ".$offeredItemData[0]->getArtist()."";
 			
-			echo $contentMessage= "Hi ".$userDemanded[0]->getUserName().", ".$userOffered[0]->getUserName()." wants to exchange your ".$demandedItemData[0]->getItemType()." titled ".$demandedItemData[0]->getTitle()." by ".$demandedItemData[0]->getArtist()." for his item ".$offeredItemData[0]->getTitle()." by ".$offeredItemData[0]->getArtist()."";
+			$directMessage= new directMessageClass();
+			$directMessage->setAll(0, $swapIDReturned, 0, $contentMessage, 0); 
+			$directMessage->create();
 			
+			return true;
 		}
 	}
 	

@@ -19,7 +19,7 @@
 			<b>Release year:</b> {{item.getReleaseYear()}}<br/>		
 			<b>Condition:</b> {{musicCtrl.conditionsArray[item.getConditionID()].name}}<br />
 			<a href="#" title="Bid up" ng-if="item.bidID!=null"><img src="img/bid.png" width="31px"/></a>
-			<a href="#" title="Start trade" ng-if="item.bidID==null" ng-click="musicCtrl.loadStartTradeForm($index)"><img src="img/trade.png" /></a><br />			
+			<a href="#" title="Start trade" ng-if="item.bidID==null" ng-click="musicCtrl.loadStartTradeForm($index, 2)"><img src="img/trade.png" /></a><br />			
 		</div>		
 	</div>
 </div>	

@@ -5,14 +5,16 @@ function swapObj ()
 	this.swapID;
 	this.date;
 	this.content;
+	this.read;
 		
 	//Methods declaration
-	this.construct = function (messageID,swapID, date, content)
+	this.construct = function (messageID,swapID, date, content, read)
 	{
 		this.setMessageID(messageID);
 		this.setSwapID(swapID);
 		this.setDate(date);
 		this.setContent(content);
+		this.setRead(read);
 	}
 	
 	//getters and setters
@@ -20,11 +22,13 @@ function swapObj ()
 	this.setSwapID = function (swapID){this.swapID=swapID;}
 	this.setDate = function (date){this.date=date;}
 	this.setContent = function (content){this.content=content;}
+	this.setRead= function(read){this.read=read;}
 	
 	this.getMessageID = function () {return this.messageID;}
 	this.getSwapID = function () {return this.swapID;}
 	this.getDate = function () {return this.date;}
 	this.getContent = function () {return this.content;}
+	this.getRead = function () {return this.read;}
 	
 	/*
 	* @swapID: arrayToString()

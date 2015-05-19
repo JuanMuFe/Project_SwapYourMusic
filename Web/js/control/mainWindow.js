@@ -803,10 +803,14 @@ $(document).ready(function(){
 			});				 
 		}
 		
-		this.loadStartTradeForm	= function(itemDemanded){
+		this.loadStartTradeForm	= function(itemDemanded, action){
 			this.loadUserItems();
 			this.demandedItem= new itemObj();
-			this.demandedItem= this.friendItemsArray[itemDemanded];
+			
+			if(action==1){
+				this.demandedItem= this.itemsArrayHome[itemDemanded];
+			}else{this.demandedItem= this.friendItemsArray[itemDemanded];}
+			
 			$("#startTradeForm").fadeIn(500);		
 		}
 				
@@ -849,8 +853,7 @@ $(document).ready(function(){
 			  error: function (xhr, ajaxOptions, thrownError) {
 				  alert(xhr.status+"\n"+thrownError);
 			  }	
-			});	
-			
+			});				
 		}
 		
 		this.hideTradeForm= function(){

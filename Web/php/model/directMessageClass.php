@@ -1,6 +1,6 @@
 <?php
 /*
- * swapClass.php
+ * directMessageClass.php
  * @author: Irene Blanco
  * @version: 1.0
  * @content: php class of the object
@@ -8,19 +8,21 @@
  */
 require_once "BDSwap_your_music.php";
 
-class swapClass {
+class directMessageClass {
     private $messageID;
     private $swapID;
 	private $date;
     private $content;
+    private $read;
 
 
     //----------Data base Values---------------------------------------
-    private static $tableName = "direct_messages";
+    private static $tableName = "direct_message";
     private static $colNameMessageID = "messageID";
     private static $colNameSwapID = "swapID";
     private static $colNameDate = "date";
     private static $colNameContent = "content";
+    private static $colNameRead = "read";
     
         
     function __construct() {
@@ -58,6 +60,13 @@ class swapClass {
     public function setContent($content) {
         $this->content = $content;
     }
+     public function getRead() {
+        return $this->read;
+    }
+    
+    public function setRead($read) {
+        $this->read = $read;
+    }
     
     
   
@@ -68,9 +77,9 @@ class swapClass {
 		$data["swapID"] = $this->getSwapID();
 		$data["date"] = $this->getDate();
 		$data["content"] = $this->getContent();
-		
+		$data["read"]= $this->getRead();
 
-	return $data;
+		return $data;
     }
 
 /*
@@ -81,12 +90,12 @@ class swapClass {
 	 * @params: $messageID ,$swapID
 	 * @return: none
 	 */ 
-    public function setAll($messageID ,$swapID, $date, $content) {
-		$this->setRegionID($messageID);
+    public function setAll($messageID ,$swapID, $date, $content, $read) {
+		$this->setMessageID($messageID);
 		$this->setSwapID($swapID);
 		$this->setDate($date);
 		$this->setContent($content);
-
+		$this->setRead($read);
     }
     
     //---Databese management section-----------------------
@@ -104,7 +113,7 @@ class swapClass {
 	$i=0;
 	while ( ($row = $res->fetch_array(MYSQLI_BOTH)) != NULL ) {
 		//We get all the values an add into the array
-		$entity = swapClass::fromResultSet( $row );
+		$entity = directMessageClass::fromResultSet( $row );
 		
 		$entityList[$i]= $entity;
 		$i++;
@@ -123,19 +132,19 @@ class swapClass {
 	 */ 
     private static function fromResultSet( $res ) {
 		//We get all the values form the query
-		$messageID=$res[swapClass::$colNameMessageID];
-		$swapID=$res[swapClass::$colNameSwapID];
-		$date=$res[swapClass::$colNameDate];
-		$content=$res[swapClass::$colNameContent];		
-		
+		$messageID=$res[directMessageClass::$colNameMessageID];
+		$swapID=$res[directMessageClass::$colNameSwapID];
+		$date=$res[directMessageClass::$colNameDate];
+		$content=$res[directMessageClass::$colNameContent];		
+		$read= $res[directMessageClass::$colNameRead];
 
        	//Object construction
-       	$entity = new swapClass();
+       	$entity = new directMessageClass();
 		$entity->setRegionID($messageID);
 		$entity->setSwapID($swapID);
 		$entity->setDate($date);
 		$entity->setContent($content);
-		
+		$entity->setRead($read);
 		
 		return $entity;
     }
@@ -162,7 +171,7 @@ class swapClass {
 	
 	if ( $conn != null ) $conn->close();
 
-	return swapClass::fromResultSetList( $res );
+	return directMessageClass::fromResultSetList( $res );
     }
 
     /*
@@ -175,9 +184,9 @@ class swapClass {
 	 * @return: object with the query results
 	 */ 
     public static function findById( $messageID ) {
-	$cons = "select * from `".swapClass::$tableName."` where ".swapClass::$colNameMessageID." = \"".$messageID."\"";
+	$cons = "select * from `".directMessageClass::$tableName."` where ".directMessageClass::$colNameMessageID." = \"".$messageID."\"";
 
-	return swapClass::findByQuery( $cons );
+	return directMessageClass::findByQuery( $cons );
     }
 
  
@@ -191,8 +200,8 @@ class swapClass {
 	 * @return: objects collection
 	 */ 
     public static function findAll( ) {
-    	$cons = "select * from `".swapClass::$tableName."`";
-	return swapClass::findByQuery( $cons );
+    	$cons = "select * from `".directMessageClass::$tableName."`";
+	return directMessageClass::findByQuery( $cons );
     }
 
 
@@ -206,21 +215,21 @@ class swapClass {
 	 * @return: none
 	 */ 
     public function create() {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	//return $this->toString();
-	//Preparing the sentence
-	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".swapClass::$tableName."(`messageID`,`swapID`, `date`, `content`) values (?,?,?,?)" )) {
-		$stmt->bind_param("iiss",$this->getMessageID(), $this->getSwapID(), $this->getDate(), $this->getContent());
-		//executar consulta
-		$stmt->execute();
-	    }
-	    
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		//return $this->toString();
+		//Preparing the sentence
+		$stmt = $conn->stmt_init();
+		if ($stmt->prepare("insert into ".directMessageClass::$tableName."(`messageID`,`swapID`, `content`, `read`) values (?,?,?,?)" )) {
+			$stmt->bind_param("iisi",$this->getMessageID(), $this->getSwapID(), $this->getContent(), $this->getRead());
+			//executar consulta
+			$stmt->execute();
+			}
+			
 	    if ( $conn != null ) $conn->close();
 	}
 
@@ -243,7 +252,7 @@ class swapClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("DELETE FROM `".swapClass::$tableName."` where ".swapClass::$colNameMessageID." = ?")) {
+		if ($stmt->prepare("DELETE FROM `".directMessageClass::$tableName."` where ".directMessageClass::$colNameMessageID." = ?")) {
 			$stmt->bind_param("i",$this->getMessageID());
 			$stmt->execute();
 		}
@@ -271,8 +280,8 @@ class swapClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("UPDATE `".swapClass::$tableName."` set ".swapClass::$colNameMessageID." = ?,".swapClass::$colNameSwapID." = ?,".swapClass::$colNameDate." = ?,".swapClass::$colNameContent." = ? where ".swapClass::$colNameMessageID." =?") ) {
-			$stmt->bind_param("iiss",$this->getMessageID(), $this->getSwapID(),$this->getDate(),$this->getContent(),$this->getMessageID() );
+		if ($stmt->prepare("UPDATE `".directMessageClass::$tableName."` set ".directMessageClass::$colNameMessageID." = ?,".directMessageClass::$colNameSwapID." = ?,".directMessageClass::$colNameDate." = ?,".directMessageClass::$colNameContent." = ?, ".directMessageClass::$colNameRead."=? where ".directMessageClass::$colNameMessageID." =?") ) {
+			$stmt->bind_param("iisis",$this->getMessageID(), $this->getSwapID(),$this->getDate(),$this->getContent(), $this->getRead(), $this->getMessageID());
 			//executar consulta
 			$stmt->execute();;
 		}
@@ -291,7 +300,7 @@ class swapClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "swapClass[messageID=" . $this->messageID . "][swapID=" . $this->swapID . "][date=" . $this->date . "][content=" . $this->content . "]";
+        $toString = "directMessageClass[messageID=" . $this->messageID . "][swapID=" . $this->swapID . "][date=" . $this->date . "][content=" . $this->content . "]";
 		return $toString;
 
     }
