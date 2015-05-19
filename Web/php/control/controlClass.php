@@ -102,7 +102,7 @@ require_once "toDoClass.php";
 							break;
 					case 68:	echo toDoClass::searchAllItems();
 							break;
-
+			
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

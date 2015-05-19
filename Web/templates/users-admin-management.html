@@ -16,9 +16,12 @@
 			<td>{{user.registerDate}}</td>
 			<td>{{user.unsubscribeDate}}</td>
 			<td>{{adminCtrl.provincesArray[$index].name}}</td>
-			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
-			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteUser($index)"/></td>
-			<td><img src="img/triangle38.png" width="20" ng-click="adminCtrl.warnings($index); adminCtrl.loadUserWarnings()"/></td>
+			<td><a href=""><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
+			<td>
+				<a href=""><img src="img/delete97.png" ng-if="user.unsubscribeDate=='0000-00-00'" width="20" ng-click="adminCtrl.deleteUser($index)"/></a>
+				<img src="img/noDelete.png" ng-if="user.unsubscribeDate!='0000-00-00'" width="20"/>
+			</td>
+			<td><a href=""><img src="img/triangle38.png" width="20" ng-click="adminCtrl.warnings($index); adminCtrl.loadUserWarnings()"/></a></td>
 		</tr>
 	
 	</table>

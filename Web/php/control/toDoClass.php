@@ -655,15 +655,14 @@ require_once "../model/bidsParticipationClass.php";
 				$listUsersSearch = userClass::findAll();
 				
 				foreach ($listItemsSearch as $item){
-					if($item->getAvailable()==1){
-						$itemsArray[]=$item->getAll();
+				
+					$itemsArray[]=$item->getAll();
 						
-						foreach($listUsersSearch as $user){
-							if($user->getUserID()==$item->getUserID()){
-								$usersArray[]=$user->getAll();	
-							}
-						}	
-					}																						
+					foreach ($listUsersSearch as $user){
+						if($user->getUserID()==$item->getUserID()){
+							$usersArray[]=$user->getAll();	
+						}
+					}																												
 				}			
 				
 				$outPutData[1]=$itemsArray;
@@ -794,7 +793,7 @@ require_once "../model/bidsParticipationClass.php";
 			$itemObject= json_decode(stripslashes($JSONData));
 			$item= new itemClass();
 			
-			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
 							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->delete();				
 			echo true;

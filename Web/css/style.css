@@ -154,3 +154,10 @@ header{
 	height:40px;
 	top:0.5%;
 }
+
+
+#paginationDiv{
+	position:absolute;
+	top:95%;
+	left:52%;
+}

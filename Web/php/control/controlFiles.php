@@ -19,6 +19,17 @@
 					}
 					echo json_encode($newFileNames);
 					break;
+					
+		case 2:
+					//This option is to remove files from the server
+					$filesToDeleteArray = json_decode(stripslashes($_REQUEST["JSONData"]));
+					
+					foreach($filesToDeleteArray as $filename){
+						unlink('../../'.$filename);
+					}
+					
+					echo true;
+					break;
 
 		case "50":
 			//This option is to upload users images to the server

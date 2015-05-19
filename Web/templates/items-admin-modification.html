@@ -1,0 +1,86 @@
+		<form name="itemModification" ng-submit="adminCtrl.modifyItem()" novalidate>
+			<div class="container well">
+				<div class="form-horizontal" >
+
+					 <!--<div>{{sessionCtrl.selectedRegion}}
+					 </br>passwordValid:{{passwordValid}} userManagement.$invalid: {{userManagement.$invalid}} email valid:{{emailValid}} userName valid:{{userNameValid}}</div> 
+					-->
+			<div class="row" >
+						<div class="col-xs-12"><h3>Item modification</h3></div>
+					</div>
+
+					<br/>
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup">Title:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" id="userName" ng-model="adminCtrl.item.title"  required/>
+						</div>
+						<label class="col-sm-2 control-label" for="formGroup">Artist:</label>
+						<div class="col-sm-4">
+							<input class="form-control" id="email" type="text" ng-model="adminCtrl.item.artist" required></input>
+						</div>						
+						
+						</br></br></br></br>
+	
+						<label class="col-sm-2 control-label" for="formGroup">Release Year:</label>
+						<div class="col-sm-4">
+							<input class="form-control" type="text" ng-model="adminCtrl.item.releaseYear" name="releaseYear"  required/>
+						</div>	
+						<label class="col-sm-2 control-label" for="formGroup">Item type:</label>
+						<div class="col-sm-4">												
+							<select class="form-control" id="itemType" name="condition"  ng-model="adminCtrl.item.itemType" required>
+								<option ng-repeat="itemType in adminCtrl.itemTypesArray" ng-selected="adminCtrl.item.itemType==itemType" value="{{itemType}}"> {{itemType}}</option>
+							</select>				
+												
+						</div>		
+											
+						</br></br></br></br>
+	
+						<label class="col-sm-2 control-label" for="formGroup">Genre:</label>
+						<div class="col-sm-4">
+							<select class="form-control" name="region"  ng-model="adminCtrl.item.genreID" required>
+								<option ng-repeat="genre in adminCtrl.genresArray" ng-selected="adminCtrl.item.genreID==genre.genreID" value="{{genre.genreID}}"> {{genre.name}}</option>
+							</select>
+
+						</div>	
+						<label class="col-sm-2 control-label" for="formGroup">Condition:</label>
+						<div class="col-sm-4">						
+							<select class="form-control" id="condition" name="condition"  ng-model="adminCtrl.item.conditionID" required>
+								<option ng-repeat="condition in adminCtrl.conditionsArray" ng-selected="adminCtrl.item.conditionID==condition.conditionID" value="{{condition.conditionID}}"> {{condition.name}}</option>
+							</select>				
+										
+						</div>							
+						</br></br></br></br>
+						
+						<label class="col-sm-2 control-label" for="formGroup">Upload Date:</label>
+						<div class="col-sm-4">							
+							<input type="text" calendar class="form-control" id="uploadDate" ng-model="adminCtrl.item.uploadDate" required>								
+									
+						</div>	
+						
+					</div>
+					<div class="form-group">						
+						<label class="col-sm-2 control-label" for="formGroup">Image: <img src="{{adminCtrl.item.image}}" width="50"/></label>
+						<label class="col-sm-6 control-label" for="formGroup" ><input class="form-control" type="file" file="image" accept="image/*" id="imageMod" /></label>						
+						
+							
+					</div>
+					<br />
+					<br />
+					<div class="form-group">
+						<label class="col-sm-2 control-label" for="formGroup"></label>
+						<div class="col-sm-4">
+							<button ng-disabled="itemModification.$invalid" class="btn btn-success" >
+								Submit
+							</button>
+						</div>
+						<div class="form-group col-sm-6">
+							<label>
+								<input class="btn btn-default btn-primary btn-block" type="button"  value="Back" ng-click="adminCtrl.loadItems(); usersFlag=0"> 
+								
+							</label>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
