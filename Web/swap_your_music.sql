@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-05-2015 a las 12:25:26
+-- Tiempo de generación: 19-05-2015 a las 14:23:00
 -- Versión del servidor: 5.6.24
 -- Versión de PHP: 5.6.8
 
@@ -40,11 +40,21 @@ CREATE TABLE IF NOT EXISTS `applications` (
 
 CREATE TABLE IF NOT EXISTS `bids` (
   `bidID` int(11) NOT NULL,
+  `itemID` int(11) NOT NULL,
   `startPrice` decimal(4,2) NOT NULL,
+  `actualPrice` decimal(4,2) NOT NULL,
   `duration` int(11) NOT NULL,
   `startDate` date NOT NULL,
-  `finishDate` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+  `finishDate` date DEFAULT NULL
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `bids`
+--
+
+INSERT INTO `bids` (`bidID`, `itemID`, `startPrice`, `actualPrice`, `duration`, `startDate`, `finishDate`) VALUES
+(3, 21, '0.30', '0.70', 4, '2015-05-12', NULL),
+(6, 19, '0.50', '0.50', 6, '2015-05-12', '2015-05-13');
 
 -- --------------------------------------------------------
 
@@ -58,6 +68,14 @@ CREATE TABLE IF NOT EXISTS `bids_participation` (
   `offeredMoney` decimal(4,2) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
+--
+-- Volcado de datos para la tabla `bids_participation`
+--
+
+INSERT INTO `bids_participation` (`userID`, `bidID`, `offeredMoney`) VALUES
+(6, 3, '0.60'),
+(8, 3, '0.70');
+
 -- --------------------------------------------------------
 
 --
@@ -67,16 +85,16 @@ CREATE TABLE IF NOT EXISTS `bids_participation` (
 CREATE TABLE IF NOT EXISTS `conditions` (
   `conditionID` int(11) NOT NULL,
   `name` varchar(200) COLLATE utf8_spanish2_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `conditions`
 --
 
 INSERT INTO `conditions` (`conditionID`, `name`) VALUES
-(0, 'New'),
-(1, 'Used'),
-(2, 'Rarely used');
+(1, 'New'),
+(2, 'Used'),
+(3, 'Rarely used');
 
 -- --------------------------------------------------------
 
@@ -88,7 +106,8 @@ CREATE TABLE IF NOT EXISTS `direct_message` (
   `messageID` int(11) NOT NULL,
   `swapID` int(11) NOT NULL,
   `date` date NOT NULL,
-  `content` text COLLATE utf8_spanish2_ci NOT NULL
+  `content` text COLLATE utf8_spanish2_ci NOT NULL,
+  `read` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -163,7 +182,7 @@ INSERT INTO `friends` (`userID`, `friendID`) VALUES
 CREATE TABLE IF NOT EXISTS `genres` (
   `genreID` int(11) NOT NULL,
   `name` varchar(200) COLLATE utf8_spanish2_ci NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `genres`
@@ -191,7 +210,8 @@ INSERT INTO `genres` (`genreID`, `name`) VALUES
 
 CREATE TABLE IF NOT EXISTS `items` (
   `itemID` int(11) NOT NULL,
-  `userID` int(11) NOT NULL,
+  `userID` int(11) DEFAULT NULL,
+  `bidID` int(11) DEFAULT NULL,
   `itemType` varchar(200) COLLATE utf8_spanish2_ci NOT NULL,
   `title` varchar(200) COLLATE utf8_spanish2_ci NOT NULL,
   `artist` varchar(200) COLLATE utf8_spanish2_ci NOT NULL,
@@ -201,27 +221,26 @@ CREATE TABLE IF NOT EXISTS `items` (
   `image` varchar(255) COLLATE utf8_spanish2_ci NOT NULL,
   `available` int(11) NOT NULL,
   `uploadDate` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-) ENGINE=InnoDB AUTO_INCREMENT=103 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=105 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `items`
 --
 
-INSERT INTO `items` (`itemID`, `userID`, `itemType`, `title`, `artist`, `releaseYear`, `genreID`, `conditionID`, `image`, `available`, `uploadDate`) VALUES
-(19, 5, 'Cassette', 'Veneno en la piel', 'Radio Futura', 1990, 1, 2, 'img/items/item0.jpg', 1, '2015-05-11 03:20:31'),
-(20, 2, 'Cassette', 'No es pecado', 'Alaska y Dinarama', 1986, 1, 1, 'img/items/item1.jpg', 1, '2015-05-01 07:31:26'),
-(21, 5, 'Cassette', 'Lo mejor de…', 'Leño', 1990, 1, 2, 'img/items/item2.jpg', 1, '2015-05-10 10:13:44'),
-(22, 1, 'Vinyl', 'The very best of', 'Enya', 2009, 9, 1, 'img/items/item3.jpg', 1, '2015-05-08 11:39:18'),
-(23, 2, 'Vinyl', 'Rumours', 'Fleetwood Mac', 1977, 1, 1, 'img/items/item4.jpg', 1, '2015-05-07 09:31:49'),
-(24, 4, 'Vinyl', 'Chariots of fire', 'Vangelis', 1981, 11, 1, 'img/items/item5.jpg', 1, '2015-05-03 08:42:26'),
-(25, 1, 'CD', 'Kvelertak', 'Kvelertak', 2010, 7, 2, 'img/items/item6.jpg', 1, '2015-05-09 06:43:19'),
-(27, 10, 'CD', 'De vuelta y vuelta', 'Jarabe de Palo', 2001, 1, 1, 'img/items/item8.jpg', 1, '2015-05-10 04:38:13'),
-(31, 9, 'CD', 'Andy Warhol', 'Andy', 2051, 3, 2, 'img/items/AndyWarhol9.jpg', 1, '2015-05-06 19:33:52'),
-(62, 9, 'Cassete', 'Furia', 'AC/DC', 1998, 0, 0, 'img/items/Furia9.jpg', 1, '2015-05-07 08:40:32'),
-(63, 9, 'Cassete', 'Juan', 'Juan', 2015, 4, 2, 'img/items/Juan9.jpg', 1, '2015-05-09 22:37:22'),
-(100, 7, 'CD', 'qweqw', 'qweqwe', 2015, 2, 1, 'img/items/item10.jpg', 1, '2015-05-11 12:10:22'),
-(101, 9, 'Cassete', 'owerwo', 'iuqwh', 2015, 0, 1, 'img/items/owerwo9.jpg', 1, '2015-05-11 12:21:26'),
-(102, 9, 'Cassete', 'owerwo', 'iuqwh', 2015, 0, 1, 'img/items/owerwo9.jpg', 1, '2015-05-11 12:22:15');
+INSERT INTO `items` (`itemID`, `userID`, `bidID`, `itemType`, `title`, `artist`, `releaseYear`, `genreID`, `conditionID`, `image`, `available`, `uploadDate`) VALUES
+(19, 5, 6, 'Cassette', 'Veneno en la piel', 'Radio Futura', 1990, 1, 2, 'img/items/item0.jpg', 1, '2015-05-13 09:59:06'),
+(20, 6, NULL, 'Cassette', 'No es pecado', 'Alaska y Dinarama', 1986, 1, 1, 'img/items/item1.jpg', 1, '2015-05-19 12:39:10'),
+(21, 5, 3, 'Cassette', 'Lo mejor de…', 'Leño', 1990, 1, 2, 'img/items/item2.jpg', 1, '2015-05-13 09:57:40'),
+(22, 8, NULL, 'Vinyl', 'The very best of', 'Enya', 2009, 9, 1, 'img/items/item3.jpg', 1, '2015-05-19 12:39:18'),
+(23, 9, NULL, 'Vinyl', 'Rumours', 'Fleetwood Mac', 1977, 1, 1, 'img/items/item4.jpg', 1, '2015-05-19 12:39:22'),
+(24, 7, NULL, 'Vinyl', 'Chariots of fire', 'Vangelis', 1981, 11, 1, 'img/items/item5.jpg', 1, '2015-05-19 12:39:56'),
+(25, 10, NULL, 'CD', 'Kvelertak', 'Kvelertak', 2010, 7, 2, 'img/items/item6.jpg', 1, '2015-05-19 12:39:26'),
+(27, 10, 0, 'CD', 'De vuelta y vuelta', 'Jarabe de Palo', 2001, 1, 1, 'img/items/item8.jpg', 1, '2015-05-11 11:37:54'),
+(31, 11, NULL, 'CD', 'Andy Warhol', 'Andy', 2051, 3, 2, 'img/items/AndyWarhol9.jpg', 1, '2015-05-12 08:57:05'),
+(62, 9, NULL, 'Cassete', 'Furia', 'AC/DC', 1998, 0, 0, 'img/items/Furia9.jpg', 1, '2015-05-07 08:40:32'),
+(63, 9, NULL, 'Cassete', 'Juan', 'Juan', 2015, 4, 2, 'img/items/Juan9.jpg', 1, '2015-05-09 22:37:22'),
+(103, 11, NULL, 'CD', 'Endangered Species', 'Big Pun', 2015, 2, 2, 'img/items/EndangeredSpecies9.jpg', 1, '2015-05-12 08:58:31'),
+(104, 11, NULL, 'Vinyl', 'Júñçaïn', 'Juan', 2015, 3, 0, 'img/items/juncain11.jpg', 1, '2015-05-12 13:22:16');
 
 -- --------------------------------------------------------
 
@@ -358,7 +377,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `unsubscribeDate` date NOT NULL,
   `image` varchar(255) COLLATE utf8_spanish2_ci NOT NULL,
   `provinceID` int(11) NOT NULL
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
 
 --
 -- Volcado de datos para la tabla `users`
@@ -366,15 +385,17 @@ CREATE TABLE IF NOT EXISTS `users` (
 
 INSERT INTO `users` (`userID`, `userType`, `userName`, `password`, `email`, `registerDate`, `unsubscribeDate`, `image`, `provinceID`) VALUES
 (1, 0, 'irene', 'a11900e7a864e78aa0e5982debdf3078', 'ireneblancofabregat@gmail.com', '2015-05-04', '0000-00-00', 'img/users/irene.jpg', 7),
-(2, 0, 'juan', '640f03b862944def762b9c7153124388', 'juanmf1894@gmail.com', '2015-05-04', '0000-00-00', 'img/users/juan.png', 7),
+(2, 0, 'juan', '640f03b862944def762b9c7153124388', 'juanmf1894@gmail.com', '2015-05-04', '0000-00-00', 'img/users/juan.jpg', 7),
 (4, 0, 'admin', '62f04a011fbb80030bb0a13701c20b41', 'admin@gmail.com', '2015-05-04', '0000-00-00', 'img/users/admin.jpg', 27),
-(5, 1, 'user1', '24c9e15e52afc47c225b757e7bee1f9d', 'user1@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user1.jpg', 7),
-(6, 1, 'user2', 'd079f41b77a39477b1547e6259d70ebd', 'user2@gmail.com', '2015-05-04', '2015-05-08', 'img/users/user2.jpg', 18),
-(7, 1, 'user3', '92877af70a45fd6a2ed7fe81e1236b78', 'user3@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user3.jpg', 9),
-(8, 1, 'user4', '177d0f03e6312d7e5e63da3571cc0672', 'user4@gmail.com', '2015-05-04', '2015-05-08', 'img/users/user4.jpg', 5),
-(9, 1, 'user5', '0a791842f52a0acfbb3a783378c066b8', 'user5@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user5.jpg', 23),
-(10, 1, 'user6', 'affec3b64cf90492377a8114c86fc093', 'user6@gmail.com', '2015-05-04', '2013-05-01', 'img/users/user6.jpg', 10),
-(11, 1, 'user7', '3e0469fb134991f8f75a2760e409c6ed', 'user7@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user7.jpg', 12);
+(5, 1, 'Roberto', 'a3e05197fe322842fd86207db9e0040d', 'user1@gmail.com', '2015-05-04', '0000-00-00', 'img/users/Roberto.png', 7),
+(6, 1, 'Juana', '6ecf8922b47157c32daa0c36430d00e6', 'user2@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user2.png', 35),
+(7, 1, 'Paco', 'b0ccb9315cedd35de6e52571fd99a86f', 'user3@gmail.com', '2015-05-04', '2015-05-07', 'img/users/user3.png', 9),
+(8, 1, 'Sara', '69a5b3d9c31e8554e9f588d884371faa', 'user4@gmail.com', '2015-05-04', '2015-05-08', 'img/users/Sara.png', 17),
+(9, 1, 'Marcos', 'c5e3539121c4944f2bbe097b425ee774', 'user5@gmail.com', '2015-05-04', '0000-00-00', 'img/users/user5.png', 28),
+(10, 1, 'Carla', '8495ea21c436e051a2a7878bfb1b7992', 'user6@gmail.com', '2015-05-04', '2015-05-08', 'img/users/Carla.png', 28),
+(11, 1, 'Pepa', '3e0469fb134991f8f75a2760e409c6ed', 'user7@gmail.com', '2015-05-04', '0000-00-00', 'img/users/Pepa.png', 12),
+(14, 1, 'Jordi', '14e1b600b1fd579f47433b88e8d85291', 'jordipm@gmail.com', '2015-05-06', '0000-00-00', 'img/users/jordi.png', 8),
+(15, 1, 'Lydia', 'e10adc3949ba59abbe56e057f20f883e', 'lydia@gmail.com', '2015-05-11', '0000-00-00', 'img/users/Lydia.png', 49);
 
 -- --------------------------------------------------------
 
@@ -384,8 +405,19 @@ INSERT INTO `users` (`userID`, `userType`, `userName`, `password`, `email`, `reg
 
 CREATE TABLE IF NOT EXISTS `warnings` (
   `warningID` int(11) NOT NULL,
-  `description` text COLLATE utf8_spanish2_ci NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+  `description` text COLLATE utf8_spanish2_ci NOT NULL,
+  `active` int(11) NOT NULL DEFAULT '1'
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `warnings`
+--
+
+INSERT INTO `warnings` (`warningID`, `description`, `active`) VALUES
+(1, 'Remember to cancel all exchanges that don''t interest you anymore!', 1),
+(2, 'You tried to upload an item that violates the term conditions.', 1),
+(3, 'Hey!  You have too much negative evaluations. If it lasts your account will be deleted soon.', 1),
+(7, 'Your account will be deleted in 3 days.', 1);
 
 -- --------------------------------------------------------
 
@@ -395,8 +427,20 @@ CREATE TABLE IF NOT EXISTS `warnings` (
 
 CREATE TABLE IF NOT EXISTS `warnings_users` (
   `userID` int(11) NOT NULL,
-  `warningID` int(11) NOT NULL
+  `warningID` int(11) NOT NULL,
+  `read` int(11) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_spanish2_ci;
+
+--
+-- Volcado de datos para la tabla `warnings_users`
+--
+
+INSERT INTO `warnings_users` (`userID`, `warningID`, `read`) VALUES
+(5, 2, 0),
+(6, 3, 0),
+(8, 2, 0),
+(14, 3, 0),
+(15, 3, 0);
 
 --
 -- Índices para tablas volcadas
@@ -412,13 +456,13 @@ ALTER TABLE `applications`
 -- Indices de la tabla `bids`
 --
 ALTER TABLE `bids`
-  ADD PRIMARY KEY (`bidID`);
+  ADD PRIMARY KEY (`bidID`), ADD KEY `itemID` (`itemID`);
 
 --
 -- Indices de la tabla `bids_participation`
 --
 ALTER TABLE `bids_participation`
-  ADD PRIMARY KEY (`userID`,`bidID`), ADD KEY `userID` (`userID`), ADD KEY `bidID` (`bidID`);
+  ADD PRIMARY KEY (`userID`,`bidID`), ADD KEY `userID` (`userID`), ADD KEY `bidID` (`bidID`), ADD KEY `bidID_2` (`bidID`), ADD KEY `userID_2` (`userID`);
 
 --
 -- Indices de la tabla `conditions`
@@ -466,7 +510,7 @@ ALTER TABLE `genres`
 -- Indices de la tabla `items`
 --
 ALTER TABLE `items`
-  ADD PRIMARY KEY (`itemID`), ADD KEY `userID` (`userID`);
+  ADD PRIMARY KEY (`itemID`), ADD KEY `userID` (`userID`), ADD KEY `userID_2` (`userID`);
 
 --
 -- Indices de la tabla `provinces`
@@ -512,12 +556,12 @@ ALTER TABLE `warnings_users`
 -- AUTO_INCREMENT de la tabla `bids`
 --
 ALTER TABLE `bids`
-  MODIFY `bidID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `bidID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
 --
 -- AUTO_INCREMENT de la tabla `conditions`
 --
 ALTER TABLE `conditions`
-  MODIFY `conditionID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=3;
+  MODIFY `conditionID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=4;
 --
 -- AUTO_INCREMENT de la tabla `direct_message`
 --
@@ -537,12 +581,12 @@ ALTER TABLE `events`
 -- AUTO_INCREMENT de la tabla `genres`
 --
 ALTER TABLE `genres`
-  MODIFY `genreID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+  MODIFY `genreID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=13;
 --
 -- AUTO_INCREMENT de la tabla `items`
 --
 ALTER TABLE `items`
-  MODIFY `itemID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=103;
+  MODIFY `itemID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=105;
 --
 -- AUTO_INCREMENT de la tabla `provinces`
 --
@@ -562,12 +606,23 @@ ALTER TABLE `swaps`
 -- AUTO_INCREMENT de la tabla `users`
 --
 ALTER TABLE `users`
-  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=12;
+  MODIFY `userID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=16;
 --
 -- AUTO_INCREMENT de la tabla `warnings`
 --
 ALTER TABLE `warnings`
-  MODIFY `warningID` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `warningID` int(11) NOT NULL AUTO_INCREMENT,AUTO_INCREMENT=8;
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `bids_participation`
+--
+ALTER TABLE `bids_participation`
+ADD CONSTRAINT `bids_participation_ibfk_1` FOREIGN KEY (`userID`) REFERENCES `users` (`userID`),
+ADD CONSTRAINT `bids_participation_ibfk_2` FOREIGN KEY (`bidID`) REFERENCES `bids` (`bidID`);
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

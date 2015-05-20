@@ -1,31 +1,9 @@
-//JQuery code
-$(document).ready(function(){
-	$("#userItemsMod").hide();
-	$("#friendItemsMessage").hide();
-	$("#startTradeForm").hide();
-	
-    $(".dropdown").hover(            
-         function() {
-             $('.dropdown-menu', this).stop( true, true ).fadeIn("fast");
-             $(this).toggleClass('open');
-             $('b', this).toggleClass("caret caret-up");                
-         },
-         function() {
-             $('.dropdown-menu', this).stop( true, true ).fadeOut("fast");
-             $(this).toggleClass('open');
-             $('b', this).toggleClass("caret caret-up");                
-    });
-    
-    
-});
-
 //Angular Code
 (function(){
 	var swapYourMusicApp = angular.module("swapYourMusicApp", []);
 	
-	swapYourMusicApp.controller("sessionController", function($scope){
+	swapYourMusicApp.controller("sessionController", function(){
 		this.user= new userObj();
-		$scope.userPage=2;
 /*
  *@name: checkSession
  *@author: Juan Antonio Muñoz
@@ -64,37 +42,18 @@ $(document).ready(function(){
 		}
 	});
 	
-	swapYourMusicApp.controller("swapYourMusicCtrl", function($scope){
+	swapYourMusicApp.controller("swapYourMusicCtrl", function(){
 		this.user= new userObj();
 		this.item= new itemObj();
 		this.itemToAdd= new itemObj();
 		this.genre= new genreObj();
 		this.conditions= new conditionObj();
-		this.warningsUser= new warningUsersObj();
-		this.warnings= new warningObj();
-		this.friend= new friendsObj();
-		$scope.imagesArray= new Array();
-		$scope.warningRead=0;
-		$scope.addFriendIcon=1;
-		this.demandedItem= new itemObj();
-		this.offeredItem= new itemObj();
-		this.swapItem= new swapObj();
 		
 		//Data from DDBB
 		this.itemsArray= new Array(); 
-		this.itemsArrayHome= new Array();
 		this.genresArray= new Array();
 		this.conditionsArray= new Array();
-		this.usersArray= new Array();
 		this.itemTypesArray= new Array("Vinyl", "Cassete", "CD");
-		this.friendsArray= new Array();
-		this.userFriendsArray= new Array();
-		this.friendItemsArray= new Array();
-		this.friendProfile= new userObj();
-		this.arrayToSeeProfile= new Array();
-		this.provincesArray= new Array();
-		this.warningsArray= new Array();
-		this.warningsToShowArray= new Array();
 		
 				
 		var user = JSON.parse(sessionStorage.getItem("userConnected"));
@@ -105,7 +64,37 @@ $(document).ready(function(){
 		}		
 		
 		this.accessMainData = function (){ 
-			this.user= angular.copy(this.user);	
+			this.user= angular.copy(this.user);
+			//calls to AJAX in order to search all items
+			var outPutdata= new Array();
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=2&userID='+this.user.getUserID(), 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					if(outPutdata[1][i].available==1){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+										outPutdata[1][i].image,outPutdata[1][i].available);	
+						this.itemsArray.push(item);	
+						this.item.setUserID(outPutdata[1][i].userID);				
+					}									
+				}				
+			}
+			else showErrors(outPutdata[1]);
 					
 			//calls to AJAX in order to search all genres
 			var outPutdata= new Array(); 
@@ -158,779 +147,77 @@ $(document).ready(function(){
 				}			
 			}
 			else showErrors(outPutdata[1]);
-			
-			//calls to AJAX in order to search all items to put in home
-			var outPutdata= new Array(); 
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=8&limitNumber='+10,   // limitNumber=10 is the number of items that the admin wants to appear in the home
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if (outPutdata[0]){		
-				for (var i = 0; i < outPutdata[1].length; i++){
-					if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
-						var item = new itemObj();
-						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
-											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
-						this.itemsArrayHome.push(item);
-					}										
-				}	
-				
-				for (var i = 0; i < outPutdata[2].length; i++){
-					if(outPutdata[2][i].unsubscribeDate=="0000-00-00" && (outPutdata[2][i].userID!=this.user.getUserID())){
-						var user= new userObj();
-						user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
-									   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image,
-									   outPutdata[2][i].provinceID);
-						this.usersArray.push(user);
-					}
-				}	
-			}
-			else showErrors(outPutdata[1]);
 		}
 		
-		this.loadUserItems= function(){
-			//calls to AJAX in order to search all items
-			var outPutdata= new Array();
-			this.itemsArray= new Array();
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=2&userID='+this.user.getUserID(), 
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if (outPutdata[0]){		
-				for (var i = 0; i < outPutdata[1].length; i++){
-					if(outPutdata[1][i].available==1){
-						$scope.userItems=0;
-						var item = new itemObj();
-						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
-										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-										outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
-						this.itemsArray.push(item);	
-						this.item.setUserID(outPutdata[1][i].userID);
-						$scope.imagesArray.push(outPutdata[1][i].image);				
-					}									
-				}			
-			}else{
-				$("#userItemsMeesage").html("Still it does not have any item added");
-				$("#userItemsTable").hide();
-			}
-		}
-		
-		this.addItem= function(){				
+		this.addItem= function(){			
 			//Uploading files
-			var itemImage = imagesItemManagement(this.item.userID);
-			var now = new Date();
-
-			var month = now.getMonth()+1;
-			var day = now.getDate();
-				if(day<10) day= "0"+day;
-				if(month<10) month= "0"+month;					
-			var year = now.getFullYear();
-			var hours= now.getHours();
-			var minutes= now.getMinutes();				
-			var seconds= now.getSeconds();
-				if(hours<10) hours= "0"+hours;
-				if(minutes<10) minutes= "0"+minutes;
-				if(seconds<10) seconds= "0"+seconds;
-			var currentDateHour= year+"-"+month+"-"+day+" "+hours+":"+minutes+":"+seconds;
-	
+			var itemImageArray = imagesItemManagement(this.item.userID);
+			
+			this.item = angular.copy(this.item);
 			this.item.setItemID(0);
 			this.item.setAvailable(1);
-			this.item.setImage(itemImage[0]);
-			this.item.setUploadDate(currentDateHour);
-			this.item.setBidID(null);
+			this.item.setImage(itemImageArray[0]);
+			var idItem;
 			
-			var dateToGetYear = new Date();
-			var year = dateToGetYear.getFullYear();
-				
-			if(this.item.getReleaseYear()>year){
-				alert("You must introduce a valid release year");
-			}else{
-				this.item = angular.copy(this.item);
-				var idItem;
-				
-				$.ajax({
-					  url: 'php/control/control.php',
-					  type: 'POST',
-					  async: false,
-					  data: 'action=5&JSONData='+JSON.stringify(this.item),
-					  dataType: "json",
-					  success: function (response) { 
-						  idItem = response;
-						  alert("Item inserted correctly");
-					  },
-					  error: function (xhr, ajaxOptions, thrownError) {
-							alert(xhr.status+"\n"+thrownError);
-					  }	
-				});	
-				
-				if(idItem!=null){
-					$scope.userPage=2;
-					this.item= new itemObj();
-					this.loadUserItems();	
-				} 
-			}			
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=5&JSONData='+JSON.stringify(this.item),
+				  dataType: "json",
+				  success: function (response) { 
+					  idItem = response;
+					  alert("Item inserted correctly");
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }	
+			});			
 		}
 		
-		this.deleteItem= function(itemIDToDelete){
+		this.deleteItem= function(){
 			if(confirm("Are you sure you want delete this item?")){	
-				for (var i = 0; i <this.itemsArray.length; i++){				
-					if(this.itemsArray[i].getItemID()==itemIDToDelete){					
-						var item= new itemObj();						
-						item.construct(this.itemsArray[i].itemID, this.itemsArray[i].userID, this.itemsArray[i].bidID, this.itemsArray[i].itemType,
-										this.itemsArray[i].title,this.itemsArray[i].artist,this.itemsArray[i].releaseYear,
-										this.itemsArray[i].genreID,this.itemsArray[i].conditionID,this.itemsArray[i].image,
-										this.itemsArray[i].available, this.itemsArray[i].uploadDate);
-						item.setAvailable(0);
+				
+				for (var i = 0; i <this.items.length; i++){
+					if($("#delete"+i)){
+						
 					}
 				}
 							
-				item = angular.copy(item);
-				var idItem;
+				this.item = angular.copy(this.item);
+				this.item.setAvailable(0);
+				
 				$.ajax({
 				  url: 'php/control/control.php',
 				  type: 'POST',
 				  async: false,
-				  data: 'action=6&JSONData='+JSON.stringify(item),
+				  data: 'action=6&JSONData='+JSON.stringify(this.item),
 				  dataType: "json",
 				  success: function (response) { 
 					  idItem = response;
-					  alert("Item deleted correctly");					  
+					  alert("Item deleted correctly");
 				  },
 				  error: function (xhr, ajaxOptions, thrownError){
 						alert(xhr.status+"\n"+thrownError);
 				  }	
 				});
-				
-				if(idItem!=null){
-					this.loadUserItems();
-				}				
 			}
 		}
-		
-		this.searchItems= function(){							
-			if((this.item.getItemType()!=null && this.item.getItemType()!="") || (this.item.getGenreID()!=null && this.item.getGenreID()!="") || (this.item.getArtist()!=null && this.item.getArtist()!="")){
-				this.item= angular.copy(this.item);	
-				this.itemsArrayHome= new Array();		
-				var outPutdata= new Array();			
-				
-				var itemType= ((typeof this.item.getItemType() == "undefined") ? '' : this.item.getItemType());
-				var genreID=((typeof this.item.getGenreID() == "undefined") ? '' : this.item.getGenreID());
-				var artist= ((typeof this.item.getArtist() == "undefined") ? '' : this.item.getArtist());		
-				
-				$.ajax({
-					url: 'php/control/control.php',  
-					type: 'POST',  
-					async: false,   
-					data: 'action=9&itemType='+itemType+'&genreID='+genreID+'&artist='+artist, 
-					dataType: "json", 
-					success: function (response) { 
-						outPutdata = response;
-					},
-					error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-					}	
-				});
-				
-				if (outPutdata[0]){	
-					$("#searchMessage").hide();	
-					for (var i = 0; i < outPutdata[1].length; i++){
-						if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
-							var item = new itemObj();
-							item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
-											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-											outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
-							this.itemsArrayHome.push(item);					
-						}							
-					}				
-				}else{
-					$("#searchMessage").html("No items have been found into the databse");
-					$("#searchMessage").fadeIn(500);	
-				}					
-			}else this.loadHomeItems();				
-		}
-		
-		this.loadHomeItems= function(){
-			var outPutdata= new Array(); 
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=8&limitNumber='+10,   // limitNumber=10 is the number of items that the admin wants to appear in the home
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
 			
-			if (outPutdata[0]){		
-				for (var i = 0; i < outPutdata[1].length; i++){
-					if(outPutdata[1][i].available==1 && (outPutdata[1][i].userID!=this.user.getUserID())){
-						var item = new itemObj();
-						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
-											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
-						this.itemsArrayHome.push(item);
-					}										
-				}
-			}
-		}	
-		
-		
-		this.createModItemForm= function(item){
-			this.item= new itemObj();
-			this.item.construct(item.itemID, item.userID, item.bidID, item.itemType, item.title, item.artist, item.releaseYear,
-								item.genreID, item.conditionID,item.image, item.userID,item.available);
-			$("#userItemsManag").hide();			
-			$("#userItemsMod").fadeIn(1000);
-		}
-		
-		this.modifyItem= function(){			
-			if(confirm("Are you sure you want modify this item/s?")){
-				
-				var imageItem = $("#imageMod")[0].files[0];
-				
-				if(imageItem!= undefined){
-					var imagesNames = filesManagementToModItems(this.item);
-					//New files modification				
-					this.item.setImage(imagesNames[0]);
-				}				
-				
-				var dateToGetYear = new Date();
-				var year = dateToGetYear.getFullYear();
-				
-				if(this.item.getReleaseYear()>year){
-					alert("You must introduce a valid release year");
-				}																	
-							
-				this.item.setAvailable(1);				
-				
-				this.item = angular.copy(this.item);
-				var itemsToModArray= new Array();
-				itemsToModArray.push(this.item);
-				var success;
-				$.ajax({
-					url: 'php/control/control.php',
-					type: 'POST',
-					async: false,
-					data: 'action=7&JSONItemToMod='+JSON.stringify(itemsToModArray),
-					dataType: "json",
-					success: function (response) { 
-						  success=response;
-					},
-					error: function (xhr, ajaxOptions, thrownError) {
-						alert(xhr.status+"\n"+thrownError);
-					}	
-				});
-				
-				if(success){
-					alert("Item modified correctly.");
-					$("#userItemsManag").fadeIn(1000);			
-					$("#userItemsMod").hide();
-				}			
-			}
-		}
-		
-		this.hideShowWindows= function(){
-			$("#userItemsManag").fadeIn(1000);			
-			$("#userItemsMod").hide();
-		}
-		
-		this.deleteAccount= function(){
-			var passToConfirm= $("#passwordToDelete").val();
-			
-			if(window.md5(passToConfirm)==this.user.password){	
-				for (var i = 0; i < this.itemsArray.length; i++){  
-					this.itemsArray[i].setAvailable(0);						
-				}
-				//call in ajax in order to put available=0 for this user items
-				$.ajax({
-					  url: 'php/control/control.php',
-					  type: 'POST',
-					  async: false,
-					  data: 'action=7&JSONItemToMod='+JSON.stringify(this.itemsArray),
-					  dataType: "json",
-					  success: function (response){ 
-						  success = response;
-						  alert("Account deleted successful");
-					  },
-					  error: function (xhr, ajaxOptions, thrownError) {
-							alert(xhr.status+"\n"+thrownError);
-					  }	
-				});
-							
-				$("#message").hide();
-				if(confirm("Are you sure you want to delete your account?")){
-					var now = new Date();
-
-					var month = now.getMonth()+1;
-					var day = now.getDate();
-						if(day<10) day= "0"+day;
-						if(month<10) month= "0"+month;					
-					var year = now.getFullYear();
-					var currentDate= year+"-"+month+"-"+day;
-					
-					this.user.setUnsubscribeDate(currentDate);
-					
-					var success;
-					$.ajax({
-					  url: 'php/control/control.php',
-					  type: 'POST',
-					  async: false,
-					  data: 'action=57&JSONData='+JSON.stringify(this.user),
-					  dataType: "json",
-					  success: function (response){ 
-						  success = response;
-						  alert("Account deleted successful");
-					  },
-					  error: function (xhr, ajaxOptions, thrownError) {
-							alert(xhr.status+"\n"+thrownError);
-					  }	
-					});
-					
-					if(success!=null){
-						sessionStorage.removeItem("userConnected");			
-						window.open("index.html","_self");
-					}
-				}
-			}else{
-				var pContent="The passwords do not match";
-				$("#message").html(pContent);				
-			}
-		}
-		
-		this.loadUserFriends= function(){
-			var outPutdata= new Array();
-			this.friendsArray= new Array();
-			this.userFriendsArray= new Array();
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=13&userID='+this.user.getUserID(), 
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if(outPutdata[0]){
-				for (var i = 0; i < outPutdata[1].length; i++){							
-					this.friend= new friendsObj();
-					this.friend.construct(outPutdata[1][i].userID, outPutdata[1][i].friendID);
-					this.userFriendsArray.push(this.friend);											
-				}
-				
-				for (var i = 0; i < outPutdata[2].length; i++){							
-					var user= new userObj();
-					user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
-								   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image, 
-								   outPutdata[2][i].provinceID);
-					this.friendsArray.push(user);											
-				}								
-			}else $("#friendsErrorMessage").html("Still don't have any added friends");
-			
-			var outPutdata= new Array();
-			this.provincesArray= new Array();
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=14', 
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if(outPutdata[0]){
-				for (var i = 0; i < outPutdata[1].length; i++){							
-					var province= new provinceObj();
-					province.construct(outPutdata[1][i].provinceID, outPutdata[1][i].name, outPutdata[1][i].regionID);
-					this.provincesArray.push(province);													
-				}								
-			}else showErrors(outPutdata[1]);	
-		}
-		
-		this.deleteFriend= function(friendToDelete){
-			if(confirm("Are you sure you want to delete this friend?")){
-				var friendToDel= new friendsObj();
-				for (var i = 0; i < this.userFriendsArray.length; i++){		
-					if(this.userFriendsArray[i].getFriendID() == this.friendsArray[friendToDelete].userID){
-						friendToDel.construct(this.userFriendsArray[i].getUserID(), this.userFriendsArray[i].getFriendID());
-					}					
-				}
-				friendToDel = angular.copy(friendToDel);
-				var deleted;
-				$.ajax({
-					url: 'php/control/control.php',  
-					type: 'POST',  
-					async: false,   
-					data: 'action=15&friendToDelete='+JSON.stringify(friendToDel),
-					dataType: "json", 
-					success: function (response) { 
-						deleted = response;
-					},
-					error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-					}	
-				});
-				if(deleted){					 
-					 $scope.userProfile=2;
-					 this.loadUserFriends();
-					 $("#friendsErrorSuccessMessage").html("Friend deleted correctly");
-				}
-			}			
-		}	
-		
-		this.showFriendList= function(){
-			$("#friendsListForm").fadeIn(500);
-			$("#friendProfileForm").hide();
-		}
-		
-		this.loadUserProfile= function(friendToVisit, action){			
-			this.friendProfile= new userObj();			
-			this.arrayToSeeProfile= new Array();
-			$scope.addFriendIcon=1;
-			
-			if(action==1){
-				this.arrayToSeeProfile=this.usersArray;
-			}else this.arrayToSeeProfile=this.friendsArray;
-			
-			for (var i = 0; i < this.arrayToSeeProfile.length; i++){
-				if(this.arrayToSeeProfile[i].getUserID()==friendToVisit){		
-					this.friendProfile.construct(this.arrayToSeeProfile[i].getUserID(), this.arrayToSeeProfile[i].getUserType(), 
-												 this.arrayToSeeProfile[i].getUserName(), this.arrayToSeeProfile[i].getPassword(), 
-											 	 this.arrayToSeeProfile[i].getEmail(), this.arrayToSeeProfile[i].getRegisterDate(), 
-											 	 this.arrayToSeeProfile[i].getUnsubscribeDate(), this.arrayToSeeProfile[i].getImage(), 
-												 this.arrayToSeeProfile[i].getProvinceID());
-					
-					for (var j = 0; j < this.friendsArray.length; j++){
-						if(this.arrayToSeeProfile[i].getUserID()==this.friendsArray[j].getUserID()){
-							$scope.addFriendIcon=0;
-						}
-					}												
-				}
-			}		
-			
-			
-			
-			$scope.userPage=1
-			$scope.userProfile=2;
-			$scope.friends=2;
-			$("#friendProfileForm").fadeIn(500);
-			$("#friendItemsMessage").hide();	
-			
-			//calls to AJAX in order to search friend items
-			var outPutdata= new Array();
-			this.friendItemsArray= new Array();
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=2&userID='+friendToVisit, 
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if (outPutdata[0]){		
-				for (var i = 0; i < outPutdata[1].length; i++){
-					if(outPutdata[1][i].available==1){
-						var item = new itemObj();
-						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID, outPutdata[1][i].itemType, outPutdata[1][i].title,
-										outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
-										outPutdata[1][i].image,outPutdata[1][i].available,outPutdata[1][i].uploadDate);	
-						this.friendItemsArray.push(item);					
-					}									
-				}			
-			}else{
-				$("#friendItemsMessage").html("Still it does not have any item added");
-				$("#friendItemsMessage").fadeIn(500);
-			}
-		}
-		
-		this.addFriend= function(idFriendToAdd){
-			
-			var success;
-			$.ajax({
-				url: 'php/control/control.php',  
-				type: 'POST',  
-				async: false,   
-				data: 'action=16&userID='+this.user.getUserID()+"&idFriendToAdd="+idFriendToAdd,
-				dataType: "json", 
-				success: function (response) { 
-					success = response;
-				},
-				error: function (xhr, ajaxOptions, thrownError){
-					alert("There has been and error while connecting to server");
-					console.log(xhr.status+"\n"+thrownError);
-				}	
-			});
-			
-			if(success) alert("Friend added correctly");
-			
-		}
-			
-		this.checkWarnings= function(){
-			var outPutdata= new Array();
-			var warningsCount=0;
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=10&userID='+this.user.getUserID(), 
-				  dataType: "json", 
-				  success: function (response) { 
-					  outPutdata = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});
-			
-			if (outPutdata[0]){
-				$("#warningAlert").fadeIn(200);		
-				for (var i = 0; i < outPutdata[1].length; i++){
-					if(outPutdata[1][i].read==0){
-						this.warningsUser = new warningUsersObj();
-						this.warningsUser.construct(outPutdata[1][i].warningID, outPutdata[1][i].userID, outPutdata[1][i].read);	
-						this.warningsArray.push(this.warningsUser);
-						warningsCount++;
-					}											
-				}
-				
-				if(warningsCount==0){
-					$("#warningAlert").hide();	
-				}
-				
-				var outPutdata= new Array();								
-				$.ajax({
-					  url: 'php/control/control.php',  
-					  type: 'POST',  
-					  async: false,   
-					  data: 'action=11', 
-					  dataType: "json", 
-					  success: function (response) { 
-						  outPutdata = response;
-					  },
-					  error: function (xhr, ajaxOptions, thrownError){
-							alert("There has been and error while connecting to server");
-							console.log(xhr.status+"\n"+thrownError);
-					  }	
-				});	
-				
-				if(outPutdata[0]){
-					for (var i = 0; i < this.warningsArray.length; i++){
-						for (var j = 0; j < outPutdata[1].length; j++){
-							if((outPutdata[1][j].warningID==this.warningsArray[i].getWarningID())){								
-								this.warnings= new warningObj();
-								this.warnings.construct(outPutdata[1][j].warningID, outPutdata[1][j].description);
-								this.warningsToShowArray.push(this.warnings);								
-							}							
-						}												
-					}					
-				}	
-			}else $("#warningAlert").hide();
-			var divContent="";
-			for (var i = 0; i < this.warningsToShowArray.length; i++){
-				divContent +=(i+1)+".- "+this.warningsToShowArray[i].description+"<br />";
-			}
-			$("#warningsDiv").html(divContent);					
-		}
-		
-		this.readUserWarnings= function(){
-			for (var i = 0; i < this.warningsArray.length; i++){
-				this.warningsArray[i].setRead(1);
-			}
-			this.warningsArray = angular.copy(this.warningsArray);	
-			var success;								
-			$.ajax({
-				  url: 'php/control/control.php',  
-				  type: 'POST',  
-				  async: false,   
-				  data: 'action=12&warningsArray='+JSON.stringify(this.warningsArray), 
-				  dataType: "json", 
-				  success: function (response){ 
-					  success = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError){
-						alert("There has been and error while connecting to server");
-						console.log(xhr.status+"\n"+thrownError);
-				  }	
-			});				 
-		}
-		
-		this.loadStartTradeForm	= function(itemDemanded, action){
-			this.loadUserItems();
-			this.demandedItem= new itemObj();
-			
-			if(action==1){
-				this.demandedItem= this.itemsArrayHome[itemDemanded];
-			}else{this.demandedItem= this.friendItemsArray[itemDemanded];}
-			
-			$("#startTradeForm").fadeIn(500);		
-		}
-				
-		this.selectItem= function(numItem){
-			this.offeredItem= new itemObj();
-			this.offeredItem= this.itemsArray[numItem];
-						
-			for (var i = 0; i < this.itemsArray.length; i++){
-				$("#ownItemDiv"+i).css({background: "white", border:"1px solid #626262"});				
-			}			
-			$("#ownItemDiv"+numItem).css({background: "#CEF6CE", border:"1px solid #2EFE2E"});
-								
-		}
-		
-		this.startTradeWithItem= function(){
-			var now = new Date();
-
-			var month = now.getMonth()+1;
-			var day = now.getDate();
-				if(day<10) day= "0"+day;
-				if(month<10) month= "0"+month;					
-			var year = now.getFullYear();
-			var currentDate= year+"-"+month+"-"+day;
-			
-			this.swapItem= new swapObj();
-			this.swapItem.setSwapID(0);
-			this.swapItem.setStartDate(currentDate);
-			this.swapItem.setFinishDate("0000-00-00");
-			this.swapItem.setSuccess(0);
-			
-			$.ajax({
-			  url: 'php/control/control.php',
-			  type: 'POST',
-			  async: false,
-			  data: 'action=17&JSONData='+JSON.stringify(this.swapItem)+"&offeredItemID="+this.offeredItem.getItemID()+"&demandedItemID="+this.demandedItem.getItemID(),
-			  dataType: "json",
-			  success: function (response) { 
-				  alert("Request correctly sent");
-			  },
-			  error: function (xhr, ajaxOptions, thrownError) {
-				  alert(xhr.status+"\n"+thrownError);
-			  }	
-			});				
-		}
-		
-		this.hideTradeForm= function(){
-			$("#startTradeForm").hide();
-		}
-		
-						
 		
 	});
 	
 	//Templates of the application
-	swapYourMusicApp.directive("userItemsManagement", function (){
+	swapYourMusicApp.directive("userProfileManagement", function (){
 		return {
 		  restrict: 'E',
-		  templateUrl:"templates/user-items-management.html",
+		  templateUrl:"templates/user-profile-management.html",
 		  controller:function(){
 			
 		  },
-		  controllerAs: 'userItemsManagement'
+		  controllerAs: 'userProfileManagement'
 		};
 	});
-	
-	swapYourMusicApp.directive("userItemsModification", function (){
-		return {
-		  restrict: 'E',
-		  templateUrl:"templates/user-items-modification.html",
-		  controller:function(){
-			
-		  },
-		  controllerAs: 'userItemsModification'
-		};
-	});
-	
-	swapYourMusicApp.directive("homeSearchForm", function (){
-		return {
-		  restrict: 'E',
-		  templateUrl:"templates/home-search-form.html",
-		  controller:function(){
-			
-		  },
-		  controllerAs: 'homeSearchForm'
-		};
-	});
-	
-	swapYourMusicApp.directive("friendsListForm", function (){
-		return {
-		  restrict: 'E',
-		  templateUrl:"templates/friends-list-form.html",
-		  controller:function(){
-			
-		  },
-		  controllerAs: 'friendsListForm'
-		};
-	});
-	
-	swapYourMusicApp.directive("friendProfileForm", function (){
-		return {
-		  restrict: 'E',
-		  templateUrl:"templates/friend-profile-form.html",
-		  controller:function(){
-			
-		  },
-		  controllerAs: 'friendProfileForm'
-		};
-	});
-	
-	swapYourMusicApp.directive("startTradeForm", function (){
-		return {
-		  restrict: 'E',
-		  templateUrl:"templates/start-trade-form.html",
-		  controller:function(){
-			
-		  },
-		  controllerAs: 'startTradeForm'
-		};
-	});
-	
 	
 	swapYourMusicApp.directive('file', function(){
 		return {
@@ -953,10 +240,9 @@ $(document).ready(function(){
 function imagesItemManagement(userID){
 	var imagesArrayToSend = new FormData();
 	
-	var imageFile = $("#itemImage")[0].files[0];	
-	
-	imagesArrayToSend.append('images[]', imageFile);		
-	
+	var imageFile = $("#itemImage")[0].files[0];
+		
+	imagesArrayToSend.append('images[]', imageFile);
 	var filesNamesArray = new Array();
 
 	$.ajax({
@@ -976,54 +262,4 @@ function imagesItemManagement(userID){
     });	
 	
 	return filesNamesArray;
-}
-
-
-
-function filesManagementToModItems(itemToMod){
-	//Remove image
-	var imagesNameArray=new Array();
-	imagesNameArray.push(itemToMod.getImage());
-	$.ajax({
-		url : 'php/control/controlFiles.php',
-        type : 'POST',
-        async: false,
-        data : 'action=2&JSONData='+JSON.stringify(imagesNameArray),
-        dataType: "json",
-        success : function(response){
-                   
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-			alert(xhr.status+"\n"+thrownError);
-		}                
-    });
-    
-	
-	//Upload image
-	var imageFiles = new FormData();
-	
-	var image = $("#imageMod")[0].files[0];
-		
-	imageFiles.append('images[]',image);
-	
-	var serverFileNames = new Array();
-	itemToMod = angular.copy(itemToMod);
-	
-	$.ajax({
-		url : 'php/control/controlFiles.php?action=1&titleItem='+$("#titleMod").val()+'&userID='+itemToMod.getUserID(),
-        type : 'POST',
-        async: false,
-        data : imageFiles,
-        dataType: "json",
-        processData : false, 
-        contentType : false, 
-        success : function(response){
-                   serverFileNames = response;
-        },
-        error: function (xhr, ajaxOptions, thrownError) {
-			alert(xhr.status+"\n"+thrownError);
-		}                
-    });
-    
-    return serverFileNames;
 }

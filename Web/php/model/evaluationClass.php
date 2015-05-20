@@ -10,12 +10,14 @@ require_once "BDSwap_your_music.php";
 
 class evaluationClass {
     private $evaluationID;
+    private $swapID;
     private $itemAsDescribed;
     private $comunication;
 
     //----------Data base Values---------------------------------------
     private static $tableName = "evaluations";
     private static $colNameEvaluationID = "evaluationID";
+    private static $colNameSwapID = "swapID";
     private static $colNameItemAsDescribed = "itemAsDescribed";
     private static $colNameComunication = "comunication";
         
@@ -28,6 +30,14 @@ class evaluationClass {
     
     public function setEvaluationID($evaluationID) {
         $this->evaluationID = $evaluationID;
+    }
+    
+    public function getSwapID() {
+        return $this->swapID;
+    }
+    
+    public function setSwapID($swapID) {
+        $this->swapID = $swapID;
     }
     
     public function getItemAsDescribed() {
@@ -48,12 +58,13 @@ class evaluationClass {
   
 	
     public function getAll() {
-	$data = array();
-	$data["evaluationID"] = $this->getEvaluationID();
-	$data["itemAsDescribed"] = $this->getItemAsDescribed();
-	$data["comunication"] = $this->getComunication();
+		$data = array();
+		$data["evaluationID"] = $this->getEvaluationID();
+		$data["swapID"] = $this->getSwapID();
+		$data["itemAsDescribed"] = $this->getItemAsDescribed();
+		$data["comunication"] = $this->getComunication();
 
-	return $data;
+		return $data;
     }
 
 /*
@@ -64,8 +75,9 @@ class evaluationClass {
 	 * @params: $evaluationID ,$itemAsDescribed
 	 * @return: none
 	 */ 
-    public function setAll($evaluationID ,$itemAsDescribed, $comunication)) {
+    public function setAll($evaluationID ,$swapID, $itemAsDescribed, $comunication) {
 		$this->setEvaluationID($evaluationID);
+		$this->getSwapID($swapID);
 		$this->setItemAsDescribed($itemAsDescribed);
 		$this->setComunication($comunication);
     }
@@ -105,6 +117,7 @@ class evaluationClass {
     private static function fromResultSet( $res ) {
 		//We get all the values form the query
 		$evaluationID=$res[evaluationClass::$colNameEvaluationID];
+		$swapID=$res[evaluationClass::$colNameSwapID];
 		$itemAsDescribed=$res[evaluationClass::$colNameItemAsDescribed];
 		$comunication=$res[evaluationClass::$colNameComunication];
 
@@ -112,6 +125,7 @@ class evaluationClass {
        	//Object construction
        	$entity = new evaluationClass();
 		$entity->setEvaluationID($evaluationID);
+		$entity->setSwapID($swapID);
 		$entity->setItemAsDescribed($itemAsDescribed);
 		$entity->setComunication($comunication);
 
@@ -158,6 +172,21 @@ class evaluationClass {
 
 	return evaluationClass::findByQuery( $cons );
     }
+    
+    /*
+     * @userItemAsDescribed: findBySwapId()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findBySwapID( $swapID ) {
+		$cons = "select * from `".evaluationClass::$tableName."` where ".evaluationClass::$colNameSwapID." = \"".$swapID."\"";
+
+		return evaluationClass::findByQuery( $cons );
+    }
 
  
     /*
@@ -171,7 +200,7 @@ class evaluationClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".evaluationClass::$tableName."`";
-	return evaluationClass::findByQuery( $cons );
+		return evaluationClass::findByQuery( $cons );
     }
 
 
@@ -185,20 +214,20 @@ class evaluationClass {
 	 * @return: none
 	 */ 
     public function create() {
-	//Connection with the database
-	$conn = new BDSwap_your_music();
-	if (mysqli_connect_errno()) {
-   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-    		exit();
-	}
-	//return $this->toString();
-	//Preparing the sentence
-	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".evaluationClass::$tableName."(`evaluationID`,`itemAsDescribed`,`comunication`) values (?,?,?)" )) {
-		$stmt->bind_param("isi",$this->getEvaluationID(), $this->getItemAsDescribed(),$this->getComunication());
-		//executar consulta
-		$stmt->execute();
-	    }
+		//Connection with the database
+		$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+				exit();
+		}
+		//return $this->toString();
+		//Preparing the sentence
+		$stmt = $conn->stmt_init();
+		if ($stmt->prepare("insert into ".evaluationClass::$tableName."(`evaluationID`,`swapID`,`itemAsDescribed`,`comunication`) values (?,?,?,?)" )) {
+			$stmt->bind_param("iisi",$this->getEvaluationID(), $this->getSwapID(), $this->getItemAsDescribed(),$this->getComunication());
+			//executar consulta
+			$stmt->execute();
+			}
 	    
 	    if ( $conn != null ) $conn->close();
 	}
@@ -250,8 +279,8 @@ class evaluationClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".evaluationClass::$tableName."` set ".evaluationClass::$colNameEvaluationID." = ?,".evaluationClass::$colNameItemAsDescribed." = ?,".evaluationClass::$colNameComunication." = ? where ".evaluationClass::$colNameEvaluationID." =?") ) {
-			$stmt->bind_param("isii",$this->getEvaluationID(), $this->getItemAsDescribed(),$this->getComunication(),$this->getEvaluationID() );
+		if ($stmt->prepare("update `".evaluationClass::$tableName."` set ".evaluationClass::$colNameEvaluationID." = ?,".evaluationClass::$colNameSwapID." = ?,".evaluationClass::$colNameItemAsDescribed." = ?,".evaluationClass::$colNameComunication." = ? where ".evaluationClass::$colNameEvaluationID." =?") ) {
+			$stmt->bind_param("iisii",$this->getEvaluationID(), $this->getSwapID(),$this->getItemAsDescribed(),$this->getComunication(),$this->getEvaluationID() );
 			//executar consulta
 			$stmt->execute();;
 		}
@@ -270,7 +299,7 @@ class evaluationClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "evaluationClass[evaluationID=" . $this->evaluationID . "][itemAsDescribed=" . $this->itemAsDescribed . "][comunication=" . $this->comunication."]";
+        $toString = "evaluationClass[evaluationID=" . $this->evaluationID . "][SwapID=" . $this->swapID . "][itemAsDescribed=" . $this->itemAsDescribed . "][comunication=" . $this->comunication."]";
 		return $toString;
 
     }

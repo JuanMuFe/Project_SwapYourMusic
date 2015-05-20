@@ -54,9 +54,9 @@ class friendsClass {
 	 * @params: $friendID ,$userID
 	 * @return: none
 	 */ 
-    public function setAll($userID, $friendID) {		
-		$this->setUserID($userID);
+    public function setAll($friendID ,$userID)) {
 		$this->setFriendID($friendID);
+		$this->setUserID($userID);
     }
     
     //---Databese management section-----------------------
@@ -140,9 +140,9 @@ class friendsClass {
 	 * @return: object with the query results
 	 */ 
     public static function findByUserId( $userID ) {
-		$cons = "select * from `".friendsClass::$tableName."` where ".friendsClass::$colNameUserID." = \"".$userID."\"";
+	$cons = "select * from `".friendsClass::$tableName."` where ".friendsClass::$colNameUserID." = \"".$userID."\"";
 
-		return friendsClass::findByQuery( $cons );
+	return friendsClass::findByQuery( $cons );
     }
 
  
@@ -180,8 +180,8 @@ class friendsClass {
 	//return $this->toString();
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".friendsClass::$tableName."(`userID`,`friendID`) values (?,?)" )) {
-		$stmt->bind_param("ii",$this->getUserID(), $this->getFriendID());
+	if ($stmt->prepare("insert into ".friendsClass::$tableName."(`friendID`,`userID`) values (?,?)" )) {
+		$stmt->bind_param("ii",$this->getFriendID(), $this->getUserID());
 		//executar consulta
 		$stmt->execute();
 	    }
@@ -208,7 +208,7 @@ class friendsClass {
 		
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("delete from `".friendsClass::$tableName."` where `".friendsClass::$colNameFriendID."` = ? and `".friendsClass::$colNameUserID."` = ?")) {
+		if ($stmt->prepare("DELETE FROM `".friendsClass::$tableName."` where ".friendsClass::$colNameFriendID." = ? and".friendsClass::$colNameUserID." = ?")) {
 			$stmt->bind_param("ii",$this->getFriendID(),$this->getUserID());
 			$stmt->execute();
 		}

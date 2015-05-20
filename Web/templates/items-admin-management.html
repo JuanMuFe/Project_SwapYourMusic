@@ -1,0 +1,29 @@
+<div id="noResult">	
+</div>
+<table class="table table-hover" id="itemsTable">
+		<tr><th>Image</th><th>Title</th><th>Artist</th><th>ReleaseYear</th><th>ItemType</th><th>Genre</th><th>Condition</th><th>UploadDate</th><th>Available</th><th>Owner</th><th></th><th></th></tr>
+		<tr ng-repeat="item in adminCtrl.itemsArray | limitTo:9:pagination" >
+			<td><img src="{{item.image}}" width="50"/></td>
+			<td>{{item.title}}</td>
+			<td>{{item.artist}}</td>
+			<td>{{item.releaseYear}}</td>
+			<td>{{item.itemType}}</td>
+			<td>{{adminCtrl.genresArray[item.getGenreID()].name}}</td>
+			<td>{{adminCtrl.conditionsArray[item.getConditionID()].name}}</td>
+			<td>{{item.uploadDate}}</td>
+			<td ng-if="item.available==1">Yes</td>
+			<td ng-if="item.available==0">No</td>
+			<td>{{adminCtrl.itemUsersArray[$index+pagination].userName}}</td>
+			<td><a href=""><img src="img/pencil43.png" width="20" ng-click="adminCtrl.prepareToModify($index)"/></a></td>
+			<td>
+				<a href=""><img src="img/delete97.png" width="20" ng-if="item.available==1" ng-click="adminCtrl.deleteItem($index)"/></a>
+				<img src="img/noDelete.png" width="20" ng-if="item.available==0" />
+			</td>
+		</tr>	
+</table>
+<div id="paginationDiv">
+	<a href=""><img src="img/first.png" width="20" ng-click="adminCtrl.paginationControl('first')"></a>
+	<a href=""><img src="img/previous.png" width="17" ng-click="adminCtrl.paginationControl('previous')"></a>
+	<a href=""><img src="img/next.png" width="17" ng-click="adminCtrl.paginationControl('next')"></a>
+	<a href=""><img src="img/last.png" width="20" ng-click="adminCtrl.paginationControl('last')"></a>
+</div>

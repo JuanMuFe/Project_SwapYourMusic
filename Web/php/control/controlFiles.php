@@ -1,27 +1,26 @@
 <?php
 	session_start();
 	$newFileNames = array();
+
 	switch ($_REQUEST["action"]){	
 			case 1:	//option to upload item images to the server
 					$nameFile=str_replace(" ","",$_REQUEST["titleItem"])."".$_REQUEST["userID"];
-											
 					foreach($_FILES['images']['error'] as $key => $error){
-						if($error == UPLOAD_ERR_OK){
+						if($error == UPLOAD_ERR_OK){							
 							$name = $_FILES['images']['name'][$key];
 							$fileNameParts = explode(".", $name);  
 							$nameWithoutExtension = $fileNameParts[0];
 							$extension = end($fileNameParts);
-							$newFileName = stripAccents($nameFile).".".$extension;
+							$newFileName = $nameFile.".".$extension;
 							move_uploaded_file($_FILES['images']['tmp_name'][$key], '../../img/items/' . $newFileName);
 							
 							$newFileNames[]='img/items/'.$newFileName;
 						}
-					}				
-					
+					}
 					echo json_encode($newFileNames);
 					break;
 					
-			case 2:
+		case 2:
 					//This option is to remove files from the server
 					$filesToDeleteArray = json_decode(stripslashes($_REQUEST["JSONData"]));
 					
@@ -31,20 +30,42 @@
 					
 					echo true;
 					break;
+
+		case "50":
+			//This option is to upload users images to the server
+			//$_FILES contains all the file to upload
+			//The program returns an array with the new file's name that ust be inserted into the database
 			
-			case 3:
-					
-					break;
+			$userNamesArray = json_decode(stripslashes($_REQUEST["userNamesArray"]));
+			$i=0;
+			foreach($_FILES['images']['error'] as $key => $error){
+				if($error == UPLOAD_ERR_OK){
+					$name = $_FILES['images']['name'][$key];
+					$fileNameParts = explode(".", $name);  
+					$nameWithoutExtension = $fileNameParts[0];
+					$extension = end($fileNameParts);
+					$newFileName = $userNamesArray[$i].".".$extension;
+					move_uploaded_file($_FILES['images']['tmp_name'][$key], '../../img/users/' . $newFileName);
+					$i++;
+					$newFileNames[]='img/users/'.$newFileName;
+				}
+			}
+			echo json_encode($newFileNames);
+			break;
+		case "51":
+			//This option is to remove files from the server
+			//$_REQUEST["JSONData"] contains all the file's names to remove
+			$filesToDeleteArray = json_decode(stripslashes($_REQUEST["JSONData"]));
+
+			foreach($filesToDeleteArray as $filename){
+				unlink('../../'.$filename);
+			}
 			
-			default: echo "Action not correct: ".$_REQUEST["action"];
-					 break;
+			echo true;
+			break;
+			
+		default:
+			echo "Action not correct: ".$_REQUEST["action"];
+			break;
 	}
-	
-	function stripAccents($string){
-        $string = utf8_decode($string);
-        $originals  = 'àáâãäçèéêëìíîïñòóôõöùúûüýÿÀÁÂÃÄÇÈÉÊËÌÍÎÏÑÒÓÔÕÖÙÚÛÜÝ';
-        $modified = 'aaaaaceeeeiiiinooooouuuuyyAAAAACEEEEIIIINOOOOOUUUUY';
-        $result = utf8_encode(strtolower(strtr($string,utf8_decode($originals), $modified)));
-        return $result;
-    }
 ?>

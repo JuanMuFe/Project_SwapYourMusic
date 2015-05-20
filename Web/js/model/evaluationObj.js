@@ -2,24 +2,28 @@ function evaluationObj ()
 {
 	//Attributes declaration
 	this.evaluationID;
+	this.swapID;
 	this.itemAsDescribed;
 	this.comunication;
 	
 	//Methods declaration
-	this.construct = function (evaluationID,itemAsDescribed, comunication)
+	this.construct = function (evaluationID, swapID, itemAsDescribed, comunication)
 	{
 		this.setEvaluationID(evaluationID);
+		this.setSwapID(swapID);
 		this.setItemAsDescribed(itemAsDescribed);
 		this.setComunication(comunication);
 	}
 	
 	//getters and setters
 	this.setEvaluationID = function (evaluationID){this.evaluationID=evaluationID;}
+	this.setSwapID = function (swapID){this.swapID=swapID;}
 	this.setItemAsDescribed = function (itemAsDescribed){this.itemAsDescribed=itemAsDescribed;}
 	this.setComunication = function (comunication){this.comunication=comunication;}
 
 	
 	this.getEvaluationID = function () {return this.evaluationID;}
+	this.getSwapID = function () {return this.swapID;}
 	this.getItemAsDescribed = function () {return this.itemAsDescribed;}
 	this.getComunication = function () {return this.comunication;}
 
@@ -51,7 +55,7 @@ function evaluationObj ()
 	* @return: clientString - well formed strng with all the object data
 	*/ 
 	this.toString = function(){
-		var evaluationString="evaluationID= "+this.getEvaluationID()+ " itemAsDescribed= "+this.getItemAsDescribed()+ " comunication= "+this.getComunication();
+		var evaluationString="evaluationID= "+this.getEvaluationID()+ " swapID= "+this.getSwapID()+" itemAsDescribed= "+this.getItemAsDescribed()+ " comunication= "+this.getComunication();
 		return evaluationString;
 	}
 }

@@ -1,27 +1,27 @@
-function evaluationObj ()
+function applicationsObj ()
 {
 	//Attributes declaration
-	this.userID;
 	this.swapID;
-	this.itemID;
+	this.offeredItemID;
+	this.demandedItemID;
 	
 	//Methods declaration
-	this.construct = function (userID,swapID, itemID)
+	this.construct = function (swapID,offeredItemID, demandedItemID)
 	{
-		this.setUserID(userID);
 		this.setSwapID(swapID);
-		this.setItemID(itemID);
+		this.setOfferedItemID(offeredItemID);
+		this.setDemandedItemIDdemandedItemID);
 	}
 	
 	//getters and setters
-	this.setUserID = function (userID){this.userID=userID;}
 	this.setSwapID = function (swapID){this.swapID=swapID;}
-	this.setItemID = function (itemID){this.itemID=itemID;}
+	this.setOfferedItemID = function (offeredItemID){this.offeredItemID=offeredItemID;}
+	this.setDemandedItemID = function (demandedItemID){this.demandedItemID=demandedItemID;}
 
 	
-	this.getUserID = function () {return this.userID;}
 	this.getSwapID = function () {return this.swapID;}
-	this.getItemID = function () {return this.itemID;}
+	this.getOfferedItemID = function () {return this.offeredItemID;}
+	this.getDemandedItemID = function () {return this.demandedItemID;}
 
 	
 	/*
@@ -51,7 +51,7 @@ function evaluationObj ()
 	* @return: clientString - well formed strng with all the object data
 	*/ 
 	this.toString = function(){
-		var applicationString="userID= "+this.getUserID()+ " swapID= "+this.getSwapID()+ " itemID= "+this.getItemID();
+		var applicationString="swapID= "+this.getSwapID()+ " offeredItemID= "+this.getOfferedItemID()+" demandedItemID="+this.getDemandedItemID();
 		return applicationString;
 	}
 }

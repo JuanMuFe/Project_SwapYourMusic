@@ -1,0 +1,56 @@
+<div ng-show="adminCtrl.allBidsArray.length==0">
+	<h3>There are no coincidences.</h3>
+</div>
+<div ng-show="adminCtrl.allBidsArray.length!=0">
+
+	<table class="table table-hover">
+			<tr><th>Item</th><th>User</th><th>Start price</th><th>Actual price</th><th>Start date</th><th>Est. duration</th><th>Finish date</th><th></th></tr>
+			<tr ng-repeat="bid in adminCtrl.allBidsArray">
+				<input type="text" hidden ng-model="bidIndex" value="2"/>
+				<td ><img ng-mouseover="adminCtrl.showItemInfo($index)" ng-mouseleave="adminCtrl.hideItemInfo()" src="{{bid.image}}" width="80"/></td>
+				<td>{{bid.userName}}</td>
+				<td>{{bid.startPrice | currency}}</td>
+				<td>{{bid.actualPrice  | currency}} </td>
+				<td>{{bid.startDate}}</td>
+				<td>{{bid.duration}} days</td>			
+				<td ng-if="bid.finishDate!=null">{{bid.finishDate}}</td>
+				<td ng-if="bid.finishDate==null">Not finished</td>
+				<td><img src="img/list-1.png" width="20" ng-click="adminCtrl.showHistory($index)"/></td>
+			</tr>	
+	</table>
+
+</div>
+
+	<div class="itemInfo" ng-show="usersFlag==5">
+		<img id="imgDetail" src="{{adminCtrl.viewBidItem .image}}" width="170"/>
+		<div id="itemDetails">	</br>
+			<b>Title: </b>{{adminCtrl.viewBidItem.title}}</br>
+			<b>Artist: </b>{{adminCtrl.viewBidItem.artist}}</br>
+			<b>ItemType: </b>{{adminCtrl.viewBidItem.itemType}}</br>
+			<b>Upload date: </b>{{adminCtrl.viewBidItem.uploadDate}}</br>
+		</div>
+	</div>
+
+
+<div class="popUp" ng-show="usersFlag==4">
+	<img class="closePopUp" src="img/delete30.png" width="15" ng-click="usersFlag=0"/>
+	<div ng-if="adminCtrl.bidsHistoryArray.length!=0" >
+		<h3>Bid history</h3>
+		<table class="table table-hover">
+			<tr><th>User</th><th>Offered money</th></tr>
+			<tr ng-repeat="register in adminCtrl.bidsHistoryArray">
+				<td>
+					<img src="{{adminCtrl.usersArray[$index].image}}" width="40"/>
+					{{adminCtrl.usersArray[$index].userName}}
+					</td>
+				<td>{{register.offeredMoney | currency}}</td>
+			</tr>	
+		</table>
+	</div>
+	<div ng-if="adminCtrl.bidsHistoryArray.length==0" >
+		<h3>This bid has no participations yet.</h3>
+	</div>
+</div>
+
+
+

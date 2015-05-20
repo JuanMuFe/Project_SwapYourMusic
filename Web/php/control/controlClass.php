@@ -58,17 +58,55 @@ require_once "toDoClass.php";
 					case 13: echo toDoClass::loadUserFriends($this->params['action'], $this->params['userID']);
 							 break;
 					
-					case 14: echo toDoClass::searchProvinces($this->params['action']);
+					case 14: echo toDoClass::searchAllProvinces($this->params['action']);
 							 break;	
 					
 					case 15: echo toDoClass::deleteFriend($this->params['action'], $this->params['friendToDelete']);
-							 break;
-					
-					case 16: echo toDoClass::addFriend($this->params['action'], $this->params['userID'], $this->params['idFriendToAdd']);
-							 break;	
-					
-					case 17: echo toDoClass::insertSwap($this->params['action'], $this->params['JSONData'], $this->params['offeredItemID'], $this->params['demandedItemID']);
-							 break;						
+							 break;								
+	
+					case 50:	echo toDoClass::searchByUserName($this->params['action'], $this->params['JSONData']);
+							break;		
+					case 51:	echo toDoClass::searchByEmail($this->params['action'], $this->params['JSONData']);
+							break;	
+					case 52:	echo toDoClass::searchRegions($this->params['action']);
+							break;	
+					case 53:	echo toDoClass::searchProvincesByRegion($this->params['action'], $this->params['regionID']);
+							break;		
+					case 54:	echo toDoClass::insertUser($this->params['action'], $this->params['JSONData']);
+							break;	
+					case 55:	echo toDoClass::searchClientUsersNameLike($this->params['action'], $this->params['userName']);
+							break;
+					case 56:	echo toDoClass::deleteUser($this->params['action'], $this->params['JSONData']);
+							break;	
+					case 57:	echo toDoClass::modifyUser($this->params['action'], $this->params['JSONData']);
+							break;
+					case 58:	echo toDoClass::searchClientUsersByRegion($this->params['action'], $this->params['regionID']);
+							break;
+					case 59:	echo toDoClass::searchClientUsersByRegionLikeName($this->params['action'], $this->params['regionID'], $this->params['userName']);
+							break;
+					case 60:	echo toDoClass::searchAllWarnings($this->params['action']);
+							break;
+					case 61: 	echo toDoClass::insertWarningToUser($this->params['warningID'],$this->params['userID']);
+							break;
+					case 62:	echo toDoClass::insertWarning($this->params['JSONData']);
+							break;
+					case 63:	echo toDoClass::setWarningInactive($this->params['JSONData']);
+							break;
+					case 64:	echo toDoClass::modifyWarning($this->params['JSONData']);
+							break;
+					case 65:	echo toDoClass::searchBids();
+							break;
+					case 66:	echo toDoClass::searchBidHistory($this->params['bidID']);
+							break;
+					case 67:	echo toDoClass::searchWarningsByUser($this->params['userID']);
+							break;
+					case 68:	echo toDoClass::searchAllItems($this->params['action'], $this->params['userName'], $this->params['itemType'], $this->params['genreID'], $this->params['artist']);
+							break;
+							
+					case 69: echo toDoClass::searchSwaps($this->params['action']);
+							break;
+							
+			
 							
 					default: echo "Action ".$action." not correct in toDoClass.";
 							 break;

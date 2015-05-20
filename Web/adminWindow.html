@@ -9,11 +9,13 @@
 		<meta name="description" content="Swap Your Music Project">
 		<meta name="author" content="JuanMuñoz_IreneBlanco">
 		<link rel="stylesheet" type="text/css" href="css/bootstrap/bootstrap.min.css" />
+		<link rel="stylesheet" type="text/css" href="css/jquery-ui.css" />
 		<link rel="stylesheet" type="text/css" href="css/style.css"  />
 		  
 		<!-- Angular-->
 		<script src="js/frameWorks/angular/angular.min.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/frameWorks/angular/ng-currency.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/frameWorks/angular/i18n/angular-locale_es-es.js" type="text/javascript" xml:space="preserve"></script>
     
 		<!-- JQuery-->
 		<script src="js/frameWorks/jQuery/jQuery.js" type="text/javascript" xml:space="preserve"></script>
@@ -25,19 +27,113 @@
 		<!-- jQuery Cookies management-->
 		<script src="js/frameWorks/jQuery/jquery-cookie/jquery.cookie.js" type="text/javascript" xml:space="preserve"></script>
 		
-		<!--Own scripts-->		
+<!--
+		Own scripts		
+-->
 		<script src="js/model/userObj.js" type="text/javascript" xml:space="preserve"></script>
-		<script src="js/control/mainWindow.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/regionObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/provinceObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/itemObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/genreObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/conditionObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/warningObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/warningUsersObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidsParticipationObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/bidViewObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/model/swapObj.js" type="text/javascript" xml:space="preserve"></script>
+		<script src="js/control/adminWindow.js" type="text/javascript" xml:space="preserve"></script>
 		<script src="js/control/generalFunctions.js" type="text/javascript" xml:space="preserve"></script>
 	</head>
 	
-	<body ng-controller="swapYourMusicCtrl as musicCtrl" ng-init="musicCtrl.checkSession()">
-		<h1>Welcome admin {{musicCtrl.user.getUserName()}}</h1>
+	<body ng-controller="sessionController as sessionCtrl" ng-init="sessionCtrl.checkSession()">
 		
-		<div>
-			<img src="{{musicCtrl.user.getImage()}}" width="100" />
-			<a>User administration</a> | <a>Items administration</a> | <a>Bids administration</a> | <a ng-click="musicCtrl.logOut()">Log out</a>
-			
+		
+		<div id="generalDiv" ng-controller="adminController as adminCtrl" ng-init="adminCtrl.loadRegions()">
+			<header>
+				<img id="logo" src="img/logo.png"/>
+				<a ng-click="sessionCtrl.logOut()"><div id="logoutIcon" width="20"></div></a>
+					Welcome {{sessionCtrl.loggedUser.getUserName()}}
+					<img src="{{sessionCtrl.loggedUser.getImage()}}" width="50" />
+					
+			</header>
+<!--
+			usersFlag -> {{usersFlag}}
+-->
+			<div id="adminMenu">					
+					<div id="menuItem" ng-click="flag=1;adminCtrl.loadUsers()"><img src="img/profile.png"/> USERS</div> </br>
+					<div id="menuItem" ng-click="flag=2;adminCtrl.loadItems();adminCtrl.loadGenresAndConditions()"><img src="img/items.png"/> ITEMS</div> </br>
+					<div id="menuItem" ng-click="flag=3;adminCtrl.loadBids()"><img src="img/bid.png"/> BIDS</div></br>
+					<div id="menuItem" ng-click="flag=5;adminCtrl.loadSwaps()"><img src="img/trade.png"> SWAPS</div></br>
+					<div id="menuItem" ng-click="flag=6;adminCtrl.loadWarnings()"><img src="img/warnings.png"/> WARNINGS</div></br>					
+			</div>	
+			<div id="management" >		
+					<div id="usersAdministration" ng-show="flag==1">	
+						<h2>Users Administration</h2>
+						<div ng-show="usersFlag!=1">							
+							<label for="nameToSearch"> Search by user name</label>
+								<input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.loadUsers()"/>							
+							<label for="region"> Search by region</label>
+								 <select name="region"  ng-model="adminCtrl.regionToSearch" ng-change="adminCtrl.loadUsers()">
+									<option value="">Select region</option>
+									<option ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+								</select>								
+							<button ng-click="usersFlag=1; userAction=1; adminCtrl.prepareRegister()">Add a new user</button>
+							<users-admin-management ></users-admin-management>		
+						</div>
+						<div id="user-data-admin-management" ng-show="usersFlag==1" >
+							<user-data-admin-management></user-data-admin-management>	
+						</div>	
+					</div>
+					<div id="warningsAdministration" ng-show="flag==6" >
+						<warnings-admin-management></warnings-admin-management>			
+					</div>
+					
+					<div class="popUp" ng-show="usersFlag==2 || usersFlag==6">
+						<warnings-admin-sending id="warningsAdminSending"></warnings-admin-sending>			
+					</div>
+					
+					<div id="itemsAdministration" ng-show="flag==2">
+						<h2>Items Administration</h2>
+						
+						<div id="searchBox">
+							<label>Search by:</label><br/>
+							User Name:
+							<input type="text" name="nameToSearch" ng-disabled="fieldDisabled==1" ng-model="adminCtrl.userNameToSearch" ng-change="adminCtrl.loadItems()"/>							
+						
+							Item type:
+							<select id="itemType" ng-model="adminCtrl.itemTypeToSearch" ng-change="adminCtrl.loadItems()" ng-disabled="fieldDisabled==2">
+								<option selected value="">Item type</option>
+								<option ng-repeat="itemType in adminCtrl.itemTypesArray" value="{{itemType}}">{{itemType}}</option>
+							</select>
+								
+							Genre:
+							<select ng-model="adminCtrl.genreIDToSearch" ng-change="adminCtrl.loadItems()" ng-disabled="fieldDisabled==2">
+								<option value="">Genre</option>
+								<option ng-repeat="genres in adminCtrl.genresArray" value="{{genres.genreID}}">{{genres.name}}</option>
+							</select>
+							
+							Or artist:
+							<input type="text" id="artistToSearch" ng-disabled="fieldDisabled==1" ng-model="adminCtrl.artistToSearch" value="" ng-change="adminCtrl.loadItems()"/>
+							</br></br>
+						</div>			
+						<items-admin-management ng-show="usersFlag!=7"></items-admin-management>				
+						<items-admin-modification ng-show="usersFlag==7"></items-admin-modification>				
+					</div>
+					
+					<div id="bidsAdministration" ng-show="flag==3">
+						<h2>Bids management</h2>
+						<label for="nameToSearch"> Search by user name</label>
+						<input type="text" name="nameToSearch" ng-model="adminCtrl.nameToSearch" ng-change="adminCtrl.filterBids()"/>	
+								
+						<bids-admin-management></bids-admin-management>
+					</div>				
+					
+					<div id="swapsAdministration" ng-show="flag==5">
+						Swaps Administration			
+					</div>
+			</div>			
 		</div>
 	</body>
 </html>

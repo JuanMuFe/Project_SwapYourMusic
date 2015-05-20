@@ -1,14 +1,14 @@
-function friendsObj ()
+function warningUsersObj ()
 {
 	//Attributes declaration
 	this.friendID;
 	this.userID;
 	
 	//Methods declaration
-	this.construct = function (userID, friendID)
+	this.construct = function (friendID,userID)
 	{
+		this.setFriendID(friendID);
 		this.setUserID(userID);
-		this.setFriendID(friendID);		
 	}
 	
 	//getters and setters

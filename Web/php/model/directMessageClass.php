@@ -73,7 +73,7 @@ class directMessageClass {
 	
     public function getAll() {
 		$data = array();
-		$data["messageID"] = $this->getRegionID();
+		$data["messageID"] = $this->getMessageID();
 		$data["swapID"] = $this->getSwapID();
 		$data["date"] = $this->getDate();
 		$data["content"] = $this->getContent();
@@ -140,7 +140,7 @@ class directMessageClass {
 
        	//Object construction
        	$entity = new directMessageClass();
-		$entity->setRegionID($messageID);
+		$entity->setMessageID($messageID);
 		$entity->setSwapID($swapID);
 		$entity->setDate($date);
 		$entity->setContent($content);
@@ -187,6 +187,21 @@ class directMessageClass {
 	$cons = "select * from `".directMessageClass::$tableName."` where ".directMessageClass::$colNameMessageID." = \"".$messageID."\"";
 
 	return directMessageClass::findByQuery( $cons );
+    }
+    
+    /*
+     * @userSwapID: findBySwapID()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @content: this function runs a query and returns an object array
+     * @swapID: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findBySwapID( $swapID ) {
+		$cons = "select * from `".directMessageClass::$tableName."` where ".directMessageClass::$colNameSwapID." = \"".$swapID."\"";
+
+		return directMessageClass::findByQuery( $cons );
     }
 
  

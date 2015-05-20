@@ -64,7 +64,7 @@ class swapClass {
 	
     public function getAll() {
 		$data = array();
-		$data["swapID"] = $this->getRegionID();
+		$data["swapID"] = $this->getSwapID();
 		$data["startDate"] = $this->getStartDate();
 		$data["finishDate"] = $this->getFinishDate();
 		$data["success"] = $this->getSuccess();
@@ -131,7 +131,7 @@ class swapClass {
 
        	//Object construction
        	$entity = new swapClass();
-		$entity->setRegionID($swapID);
+		$entity->setSwapID($swapID);
 		$entity->setStartDate($startDate);
 		$entity->setFinishDate($finishDate);
 		$entity->setSuccess($success);
@@ -192,7 +192,7 @@ class swapClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".swapClass::$tableName."`";
-	return swapClass::findByQuery( $cons );
+		return swapClass::findByQuery( $cons );
     }
 
 
@@ -206,25 +206,22 @@ class swapClass {
 	 * @return: none
 	 */ 
     public function create() {
-		//Connection with the database
-		$conn = new BDSwap_your_music();
-		if (mysqli_connect_errno()) {
-			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-				exit();
-		}
-		//return $this->toString();
-		//Preparing the sentence
-		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("insert into ".swapClass::$tableName."(`swapID`,`startDate`, `finishDate`, `success`) values (?,?,?,?)" )) {
-			$stmt->bind_param("issi",$this->getSwapID(), $this->getStartDate(), $this->getFinishDate(), $this->getSuccess());
-			//executar consulta
-			$stmt->execute();
-			
-			$this->setSwapID($conn->insert_id);
-		}
+	//Connection with the database
+	$conn = new BDSwap_your_music();
+	if (mysqli_connect_errno()) {
+   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+    		exit();
+	}
+	//return $this->toString();
+	//Preparing the sentence
+	$stmt = $conn->stmt_init();
+	if ($stmt->prepare("insert into ".swapClass::$tableName."(`swapID`,`startDate`, `finishDate`, `success`) values (?,?,?,?)" )) {
+		$stmt->bind_param("issi",$this->getSwapID(), $this->getStartDate(), $this->getFinishDate(), $this->getSuccess());
+		//executar consulta
+		$stmt->execute();
+	    }
 	    
 	    if ( $conn != null ) $conn->close();
-	    return $this->getSwapID();
 	}
 
 	/*

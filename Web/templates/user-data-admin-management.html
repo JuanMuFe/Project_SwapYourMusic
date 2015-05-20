@@ -1,14 +1,12 @@
-		<form name="userManagement" ng-submit="adminCtrl.userManagement()" novalidate>
-			<div class="container well">
+		<form  name="userManagement" ng-submit="adminCtrl.userManagement() ; adminCtrl.selectedRegion=''" novalidate>
+			<div class="container">
 				<div class="form-horizontal" >
-
-<!--
+					<!--
 					 <div>{{adminCtrl.selectedRegion}}
 					 </br>passwordValid:{{passwordValid}} userManagement.$invalid: {{userManagement.$invalid}} email valid:{{emailValid}} userName valid:{{userNameValid}}</div> 
-					
--->
+					-->
 			<div class="row" ng-show="userAction==1">
-						<div class="col-xs-12"><h2>Register</h2></div>
+						<div class="col-xs-12"><h2>Add a new user</h2></div>
 					</div>
 					<div class="row" ng-show="userAction==2">
 						<div class="col-xs-12"><h2>Modify user data</h2></div>
@@ -17,7 +15,7 @@
 					<div class="form-group">
 						<label class="col-sm-2 control-label" for="formGroup">User name:</label>
 						<div class="col-sm-4">
-							<input class="form-control" type="text" id="userName" ng-pattern="/[a-zA-Z0-9^ ]/" ng-change="adminCtrl.checkUserName()" ng-model="adminCtrl.user.userName"  required/>
+							<input class="form-control" type="text" id="userName" ng-pattern="/^[a-zA-Z0-9]*$/" ng-change="adminCtrl.checkUserName()" ng-model="adminCtrl.user.userName"  required/>
 							<p class="warning" ng-show="!userNameValid" >
 								This user name is used by another user
 							</p>
@@ -40,10 +38,8 @@
 							</p>
 						</div>	
 						<label class="col-sm-2 control-label" for="formGroup">Repeat password:</label>
-						<div class="col-sm-4">		
-										
-							<input class="form-control" id="password2" type="password" ng-model="passControl" name="password2" ng-minlength="6" required ng-change="adminCtrl.checkPassword()"/>
-							
+						<div class="col-sm-4">										
+							<input class="form-control" id="password2" type="password" ng-model="passControl" name="password2" ng-minlength="6"  ng-change="adminCtrl.checkPassword()" required/>
 							<p class="warning" ng-if="!passwordValid" >
 								Password do not match
 							</p>							
@@ -51,17 +47,21 @@
 						</br></br></br></br>
 	
 						<label class="col-sm-2 control-label" for="formGroup">Region:</label>
-						<div class="col-sm-4">REGION {{adminCtrl.selectedRegion}}
+						<div class="col-sm-4">
 							<select class="form-control" name="region"  ng-model="adminCtrl.selectedRegion" ng-change="adminCtrl.loadProvincesByRegion()"required>
-								<option ng-selected="{{region.regionID == adminCtrl.selectedRegion}}" ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+								<option ng-if="userAction==1" ng-selected="{{province.provinceID == undefined}}" value="">Select region</option>
+								<option ng-if="userAction==1" ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
+								<option ng-if="userAction==2" ng-selected="{{region.regionID == adminCtrl.selectedRegion}}" ng-repeat="region in adminCtrl.allRegionsArray" value="{{region.regionID}}"> {{region.name}}</option>
 							</select>
 
 						</div>	
 
 						<label class="col-sm-2 control-label" for="formGroup">Province:</label>
-						<div class="col-sm-4">	provinceID 					
+						<div class="col-sm-4">					
 							<select ng-disabled="adminCtrl.selectedRegion==undefined" class="form-control" id="province" name="province"  ng-model="adminCtrl.user.provinceID" required>
-								<option ng-selected="{{province.provinceID == adminCtrl.user.provinceID}}" ng-repeat="province in adminCtrl.allProvincesArray" value="{{province.provinceID}}"> {{province.name}}</option>
+								<option ng-if="userAction==1" ng-selected="{{province.provinceID == undefined}}" value="">Select province</option>
+								<option ng-if="userAction==1" ng-repeat="province in adminCtrl.allProvincesArray" value="{{province.provinceID}}"> {{province.name}}</option>
+								<option ng-if="userAction==2" ng-selected="{{province.provinceID == adminCtrl.user.provinceID}}" ng-repeat="province in adminCtrl.allProvincesArray" value="{{province.provinceID}}"> {{province.name}}</option>
 							</select>		
 							<p class="warning" ng-show="adminCtrl.selectedRegion==undefined" >
 								Select first your region
@@ -86,21 +86,25 @@
 						
 					</div>
 					<div class="form-group">						
-						<label class="col-sm-2 control-label" for="formGroup">Image: <img src="{{adminCtrl.user.image}}" width="50"/></label>						
-						<label class="col-sm-6 control-label" for="formGroup" ><input class="form-control" type="file" file="image" accept="image/*" id="imageUserMod" /></label>						
+						<label class="col-sm-2 control-label" for="formGroup">Image: <img ng-if="userAction==2" src="{{adminCtrl.user.image}}" width="50"/></label>						
+						<label class="col-sm-6 control-label" for="formGroup" ><input class="form-control" ng-if="userAction==2" type="file" file="image" accept="image/*" id="imageUserMod" /></label>	
+						<label class="col-sm-6 control-label" for="formGroup" ><input class="form-control" ng-if="userAction==1" type="file" file="image" accept="image/*" ng-model="image" id="imageUser" required/></label>						
 					</div>
 					<br />
 					<br />
 					<div class="form-group">
 						<label class="col-sm-2 control-label" for="formGroup"></label>
 						<div class="col-sm-4">
-							<button ng-disabled="userManagement.$invalid || !passwordValid ||!emailValid ||!userNameValid" class="btn btn-success" >
+							<button ng-if="userAction==1"ng-disabled="userManagement.$invalid || !passwordValid ||!emailValid ||!userNameValid" class="btn btn-success" >
+								Submit
+							</button>
+							<button ng-if="userAction==2" ng-disabled="userManagement.$invalid || !passwordValid ||!emailValid ||!userNameValid" class="btn btn-success">
 								Submit
 							</button>
 						</div>
 						<div class="form-group col-sm-6">
 							<label>
-								<input class="btn btn-default btn-primary btn-block" type="button"  value="Back" ng-click="flag=1 ; usersFlag=0"> 
+								<input class="btn btn-default btn-primary btn-block" type="button"  value="Back" ng-click="adminCtrl.loadUsers(); adminCtrl.selectedRegion=''"> 
 								
 							</label>
 						</div>

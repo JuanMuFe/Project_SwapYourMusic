@@ -8,15 +8,699 @@ require_once "../model/userClass.php";
 require_once "../model/itemClass.php";
 require_once "../model/genreClass.php";
 require_once "../model/conditionClass.php";
-require_once "../model/warningUsersClass.php";
-require_once "../model/warningClass.php";
-require_once "../model/friendsClass.php";
+require_once "../model/regionClass.php";
+require_once "../model/itemClass.php";
 require_once "../model/provinceClass.php";
+require_once "../model/warningClass.php";
+require_once "../model/warningUsersClass.php";
+require_once "../model/bidClass.php";
+require_once "../model/bidViewClass.php";
+require_once "../model/bidsParticipationClass.php";
 require_once "../model/swapClass.php";
-require_once "../model/applicationsClass.php";
 require_once "../model/directMessageClass.php";
+require_once "../model/applicationsClass.php";
+require_once "../model/evaluationClass.php";
+require_once "../model/swapViewClass.php";
 
 	class toDoClass {
+/*
+ *@name: findByUserName
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchByUserName($action, $JSONData){
+			$userObj = json_decode(stripslashes($JSONData));
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$userList = userClass::findByUserName($userObj->userName);
+			
+			if (count($userList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$usersArray=array();
+				
+				foreach ($userList as $user){
+					$usersArray[]=$user->getAll();
+				}				
+				$outPutData[1]=$usersArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+	
+	
+/*
+ *@name: searchByEmail
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchByEmail($action, $JSONData){
+			$userObj = json_decode(stripslashes($JSONData));
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$userList = userClass::findByEmail($userObj->email);
+			
+			if (count($userList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$usersArray=array();
+				
+				foreach ($userList as $user){
+					$usersArray[]=$user->getAll();
+				}				
+				$outPutData[1]=$usersArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+	
+/*
+ *@name: searchRegions
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchRegions($action){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$regionsList = regionClass::findAll();
+			
+			if (count($regionsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$regionsArray=array();
+				
+				foreach ($regionsList as $region){
+					 $regionsArray[]=$region->getAll();
+				}				
+				$outPutData[1]=$regionsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+
+
+
+/*
+ *@name: searchProvincesByRegion
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchProvincesByRegion($action, $regionID){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$regionList = provinceClass::findByRegionID($regionID);
+			
+			if (count($regionList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$regionsArray=array();
+				
+				foreach ($regionList as $region){
+					$regionsArray[]=$region->getAll();
+				}				
+				$outPutData[1]=$regionsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: insertUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function insertUser($action, $JSONData){
+
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			
+			//the senetnce returns de id of the user inserted
+			echo json_encode($user->create());	
+		}
+		
+		
+		
+/*
+ *@name: searchClientUsersNameLike
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchClientUsersNameLike ($action, $userName){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$userClientsList = userClass::findClientLikeUserName($userName);
+			
+			if (count($userClientsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$userClientsArray=array();
+				$userProvincesArray = array();
+				
+				foreach ($userClientsList as $user){
+					 $userClientsArray[]=$user->getAll();
+					 $userProvince=provinceClass::findById($user->getProvinceID());
+					 foreach ($userProvince as $province){
+						$userProvincesArray[]=$province->getAll();
+					}
+				}	
+							
+				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
+
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: searchClientUsersByRegion
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchClientUsersByRegion ($action, $regionID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findProvincesByRegion($regionID);
+			$userClientsList = userClass::findClientUsers();
+
+				$userClientsArray=array();
+				$userProvincesArray = array();
+				
+				foreach ($userClientsList as $user){
+					 $user->getAll();					
+					foreach ($provincesList as $province){
+												
+						if (strcmp($user->getProvinceID(),$province->getProvinceID())==0){
+							$userClientsArray[] = $user->getAll();
+							$userProvince=provinceClass::findById($user->getProvinceID());							
+							foreach ($userProvince as $province){								
+								$userProvincesArray[]=$province->getAll();
+							}
+						}
+					}
+				}								
+				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
+				
+				if(count($userClientsArray)==0){
+					$outPutData[0]=false;
+					$outPutData[1]=$errors;	
+					$outPutData[2]=$errors;	
+				}
+			
+			return json_encode($outPutData);
+		}
+
+/*
+ *@name: searchClientUsersByRegionLikeName
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchClientUsersByRegionLikeName ($action, $regionID, $userName){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findProvincesByRegion($regionID);
+			$userClientsList = userClass::findClientLikeUserName($userName);
+
+				$userClientsArray=array();
+				$userProvincesArray = array();
+				
+				foreach ($userClientsList as $user){
+					 $user->getAll();					
+					foreach ($provincesList as $province){
+						
+						if (strcmp($user->getProvinceID(),$province->getProvinceID())==0){
+							$userClientsArray[] = $user->getAll();
+							$userProvince=provinceClass::findById($user->getProvinceID());							
+							foreach ($userProvince as $province){								
+								$userProvincesArray[]=$province->getAll();
+							}
+						}
+					}
+				}								
+				$outPutData[1]=$userClientsArray;
+				$outPutData[2]=$userProvincesArray;
+				
+				if(count($userClientsArray)==0){
+					$outPutData[0]=false;
+					$outPutData[1]=$errors;	
+					$outPutData[2]=$errors;	
+				}
+			
+			return json_encode($outPutData);
+		}		
+
+		
+
+/*
+ *@name: searchProvinces
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchAllProvinces($action){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$provincesList = provinceClass::findAll();
+			
+			if (count($provincesList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$provincesArray=array();
+				
+				foreach ($provincesList as $province){
+					 $provincesArray[]=$province->getAll();
+				}				
+				$outPutData[1]=$provincesArray;
+
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+	
+
+/*
+ *@name: deleteUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function deleteUser($action, $JSONData){
+
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,$userObj->password,$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->delete();
+			
+			echo true;
+		}
+		
+/*
+ *@name: modifyUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function modifyUser($action, $JSONData){
+
+			$userObj = json_decode(stripslashes($JSONData));
+		
+			$user = new userClass();	   	
+			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName,md5($userObj->password),$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
+			$user->update();
+			
+			echo true;
+		}
+
+
+
+/*
+ *@name: searchWarnings
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchAllWarnings(){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$warningsList = warningClass::findActives();
+			
+			if (count($warningsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$warningsArray=array();
+				
+				foreach ($warningsList as $warning){
+					 $warningsArray[]=$warning->getAll();
+				}				
+				$outPutData[1]=$warningsArray;
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*
+ *@name: insertWarningToUser
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts a new sent warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function insertWarningToUser($warningID, $userID){
+		
+			$userWarning = new warningUsersClass();	   	
+			$userWarning->setAll($warningID, $userID,0);		
+
+			echo json_encode($userWarning->create());	
+		}
+		
+		
+/*
+ *@name: insertWarning
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts  warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function insertWarning($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	   	
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active );		
+
+			echo json_encode($warning->create());	
+		}
+		
+/*
+ *@name: setWarningInactive
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function inserts  warning
+ *@date: 2015/05/11
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function setWarningInactive($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	 
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active);  	
+			$warning->setInactive();
+			
+			echo true;	
+			
+
+		}
+		
+/*
+ *@name: modifyWarning
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: true
+ *
+*/
+		public function modifyWarning($JSONData){
+
+			$warningObj = json_decode(stripslashes($JSONData));
+		
+			$warning = new warningClass();	   	
+			$warning->setAll($warningObj->warningID ,$warningObj->description,$warningObj->active);  	
+			$warning->update();
+			
+			echo true;
+		}
+		
+/*
+ *@name: searchBids
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchBids(){
+
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+
+			$bidViewList = bidViewClass::getView();
+			
+			
+			if (count($bidViewList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$bidViewArray=array();
+
+				
+				foreach ($bidViewList as $bidView){
+						$bidViewArray[]=$bidView->getAll();
+				}
+			
+				$outPutData[1]=$bidViewArray;
+			}
+			
+			return json_encode($outPutData);
+		}	
+		
+/*
+ *@name: searchBidHistory
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action, $JSONData
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchBidHistory($bidID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$bidHistoryList = bidsParticipationClass::findByBidID($bidID);
+			
+			if (count($bidHistoryList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$bidHistoryArray=array();
+				$usersArray = array();
+				
+				foreach ($bidHistoryList as $bidHistory){
+					$bidHistoryArray[]=$bidHistory->getAll();
+					
+					$usersList = userClass::findById($bidHistory->getUserID());
+					foreach ($usersList as $user){
+						$usersArray[]=$user->getAll();
+					}
+					
+				}				
+				$outPutData[1]=$bidHistoryArray;
+				$outPutData[2]=$usersArray;
+			}
+			
+			return json_encode($outPutData);
+		}	
+		
+/*
+ *@name: searchClientUsersNameLike
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		public function searchWarningsByUser ($userID){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			
+			$userWarningsList = warningUsersClass::findByUserId($userID);
+			
+			if (count($userWarningsList)==0){
+				$outPutData[0]=false;
+				$outPutData[1]=$errors;
+			}else{
+				$userWarningsArray=array();
+				$warningsArray = array();
+				
+				foreach ($userWarningsList as $userWarning){
+					 $userWarningsArray[]=$userWarning->getAll();
+					 
+					 $warningsList=warningClass::findById($userWarning->getWarningID());
+					 foreach ($warningsList as $warning){
+						$warningsArray[]=$warning->getAll();
+					}
+				}	
+							
+				$outPutData[1]=$userWarningsArray;
+				$outPutData[2]=$warningsArray;
+
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+		
+/*
+ *@name: searchAllItems
+ *@author: Irene Blanco Fabregat
+ *@version: 1.0
+ *@description: this function 
+ *@date: 2015/05/05
+ *@params: $action
+ *@return: $outPutData -> array with all user data.
+ *
+*/
+		
+		public function searchAllItems($action, $userName, $itemType, $genreID, $artist){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$searchedUserID= array();
+			$listItemsSearch= array();
+			
+			if($userName!=""){
+				$listUsersByUserName = userClass::findClientLikeUserName($userName);
+				foreach ($listUsersByUserName as $user){
+					$searchedUserID[]= $user->getUserID();
+				}				
+			}
+						
+			if($userName=="" and $itemType=="" and $genreID=="" and $artist=="") $listItemsSearch = itemClass::findAll();			
+			if($userName!="" and $itemType=="" and $genreID=="" and $artist==""){
+				foreach($searchedUserID as $userID){
+					$itemsAux= itemClass::findByUserId($userID);	
+				
+					foreach ($itemsAux as $item)
+					{
+						$listItemsSearch[]= $item;
+					}						
+				}			
+			} 
+			
+			if($userName=="" and $itemType!="" and $genreID=="" and $artist=="") $listItemsSearch = itemClass::findByItemType($itemType);
+			if($userName=="" and $itemType=="" and $genreID!="" and $artist=="") $listItemsSearch = itemClass::findByGenre($genreID);
+			if($userName=="" and $itemType=="" and $genreID=="" and $artist!="") $listItemsSearch = itemClass::findlikeArtist($artist);
+			if($userName=="" and $itemType!="" and $genreID!="" and $artist=="") $listItemsSearch = itemClass::findByItemtypeAndGenre($itemType, $genreID);
+			if($userName=="" and $itemType!="" and $genreID=="" and $artist!="") $listItemsSearch = itemClass::findByItemTypeAndArtist($itemType, $artist);			if (count($listItemsSearch)==0){
+				$outPutData[0]=false;
+				$errors[]="No items have been found into the databse";
+				$outPutData[1]=$errors;
+			}
+			else{
+				$itemsArray= array();
+				$usersArray= array();
+				$listUsersSearch = userClass::findAll();
+				
+				foreach ($listItemsSearch as $item){				
+					$itemsArray[]=$item->getAll();
+						
+					foreach ($listUsersSearch as $user){
+						if($user->getUserID()==$item->getUserID()){
+							$usersArray[]=$user->getAll();	
+						}
+					}																												
+				}			
+				
+				$outPutData[1]=$itemsArray;
+				$outPutData[2]=$usersArray;					
+			}
+			
+			return json_encode($outPutData);
+		}
+		
+/*___________________________________________________________________________________________*/
 /*
  *@name: userConnection
  *@author: Juan Antonio Muñoz
@@ -127,8 +811,8 @@ require_once "../model/directMessageClass.php";
 			$itemObject = json_decode(stripslashes($JSONData));
 			
 			$item = new itemClass();
-			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->bidID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
-						$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
+			$item->setAll($itemObject->itemID, $itemObject->userID, $itemObject->itemType, $itemObject->title, $itemObject->artist,
+							$itemObject->releaseYear,$itemObject->genreID, $itemObject->conditionID, $itemObject->image, $itemObject->available, $itemObject->uploadDate);
 			$item->create();				
 			echo true;
 		}
@@ -155,15 +839,6 @@ require_once "../model/directMessageClass.php";
 			echo true;
 		}
 		
-		public function modifyUser($action, $JSONData){
-			$userObj = json_decode(stripslashes($JSONData));
-		
-			$user = new userClass();	   	
-			$user->setAll($userObj->userID ,$userObj->userType, $userObj->userName, md5($userObj->password),$userObj->email, $userObj->registerDate,$userObj->unsubscribeDate,$userObj->image, $userObj->provinceID);		
-			$user->update();
-			
-			echo true;
-		}
 		
 		public function searchLimitedItems($action, $limitNumber){
 			$outPutData = array();
@@ -351,45 +1026,27 @@ require_once "../model/directMessageClass.php";
 			echo true;
 		}
 		
-		public function addFriend($action, $userID, $idFriendToAdd){
+		public function searchSwaps($action){
+			$outPutData = array();
+			$errors = array();
+			$outPutData[0]=true;
+			$swapViewList = swapViewClass::getView();
 			
-			$userFriend = new friendsClass();
-			$userFriend->setAll($userID, $idFriendToAdd);
-			$userFriend->create();				
-			echo true;
+			if (count($swapViewList)==0){
+				$outPutData[0]=false;
+				$errors[]="No swaps have been found into the databse";
+				$outPutData[1]=$errors;
+			}else{
+				$swapViewArray= array();
+				
+				foreach($swapViewList as $swapView){
+					$swapViewArray[]=$swapView->getAll();
+				}							
+				$outPutData[1]=$swapViewArray;
+							
+			}			
+			return json_encode($outPutData);
 		}
-		
-		public function insertSwap($action, $JSONData, $offeredItemID, $demandedItemID){
-			$swapObj= json_decode(stripcslashes($JSONData));
-			
-			$swap= new swapClass();
-			$swap->setAll($swapObj->swapID, $swapObj->startDate, $swapObj->finishDate, $swapObj->success);
-			$swapIDReturned= $swap->create();
-			
-			$application= new applicationsClass();
-			$application->setAll($swapIDReturned, $offeredItemID, $demandedItemID);
-			$application->create();
-			
-			$offeredItem= new itemClass();
-			$offeredItemData= $offeredItem->findById($offeredItemID);
-			
-			$offeredItemUser= new userClass();
-			$userOffered= $offeredItemUser->findById($offeredItemData[0]->getUserID());
-			
-			$demandedItem= new itemClass();
-			$demandedItemData= $demandedItem->findById($demandedItemID);
-						
-			$demandedItemUser= new userClass();
-			$userDemanded= $demandedItemUser->findById($demandedItemData[0]->getUserID());
-			
-			$contentMessage= "Hi ".$userDemanded[0]->getUserName().", ".$userOffered[0]->getUserName()." wants to exchange your ".$demandedItemData[0]->getItemType()." titled ".$demandedItemData[0]->getTitle()." by ".$demandedItemData[0]->getArtist()." for his item titled ".$offeredItemData[0]->getTitle()." by ".$offeredItemData[0]->getArtist()."";
-			
-			$directMessage= new directMessageClass();
-			$directMessage->setAll(0, $swapIDReturned, 0, $contentMessage, 0); 
-			$directMessage->create();
-			
-			return true;
-		}
-	}
-	
+
+}	
 ?>

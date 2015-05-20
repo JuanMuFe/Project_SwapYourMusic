@@ -1,6 +1,13 @@
-
-	<table class="table table-hover">
-		<tr><th>Image</th><th>UserName</th><th>Password</th><th>Email</th><th>RegisterDate</th><th>unsubscribeDate</th><th>Province</th><th></th><th></th></tr>
+	<p class="warning" ng-show="!noUsers || adminCtrl.nameToSearch==undefined" >
+		Search for coincidences on the database
+	</p>
+	<p class="warning" ng-show="noUsers && (adminCtrl.nameToSearch!=undefined)" >
+		No coincidences on the data base
+	</p>							
+	
+	
+	<table ng-if="!noUsers" class="table table-hover">
+		<tr><th>Image</th><th>UserName</th><th>Password</th><th>Email</th><th>RegisterDate</th><th>unsubscribeDate</th><th>Province</th><th></th><th></th><th></th></tr>
 		<tr ng-repeat="user in adminCtrl.usersArray">
 			<td><img src="{{user.image}}" width="50"/></td>
 			<td>{{user.userName}}</td>
@@ -9,8 +16,12 @@
 			<td>{{user.registerDate}}</td>
 			<td>{{user.unsubscribeDate}}</td>
 			<td>{{adminCtrl.provincesArray[$index].name}}</td>
-			<td><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
-			<td><img src="img/delete97.png" width="20" ng-click="adminCtrl.deleteUser($index)"/></td>
+			<td><a href=""><img src="img/pencil43.png" width="20" ng-click="adminCtrl.modifyUser($index);flag=0;adminCtrl.loadRegions();adminCtrl.loadProvincesByRegion()"/></a></td>
+			<td>
+				<a href=""><img src="img/delete97.png" ng-if="user.unsubscribeDate=='0000-00-00'" width="20" ng-click="adminCtrl.deleteUser($index)"/></a>
+				<img src="img/noDelete.png" ng-if="user.unsubscribeDate!='0000-00-00'" width="20"/>
+			</td>
+			<td><a href=""><img src="img/triangle38.png" width="20" ng-click="adminCtrl.warnings($index); adminCtrl.loadUserWarnings()"/></a></td>
 		</tr>
 	
 	</table>

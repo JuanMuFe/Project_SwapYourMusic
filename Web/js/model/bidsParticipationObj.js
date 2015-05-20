@@ -1,4 +1,4 @@
-function evaluationObj ()
+function bidsParticipationObj ()
 {
 	//Attributes declaration
 	this.userID;

@@ -10,7 +10,9 @@ require_once "BDSwap_your_music.php";
 
 class bidClass {
     private $bidID;
+    private $itemID;
     private $startPrice;
+    private $actualPrice;
     private $duration;
 	private $startDate;
 	private $finishDate;
@@ -18,7 +20,9 @@ class bidClass {
     //----------Data base Values---------------------------------------
     private static $tableName = "bids";
     private static $colNameBidID = "bidID";
+    private static $colNameItemID = "itemID";
     private static $colNameStartPrice = "startPrice";
+    private static $colNameActualPrice = "actualPrice";
     private static $colNameDuration = "duration";
     private static $colNameStartDate = "startDate";
     private static $colNameFinishDate = "finishDate";
@@ -34,12 +38,28 @@ class bidClass {
         $this->bidID = $bidID;
     }
     
+      public function getItemID() {
+        return $this->itemID;
+    }
+    
+    public function setItemID($itemID) {
+        $this->itemID = $itemID;
+    }
+    
     public function getStartPrice() {
         return $this->startPrice;
     }
     
     public function setStartPrice($startPrice) {
         $this->startPrice = $startPrice;
+    }
+    
+     public function getActualPrice() {
+        return $this->actualPrice;
+    }
+    
+    public function setActualPrice($actualPrice) {
+        $this->actualPrice = $actualPrice;
     }
     
      public function getDuration() {
@@ -70,8 +90,10 @@ class bidClass {
 	
     public function getAll() {
 		$data = array();
-		$data["bidID"] = $this->getRegionID();
+		$data["bidID"] = $this->getBidID();
+		$data["itemID"] = $this->getItemID();
 		$data["startPrice"] = $this->getStartPrice();
+		$data["actualPrice"] = $this->getActualPrice();
 		$data["duration"] = $this->getDuration();
 		$data["finishDate"] = $this->getFinishDate();
 		$data["startDate"] = $this->getStartDate();
@@ -87,9 +109,11 @@ class bidClass {
 	 * @params: $bidID ,$startPrice
 	 * @return: none
 	 */ 
-    public function setAll($bidID ,$startPrice, $duration, $startDate, $finishDate)) {
-		$this->setRegionID($bidID);
+    public function setAll($bidID, $itemID, $startPrice, $actualPrice, $duration, $startDate, $finishDate) {
+		$this->setBidID($bidID);
+		$this->setItemID($itemID);
 		$this->setStartPrice($startPrice);
+		$this->setActualPrice($actualPrice);
 		$this->setDescirption($duration);
 		$this->setStartDate($startDate);
 		$this->setFinishDate($finishDate);
@@ -130,15 +154,19 @@ class bidClass {
     private static function fromResultSet( $res ) {
 		//We get all the values form the query
 		$bidID=$res[bidClass::$colNameBidID];
+		$itemID=$res[bidClass::$colNameItemID];
 		$startPrice=$res[bidClass::$colNameStartPrice];
+		$actualPrice=$res[bidClass::$colNameActualPrice];
 		$duration=$res[bidClass::$colNameDuration];
 		$startDate=$res[bidClass::$colNameStartDate];
 		$finishDate=$res[bidClass::$colNameFinishDate];
 
        	//Object construction
        	$entity = new bidClass();
-		$entity->setRegionID($bidID);
+		$entity->setBidID($bidID);
+		$entity->setItemID($itemID);
 		$entity->setStartPrice($startPrice);
+		$entity->setActualPrice($actualPrice);
 		$entity->setDescirption($duration);
 		$entity->setStartDate($startDate);
 		$entity->setFinishDate($finishDate);
@@ -186,6 +214,21 @@ class bidClass {
 
 	return bidClass::findByQuery( $cons );
     }
+        /*
+     * @userStartPrice: findByItemId()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @duration: this function runs a query and returns an object array
+     * @startDate: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findByItemId( $itemID ) {
+	$cons = "select * from `".bidClass::$tableName."` where ".bidClass::$colNameItemID." = \"".$itemID."\"";
+
+	return bidClass::findByQuery( $cons );
+    }
+    
 
  
     /*
@@ -222,8 +265,8 @@ class bidClass {
 	//return $this->toString();
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".bidClass::$tableName."(`bidID`,`startPrice`, `duration`, `startDate`, `finishDate`) values (?,?,?,?,?)" )) {
-		$stmt->bind_param("issss",$this->getBidID(), $this->getStartPrice(), $this->getDuration(), $this->getStartDate(), $this->getFinishDate());
+	if ($stmt->prepare("insert into ".bidClass::$tableName."(`bidID`,`itemID`,`startPrice`, `actualPrice`,`duration`, `startDate`, `finishDate`) values (?,?,?,?,?,?,?)" )) {
+		$stmt->bind_param("iiddiss",$this->getBidID(),$this->getItemID(), $this->getStartPrice(), $this->getActualPrice(),$this->getDuration(), $this->getStartDate(), $this->getFinishDate());
 		//executar consulta
 		$stmt->execute();
 	    }
@@ -278,10 +321,10 @@ class bidClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("UPDATE `".bidClass::$tableName."` set ".bidClass::$colNameBidID." = ?,".bidClass::$colNameStartPrice." = ?,".bidClass::$colNameDuration." = ?,".bidClass::$colNameStartDate." = ?,".bidClass::$colNameFinishDate." = ? where ".bidClass::$colNameBidID." =?") ) {
-			$stmt->bind_param("iiissi",$this->getBidID(), $this->getStartPrice(),$this->getDuration(),$this->getStartDate(),$this->getFinishDate(),$this->getBidID() );
+		if ($stmt->prepare("UPDATE `".bidClass::$tableName."` set ".bidClass::$colNameBidID." = ?,".bidClass::$colNameItemID." = ?,".bidClass::$colNameStartPrice." = ?,".bidClass::$colNameActualPrice." = ?,".bidClass::$colNameDuration." = ?,".bidClass::$colNameStartDate." = ?,".bidClass::$colNameFinishDate." = ? where ".bidClass::$colNameBidID." =?") ) {
+			$stmt->bind_param("iiddissi",$this->getBidID(),$this->getItemID(), $this->getStartPrice(), $this->getActualPrice(),$this->getDuration(),$this->getStartDate(),$this->getFinishDate(),$this->getBidID() );
 			//executar consulta
-			$stmt->execute();;
+			$stmt->execute();
 		}
 		if ( $conn != null ) $conn->close();
 
@@ -298,7 +341,7 @@ class bidClass {
 	 * @return: none
 	 */ 	
     public function toString() {
-        $toString = "bidClass[bidID=" . $this->bidID . "][startPrice=" . $this->startPrice . "][duration=" . $this->duration . "][startDate=" . $this->startDate . "][finishDate=" . $this->finishDate . "]";
+        $toString = "bidClass[bidID=" . $this->bidID . "][itemID=" . $this->itemID . "][startPrice=" . $this->startPrice . "][duration=" . $this->duration . "][startDate=" . $this->startDate ."][actualPrice=" . $this->actualPrice . "][finishDate=" . $this->finishDate . "]";
 		return $toString;
 
     }

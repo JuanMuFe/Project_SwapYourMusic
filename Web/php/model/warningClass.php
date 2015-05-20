@@ -11,11 +11,13 @@ require_once "BDSwap_your_music.php";
 class warningClass {
     private $warningID;
     private $description;
+    private $active;
 
     //----------Data base Values---------------------------------------
     private static $tableName = "warnings";
     private static $colNameWarningID = "warningID";
     private static $colNameDescription = "description";
+    private static $colNameActive = "active";
         
     function __construct() {
     }
@@ -36,12 +38,21 @@ class warningClass {
         $this->description = $description;
     }
     
+    public function getActive() {
+        return $this->active;
+    }
+    
+    public function setActive($active) {
+        $this->active = $active;
+    }
+    
   
 	
     public function getAll() {
 		$data = array();
 		$data["warningID"] = $this->getWarningID();
 		$data["description"] = $this->getDescription();
+		$data["active"] = $this->getActive();
 
 	return $data;
     }
@@ -54,9 +65,10 @@ class warningClass {
 	 * @params: $warningID ,$description
 	 * @return: none
 	 */ 
-    public function setAll($warningID ,$description) {
+    public function setAll($warningID ,$description, $active) {
 		$this->setWarningID($warningID);
 		$this->setDescription($description);
+		$this->setActive($active);
     }
     
     //---Databese management section-----------------------
@@ -95,11 +107,13 @@ class warningClass {
 		//We get all the values form the query
 		$warningID=$res[warningClass::$colNameWarningID];
 		$description=$res[warningClass::$colNameDescription];
+		$active=$res[warningClass::$colNameActive];
 
        	//Object construction
        	$entity = new warningClass();
 		$entity->setWarningID($warningID);
 		$entity->setDescription($description);
+		$entity->setActive($active);
 
 
 		return $entity;
@@ -140,10 +154,37 @@ class warningClass {
 	 * @return: object with the query results
 	 */ 
     public static function findById( $warningID ) {
-		$cons = "select * from `".warningClass::$tableName."` where ".warningClass::$colNameWarningID." = \"".$warningID."\"";
+	$cons = "select * from `".warningClass::$tableName."` where ".warningClass::$colNameWarningID." = \"".$warningID."\"";
 
-		return warningClass::findByQuery( $cons );
+	return warningClass::findByQuery( $cons );
     }
+    
+    /*
+     * @userDescription: setInactive()
+	 * @author: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public function setInactive() {
+	$conn = new BDSwap_your_music();
+		if (mysqli_connect_errno()) {
+    		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+    		exit();
+		}		
+		//Preparing the sentence
+		//return $this->toString();
+		$stmt = $conn->stmt_init();
+		if ($stmt->prepare("update `".warningClass::$tableName."` set ".warningClass::$colNameActive." = 0 where ".warningClass::$colNameWarningID." =?") ) {
+			$stmt->bind_param("i", $this->getWarningID());
+			//executar consulta
+			$stmt->execute();
+		}
+		if ( $conn != null ) $conn->close();
+    }
+
 
  
     /*
@@ -157,7 +198,21 @@ class warningClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".warningClass::$tableName."`";
-		return warningClass::findByQuery( $cons );
+	return warningClass::findByQuery( $cons );
+    }
+    
+    /*
+     * @userDescription: findActives()
+	 * @author: Irene Blanco & Carlos García
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: objects collection
+	 */ 
+    public static function findActives( ) {
+    	$cons = "select * from `".warningClass::$tableName."` where ".warningClass::$colNameActive." =1";
+	return warningClass::findByQuery( $cons );
     }
 
 
@@ -180,8 +235,8 @@ class warningClass {
 	//return $this->toString();
 	//Preparing the sentence
 	$stmt = $conn->stmt_init();
-	if ($stmt->prepare("insert into ".warningClass::$tableName."(`warningID`,`description`) values (?,?)" )) {
-		$stmt->bind_param("is",$this->getWarningID(), $this->getDescription());
+	if ($stmt->prepare("insert into ".warningClass::$tableName."(`warningID`,`description`,`active`) values (?,?,?)" )) {
+		$stmt->bind_param("isi",$this->getWarningID(), $this->getDescription(), $this->getActive());
 		//executar consulta
 		$stmt->execute();
 	    }

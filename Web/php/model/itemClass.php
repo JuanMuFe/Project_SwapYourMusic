@@ -135,6 +135,7 @@ class itemClass {
     public function getAll() {
 		$data = array();
 		$data["itemID"] = $this->getItemID();
+		
 		$data["userID"] = $this->getUserID();
 		$data["bidID"] = $this->getBidID();
 		$data["itemType"] = $this->getItemType(); 
@@ -279,6 +280,21 @@ class itemClass {
     }
     
     /*
+     * @itemType: findUserIDByItemID()
+	 * @artist: Irene Blanco 
+	 * @version: 1.0
+	 * @description: this function runs a query and returns an object array
+     * @date: 27/03/2015
+	 * @params: id
+	 * @return: object with the query results
+	 */ 
+    public static function findUserIDByItemID( $itemID ) {
+		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameItemID." = \"".$itemID."\"";
+
+		return itemClass::findByQuery( $cons );
+    }
+    
+    /*
      * @itemType: findByUserId()
 	 * @artist: Irene Blanco 
 	 * @version: 1.0
@@ -289,7 +305,7 @@ class itemClass {
 	 */ 
     public static function findByUserId( $userID ) {
 		$cons = "select * from `".itemClass::$tableName."` where ".itemClass::$colNameUserID." = \"".$userID."\"";
-
+		//var_dump($cons);
 		return itemClass::findByQuery( $cons );
     }    
   

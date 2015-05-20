@@ -13,7 +13,7 @@ function userObj ()
 	
 	
 	//Methods declaration
-	this.construct = function (userID,userType,userName, password, email, registerDate, unsubscribeDate, image, provinceID)
+	this.construct = function (userID,userType,userName, password, email, registerDate, unsibscribeDate, image, provinceID)
 	{
 		this.setUserID(userID);
 		this.setUserType(userType);
@@ -21,7 +21,7 @@ function userObj ()
 		this.setPassword(password);
 		this.setEmail(email);
 		this.setRegisterDate(registerDate);
-		this.setUnsubscribeDate(unsubscribeDate);
+		this.setUnsubscribeDate(unsibscribeDate);
 		this.setImage(image);
 		this.setProvinceID(provinceID);
 	}

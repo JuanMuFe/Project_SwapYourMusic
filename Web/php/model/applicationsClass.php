@@ -21,7 +21,7 @@ class applicationsClass {
         
     function __construct() {
     }
-        
+    
     public function getSwapID() {
         return $this->swapID;
     }
@@ -30,7 +30,7 @@ class applicationsClass {
         $this->swapID = $swapID;
     }
     
-     public function getOfferedItemID() {
+    public function getOfferedItemID() {
         return $this->offeredItemID;
     }
     
@@ -64,7 +64,7 @@ class applicationsClass {
 	 * @params: $userID ,$swapID
 	 * @return: none
 	 */ 
-    public function setAll($swapID, $offeredItemID, $demandedItemID) {
+    public function setAll($swapID ,$offeredItemID, $demandedItemID) {
 		$this->setSwapID($swapID);
 		$this->setOfferedItemID($offeredItemID);
 		$this->setDemandedItemID($demandedItemID);
@@ -129,23 +129,23 @@ class applicationsClass {
 	 * @return: objects collection
 	 */ 
     public static function findByQuery( $cons ) {
-		//Connection with the database
-		$conn = new BDSwap_your_music();
-		if (mysqli_connect_errno()) {
-				printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-				exit();
-		}
-		
-		//Run the query
-		$res = $conn->query($cons);
-		
-		if ( $conn != null ) $conn->close();
+	//Connection with the database
+	$conn = new BDSwap_your_music();
+	if (mysqli_connect_errno()) {
+    		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+    		exit();
+	}
+	
+	//Run the query
+	$res = $conn->query($cons);
+	
+	if ( $conn != null ) $conn->close();
 
-		return applicationsClass::fromResultSetList( $res );
+	return applicationsClass::fromResultSetList( $res );
     }
 
     /*
-     * @userSwapID: findById()
+     * @userSwapID: findBySwapID()
 	 * @author: Irene Blanco 
 	 * @version: 1.0
 	 * @description: this function runs a query and returns an object array
@@ -153,12 +153,12 @@ class applicationsClass {
 	 * @params: id
 	 * @return: object with the query results
 	 */ 
-    public static function findById( $swapID ) {
+    public static function findBySwapID( $swapID ) {
 		$cons = "select * from `".applicationsClass::$tableName."` where ".applicationsClass::$colNameSwapID." = \"".$swapID."\"";
 
 		return applicationsClass::findByQuery( $cons );
     }
-
+    
  
     /*
      * @userSwapID: findAll()
@@ -171,7 +171,7 @@ class applicationsClass {
 	 */ 
     public static function findAll( ) {
     	$cons = "select * from `".applicationsClass::$tableName."`";
-	return applicationsClass::findByQuery( $cons );
+		return applicationsClass::findByQuery( $cons );
     }
 
 
@@ -185,20 +185,20 @@ class applicationsClass {
 	 * @return: none
 	 */ 
     public function create() {
-		//Connection with the database
-		$conn = new BDSwap_your_music();
-		if (mysqli_connect_errno()) {
-			printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
-				exit();
-		}
-		//return $this->toString();
-		//Preparing the sentence
-		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("insert into ".applicationsClass::$tableName."(`swapID`,`offeredItemID`, `demandedItemID`) values (?,?,?)" )) {
-			$stmt->bind_param("iii",$this->getSwapID(), $this->getOfferedItemID(),$this->getDemandedItemID());
-			//executar consulta
-			$stmt->execute();
-		}
+	//Connection with the database
+	$conn = new BDSwap_your_music();
+	if (mysqli_connect_errno()) {
+   		printf("Connection with the database has failed, error: %s\n", mysqli_connect_error());
+    		exit();
+	}
+	//return $this->toString();
+	//Preparing the sentence
+	$stmt = $conn->stmt_init();
+	if ($stmt->prepare("insert into ".applicationsClass::$tableName."(`swapID`,`offeredItemID`,`demandedItemID`) values (?,?,?)" )) {
+		$stmt->bind_param("iii",$this->getSwapID(), $this->getOfferedItemID(),$this->getDemandedItemID());
+		//executar consulta
+		$stmt->execute();
+	    }
 	    
 	    if ( $conn != null ) $conn->close();
 	}
@@ -223,7 +223,7 @@ class applicationsClass {
 		//Preparing the sentence
 		$stmt = $conn->stmt_init();
 		if ($stmt->prepare("DELETE FROM `".applicationsClass::$tableName."` where ".applicationsClass::$colNameSwapID." = ?")) {
-			$stmt->bind_param("i", $this->getSwapID());
+			$stmt->bind_param("i",$this->getSwapID());
 			$stmt->execute();
 		}
 		if ( $conn != null ) $conn->close();
@@ -250,29 +250,13 @@ class applicationsClass {
 		//Preparing the sentence
 		//return $this->toString();
 		$stmt = $conn->stmt_init();
-		if ($stmt->prepare("update `".applicationsClass::$tableName."` set ".applicationsClass::$colNameSwapID." = ?,".applicationsClass::$colNameOfferedItemID." = ?,".applicationsClass::$colNameDemandedItemID."= ? where ".applicationsClass::$colNameSwapID." =?") ) {
-			$stmt->bind_param("iiii",$this->getSwapID(),$this->getOfferedItemID(),$this->getDemandedItemID(), $this->getSwapID());
+		if ($stmt->prepare("update `".applicationsClass::$tableName."` set ".applicationsClass::$colNameSwapID." = ?,".applicationsClass::$colNameOfferedItemID." = ?,".applicationsClass::$colNameDemandedItemID." = ? where ".applicationsClass::$colNameSwapID." =? ") ) {
+			$stmt->bind_param("iiiii",$this->getSwapID(), $this->getOfferedItemID(),$this->getDemandedItemID(),$this->getSwapID() );
 			//executar consulta
 			$stmt->execute();;
 		}
 		if ( $conn != null ) $conn->close();
 
-    }
-    
-    
-    /*
-     * @userSwapID: toString()
-	 * @author: Irene Blanco
-	 * @version: 1.0
-	 * @description: this function converts to string the object
-     * @date: 27/03/2015
-	 * @params: none
-	 * @return: none
-	 */ 	
-    public function toString() {
-        $toString = "applicationsClass [swapID=" . $this->swapID . "][Offered itemID=" . $this->offeredItemID."][Demaded itemID=".$this->demandedItemID."]";
-		return $toString;
-
-    }
+    }    
 }
 ?>

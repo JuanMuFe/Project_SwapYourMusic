@@ -1,6 +1,6 @@
 //Angular Code
 (function(){
-	var swapYourMusicApp = angular.module("swapYourMusicApp", []);
+	var swapYourMusicApp = angular.module("swapYourMusicApp", ["ng-currency"]);
 	
 	swapYourMusicApp.controller("sessionController", function($scope){
 		
@@ -10,9 +10,6 @@
 		$scope.flag=0;		
 
 //METHODS
-
-
-
 /*
  *@name: checkSession
  *@author: Juan Antonio Muñoz
@@ -35,7 +32,20 @@
 			}						
 		}
 		
-		
+/*
+ *@name: logOut
+ *@author: Juan Antonio Muñoz
+ *@versio: 1.0
+ *@description: This function removes the session called 'userConnected' and redirects to index.
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/		
+		this.logOut= function(){
+			sessionStorage.removeItem("userConnected");			
+			window.open("index.html","_self");
+		}		
 		
 	});
 	
@@ -47,6 +57,7 @@
 		this.usersArray = new Array();
 		this.provincesArray = new Array();
 		
+		this.nameToSearch;
 		this.user = new userObj();//user to modify
 		this.currEmail;
 		this.currUserName;
@@ -54,13 +65,49 @@
 		this.allRegionsArray = new Array();
 		this.allProvincesArray = new Array();
 		this.selectedRegion;
+		this.regionToSearch;
+		
+		this.allWarningsArray = new Array();
+		this.selectedWarning = 1;
+		this.warning = new warningObj();
+		this.description;
+		this.userWarningsArray = new Array();
+		this.userWarningsIDArray = new Array();
+		
+		this.allBidsArray = new Array();
+		this.bidsHistoryArray = new Array();
+		this.viewBidItem = new bidViewObj();
+		
+		this.itemsArray = new Array();
+		this.itemUsersArray = new Array();
+		this.item = new itemObj();
+		this.genresArray = new Array();
+		this.conditionsArray = new Array();
+		this.itemTypesArray = new Array("Vinyl","Cassette","CD");
+		this.userNameToSearch;
+		this.itemTypeToSearch;
+		this.genreIDToSearch;
+		this.artistToSearch;
+		
+		this.swapsArray= new Array();
+		this.swap= new swapObj();
 	
 		$scope.usersFlag = 0;
 		$scope.flag;
+		$scope.userAction=2;
+		
 		$scope.passControl;
 		$scope.passwordValid = true;
 		$scope.userNameValid = true;
 		$scope.emailValid = true;
+		$scope.noUsers = true;
+		
+		$scope.bidIndex = 0;
+		$scope.pagination=0;
+		
+		$scope.fieldDisabled=0;
+		
+
 		
 //METHODS
 /*
@@ -73,43 +120,84 @@
  *@return: none
  *
 */			
-		this.loadUsers = function(){
-			
-			var outPutData= new Array();						
-			
+		this.loadUsers = function(){			
+			this.usersArray = new Array();
 			this.provincesArray = new Array();
-			
-			//getting the client users
-			$.ajax({
-				  url: 'php/control/control.php',
-				  type: 'POST',
-				  async: false,
-				  data: 'action=55',
-				  dataType: "json",				  
-				  success: function (response) { 
-					  outPutData = response;
-				  },
-				  error: function (xhr, ajaxOptions, thrownError) {
-						alert(xhr.status+"\n"+thrownError);
-				  }					  
-			});
-			
-			if(outPutData[0]){
-				for (var i = 0; i < outPutData[1].length; i++)
-				{
-					var user = new userObj();
-					user.construct(outPutData[1][i].userID, outPutData[1][i].userType, outPutData[1][i].userName, outPutData[1][i].password,
-									outPutData[1][i].email, outPutData[1][i].registerDate, outPutData[1][i].unsubscribeDate, outPutData[1][i].image,
-									outPutData[1][i].provinceID);		
-					
-					this.usersArray.push(user);					
-					
-					var province = new provinceObj();
-					province.construct(outPutData[2][i].provinceID, outPutData[2][i].name,outPutData[2][i].regionID);
-					this.provincesArray.push(province);
+			$scope.userAction=2;
+	
+			if(this.nameToSearch!=""||this.regionToSearch!="") {			
+				
+				$scope.usersFlag = 0;				
+				var outPutData= new Array();						
+				
+				if(this.nameToSearch!="" && (this.regionToSearch=="" || this.regionToSearch==undefined)){
+					this.provincesArray = new Array();
+						//getting the client users
+						$.ajax({
+							  url: 'php/control/control.php',
+							  type: 'POST',
+							  async: false,
+							  data: 'action=55&userName='+this.nameToSearch,
+							  dataType: "json",				  
+							  success: function (response) { 
+								  outPutData = response;
+							  },
+							  error: function (xhr, ajaxOptions, thrownError) {
+									alert(xhr.status+"\n"+thrownError);
+							  }					  
+						});	
 				}			
-					
-			}		
+				else if((this.nameToSearch==undefined || this.nameToSearch=="") && this.regionToSearch!=""){
+					$.ajax({
+						  url: 'php/control/control.php',
+						  type: 'POST',
+						  async: false,
+						  data: 'action=58&regionID='+this.regionToSearch,
+						  dataType: "json",				  
+						  success: function (response) { 
+							  outPutData = response;
+						  },
+						  error: function (xhr, ajaxOptions, thrownError) {
+								alert(xhr.status+"\n"+thrownError);
+						  }					  
+					});
+				}
+				else if(this.nameToSearch!="" && this.regionToSearch!=""){
+						$.ajax({
+						  url: 'php/control/control.php',
+						  type: 'POST',
+						  async: false,
+						  data: 'action=59&regionID='+this.regionToSearch+'&userName='+this.nameToSearch,
+						  dataType: "json",				  
+						  success: function (response) { 
+							  outPutData = response;
+						  },
+						  error: function (xhr, ajaxOptions, thrownError) {
+								alert(xhr.status+"\n"+thrownError);
+						  }					  
+					});
+				}
+				
+				if(outPutData[0]){
+					$scope.noUsers = false;
+					for (var i = 0; i < outPutData[1].length; i++)
+					{
+						var user = new userObj();
+						user.construct(outPutData[1][i].userID, outPutData[1][i].userType, outPutData[1][i].userName, outPutData[1][i].password,
+										outPutData[1][i].email, outPutData[1][i].registerDate, outPutData[1][i].unsubscribeDate, outPutData[1][i].image,
+										outPutData[1][i].provinceID);		
+						
+						this.usersArray.push(user);					
+						
+						var province = new provinceObj();
+						province.construct(outPutData[2][i].provinceID, outPutData[2][i].name,outPutData[2][i].regionID);
+						this.provincesArray.push(province);
+					}			
+						
+				}
+				else $scope.noUsers = true;
+			}
+			else $scope.noUsers = true;
 		}
 		
 /*
@@ -166,20 +254,15 @@
  *
 */			
 		this.modifyUser = function(index){
-			console.log(this.user);			
-				this.user = this.usersArray[index];	
-				console.log(this.user);			
+
+				this.user = this.usersArray[index];		
 				$scope.passControl = this.user.getPassword();
 				
 				this.selectedRegion = this.provincesArray[index].getRegionID();
 				
 				this.currEmail = this.user.getEmail() ;
 				this.currUserName = this.user.getUserName() ;
-				
-				
-				alert("REGION ID"+this.provincesArray[index].getRegionID());
-				alert(this.user.getProvinceID());
-				console.log(this.user);			
+
 				$scope.usersFlag=1;	
 		}
 		
@@ -195,18 +278,32 @@
 		*/
 		this.userManagement = function ()
 		{
-			var confirmModify = confirm("Are you sure that you want to modify this user?");
+			if($scope.userAction==2) {
+				var confirmModify = confirm("Are you sure that you want to modify this user?");
+				var action = 57;
+			}
+			else {
+				var confirmAdd = confirm("Are you sure that you want to add this user?");
+				var action = 54;
+			}
 			
-			if(confirmModify){
+			if(confirmModify || confirmAdd){
 				this.user=angular.copy(this.user);
 
-				var imageUserMod = $("#imageUserMod")[0].files[0];
-				
-				if(imageUserMod != undefined)
-				{
-					var imagesNameArray = userImagesManagement(this.user.getUserName(), this.user.getImage());
-					this.user.setImage(imagesNameArray[0]);	
-				}			
+				if($scope.userAction==2) {
+					var imageUserMod = $("#imageUserMod")[0].files[0];
+					
+					if(imageUserMod != undefined)
+					{
+						var imagesNameArray = userImagesManagement(this.user.getUserName(), this.user.getImage());
+						this.user.setImage(imagesNameArray[0]);	
+					}
+				}	
+				else{
+					var imagesNameArray = imagesManagement(this.user.getUserName());
+					this.user.setImage(imagesNameArray[0]);
+
+				}		
 							
 				var error = false;
 				
@@ -214,7 +311,7 @@
 					  url: 'php/control/control.php',
 					  type: 'POST',
 					  async: false,
-					  data: 'action=57&JSONData='+JSON.stringify(this.user),
+					  data: 'action='+action+'&JSONData='+JSON.stringify(this.user),
 					  dataType: "json",
 					  success: function (response) { 
 						  
@@ -227,7 +324,8 @@
 				
 				if(!error)
 				{
-					alert("User correctly modified!");	
+					if($scope.userAction==2) alert("User correctly modified!");	
+					else alert("User correctly added!");	
 					$scope.usersFlag=0;	
 					this.usersArray = new Array();
 					this.loadUsers();
@@ -251,7 +349,7 @@
 */ 
 		this.checkPassword = function ()
 		{
-			if(this.user.password != this.passControl)
+			if(this.user.password != $scope.passControl)
 			{
 				$scope.passwordValid = false;
 				$("#password2").removeClass("ng-valid");
@@ -451,10 +549,761 @@
 						var province = new provinceObj();
 						province.construct(outPutData[1][i].provinceID, outPutData[1][i].name);					
 						this.allProvincesArray.push(province);
-					}			
-						
+					}						
 				}
 			}			
+		}
+		
+/*
+ *@name: prepareRegister
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.prepareRegister = function(){
+
+				this.user= new userObj();
+				$scope.passControl="";
+				this.user.setUnsubscribeDate("0000-00-00");
+				this.user.setUserType(1);
+				this.user.setUserID(0);
+		}
+
+/*
+ *@name: warnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function defines the user and
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.warnings = function(index){
+				$scope.usersFlag = 2;
+				this.user = this.usersArray[index];				
+		}
+		
+/*
+ *@name: sendWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This functionsends the selected warning to the user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.sendWarning = function(){
+			
+			var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=61&warningID='+this.selectedWarning+'&userID='+this.user.getUserID(),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("The warning has been sent.")
+					$scope.usersFlag = 2;
+					$scope.selectedWarning = 1;
+					this.loadUserWarnings();
+				}
+			}
+			
+/*
+ *@name: loadUserWarnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This functionsends the selected warning to the user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.loadUserWarnings = function(){
+			
+
+			this.userWarningsArray = new Array();
+			this.userWarningsIDArray = new Array();
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=67&userID='+this.user.getUserID(),
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var warningUser = new warningUsersObj();
+					warningUser.construct(outPutData[1][i].warningID, outPutData[1][i].userID, outPutData[1][i].read);					
+					this.userWarningsIDArray.push(warningUser);
+				}
+				
+				for (var i = 0; i < outPutData[2].length; i++)
+				{
+					var warning = new warningObj();
+					warning.construct(outPutData[2][i].warningID, outPutData[2][i].description, outPutData[2][i].active);					
+					this.userWarningsArray.push(warning);
+				}			
+					
+			}
+							
+		}
+						
+		
+/*
+ *@name: loadWarnings
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.loadWarnings = function(){
+			
+			this.allWarningsArray = new Array();
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=60',
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var warning = new warningObj();
+					warning.construct(outPutData[1][i].warningID, outPutData[1][i].description, outPutData[1][i].active);					
+					this.allWarningsArray.push(warning);
+				}			
+					
+			}				
+				
+				
+		}
+		
+/*
+ *@name: changeFlag
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function defines the user and
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.changeFlag = function(index){
+				$scope.usersFlag = 3;			
+				$scope.userAction = 1;	
+				this.warning = this.allWarningsArray[index];					
+				this.description = this.warning.getDescription();					
+		}
+		
+/*
+ *@name: clearWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function restarts the warning Object
+ * shows a pop up to send the warning 
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.clearWarning = function(index){
+				this.warning = new warningObj();					
+				
+		}
+/*
+ *@name: addWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.warningsManagement = function(action){
+			if(action==62){
+				var confirmAdd = confirm("Do you really want to add this new warning message?");
+				this.warning.setWarningID(0);
+				this.warning.setActive(1);
+			}
+			else if(action==64){
+				var modifyAdd = confirm("Do you really want to modify this  warning message?");
+				this.warning.setDescription(this.description);
+			}
+			
+			if(confirmAdd || modifyAdd){
+				var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action='+action+'&JSONData='+JSON.stringify(this.warning),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("Warning succesfully added!");	
+					$scope.usersFlag=0;	
+					this.warning = new warningObj;
+					this.loadWarnings();
+					//location.reload();
+					
+				}
+			}else this.warning = new warningObj();						
+		}
+
+		
+/*
+ *@name: deleteWarning
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.deleteWarning = function(index){
+			var confirmDelete = confirm("Do you really want to delete the warning message?");
+			this.warning = this.allWarningsArray[index];
+
+
+			if(confirmDelete){
+				var error = false;
+				
+				$.ajax({
+					  url: 'php/control/control.php',
+					  type: 'POST',
+					  async: false,
+					  data: 'action=63&JSONData='+JSON.stringify(this.warning),
+					  dataType: "json",
+					  success: function (response) { 
+						  
+					  },
+					  error: function (xhr, ajaxOptions, thrownError) {
+							alert(xhr.status+"\n"+thrownError);
+							error = true;
+					  }	
+				});
+				
+				if(!error)
+				{
+					alert("Warning succesfully deleted!");	
+					$scope.usersFlag=0;	
+					this.warning = new warningObj;
+					this.loadWarnings();
+					
+				}
+			}else this.warning = new warningObj();				
+		}
+		
+/*
+ *@name: loadBids
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.loadBids = function(){
+			var outPutData= new Array();
+			this.allBidsArray = new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=65',
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){		
+				for (var i = 0; i < outPutData[1].length; i++){
+					var bidView = new bidViewObj();
+					bidView.construct (outPutData[1][i].userID, outPutData[1][i].bidID, outPutData[1][i].userName, outPutData[1][i].startPrice, outPutData[1][i].actualPrice, outPutData[1][i].duration, outPutData[1][i].startDate,outPutData[1][i].finishDate, outPutData[1][i].itemType, outPutData[1][i].title, outPutData[1][i].artist, outPutData[1][i].releaseYear, outPutData[1][i].image, outPutData[1][i].available, outPutData[1][i].uploadDate);	
+					
+				this.allBidsArray.push(bidView);
+				}							
+							
+			}
+		}
+/*
+ *@name: filterBids
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.filterBids = function(){
+			
+			this.loadBids();
+			var filteredBidsArray = new Array();
+			
+			for (var i = 0; i < this.allBidsArray.length; i++){
+				if ( this.allBidsArray[i].userName.toLowerCase().indexOf( this.nameToSearch.toLowerCase() ) > -1 ) {
+					  filteredBidsArray.push(this.allBidsArray[i]);
+				} 
+			}
+			this.allBidsArray = filteredBidsArray;							
+		}				
+		
+/*
+ *@name: showStory
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.showHistory = function(index){
+
+			$scope.usersFlag=4;
+			
+			this.bidsHistoryArray = new Array();
+			this.usersArray = new Array();
+			
+			//loading all the movements on the selected bid
+			var bidIDToSearch = this.allBidsArray[index].getBidID();
+			
+			var outPutData= new Array();
+						
+			$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=66&bidID='+bidIDToSearch,
+				  dataType: "json",				  
+				  success: function (response) { 
+					  outPutData = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+				  }					  
+			});
+			
+			if(outPutData[0]){
+				for (var i = 0; i < outPutData[1].length; i++)
+				{
+					var bidParticipation = new bidsParticipationObj();
+					bidParticipation.construct(outPutData[1][i].userID, outPutData[1][i].bidID, outPutData[1][i].offeredMoney);					
+					this.bidsHistoryArray.push(bidParticipation);
+				}	
+				
+				for (var i = 0; i < outPutData[2].length; i++)
+				{
+					var user = new userObj();
+						user.construct(outPutData[2][i].userID, outPutData[2][i].userType, outPutData[2][i].userName, outPutData[2][i].password,
+										outPutData[2][i].email, outPutData[2][i].registerDate, outPutData[2][i].unsubscribeDate, outPutData[2][i].image,
+										outPutData[2][i].provinceID);		
+						
+					this.usersArray.push(user);					
+				}				
+					
+			}			
+
+		}
+/*
+ *@name: showItemInfo
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/				
+		this.showItemInfo = function(index){
+			$scope.usersFlag = 5;
+			this.viewBidItem = this.allBidsArray[index];
+		}
+/*
+ *@name: hideItemInfo
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies the selected user
+ *@date: 2015/05/11
+ *@params: none
+ *@return: none
+ *
+*/				
+		this.hideItemInfo = function(){
+			$scope.usersFlag = 0;
+		}
+		
+		
+/*
+ *@name: loadItems
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.loadItems = function(){
+			this.itemsArray = new Array();	
+			this.itemUsersArray= new Array();				
+			var userName= ((typeof this.userNameToSearch == "undefined") ? '' : this.userNameToSearch);
+			var itemType= ((typeof this.itemTypeToSearch == "undefined") ? '' : this.itemTypeToSearch);
+			var genreID= ((typeof this.genreIDToSearch == "undefined") ? '' : this.genreIDToSearch);
+			var artist= ((typeof this.artistToSearch == "undefined") ? '' : this.artistToSearch);
+			
+			if(itemType!="" && genreID!="") $scope.fieldDisabled=1;
+			else $scope.fieldDisabled=0;
+			
+			if(artist!="") $scope.fieldDisabled=2;
+			else $scope.fieldDisabled=0;
+			
+					
+			//calls to AJAX in order to search all items
+			var outPutdata= new Array(); 
+			
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=68&userName='+userName+"&itemType="+itemType+"&genreID="+genreID+"&artist="+artist,
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				$("#noResult").hide();
+				for (var i = 0; i < outPutdata[1].length; i++){
+						var item = new itemObj();
+						item.construct(outPutdata[1][i].itemID, outPutdata[1][i].userID, outPutdata[1][i].bidID,outPutdata[1][i].itemType, outPutdata[1][i].title,
+											outPutdata[1][i].artist, outPutdata[1][i].releaseYear,outPutdata[1][i].genreID,outPutdata[1][i].conditionID,
+											outPutdata[1][i].image,outPutdata[1][i].available, outPutdata[1][i].uploadDate);	
+						this.itemsArray.push(item);															
+				}	
+				
+				for (var i = 0; i < outPutdata[2].length; i++){
+						var user= new userObj();
+						user.construct(outPutdata[2][i].userID, outPutdata[2][i].userType, outPutdata[2][i].userName, outPutdata[2][i].password, 
+									   outPutdata[2][i].email, outPutdata[2][i].registerDate, outPutdata[2][i].unsubscribeDate, outPutdata[2][i].image,
+									   outPutdata[2][i].provinceID);
+						this.itemUsersArray.push(user);
+					
+				}	
+			}else{
+				$("#noResult").fadeIn();
+				$("#noResult").html("<h3>There are no coincidences.</h3>");	
+			}
+		}
+		
+/*
+ *@name: loadGenresAndConditions
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: this function controls loads all the regions
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+*/
+		this.loadGenresAndConditions = function(){
+			
+			this.genresArray= new Array();
+			this.conditionsArray= new Array();
+			
+			//calls to AJAX in order to search all genres
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=3', 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					this.genre = new genreObj();
+					this.genre.construct(outPutdata[1][i].genreID, outPutdata[1][i].name);	
+					this.genresArray.push(this.genre);					
+				}			
+			}
+			else showErrors(outPutdata[1]);
+			
+			//calls to AJAX in order to search all conditions
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=4', 
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if (outPutdata[0]){		
+				for (var i = 0; i < outPutdata[1].length; i++){
+					this.condition = new conditionObj();
+					this.condition.construct(outPutdata[1][i].conditionID, outPutdata[1][i].name);	
+					this.conditionsArray.push(this.condition);					
+				}			
+			}
+			else showErrors(outPutdata[1]);
+		
+		}
+		
+/*
+ *@name: deleteItem
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function sets inactive an item
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.deleteItem = function(index){
+			
+			var confirmDelete = confirm("Are you sure that you want to set this item not available?");
+		
+			if(confirmDelete){
+				
+				$.ajax({
+				  url: 'php/control/control.php',
+				  type: 'POST',
+				  async: false,
+				  data: 'action=6&JSONData='+JSON.stringify(this.itemsArray[index]),
+				  dataType: "json",
+				  success: function (response) { 
+					  error = false;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+						error = true;
+				  }	
+				});
+			
+				if(!error)
+				{
+					alert("The item is now not available.");	
+					this.itemsArray = new Array();
+					this.loadItems();		
+					
+				}
+			
+			}
+		}
+
+/*
+ *@name: prepareToModify
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies an item
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.prepareToModify= function(index){		
+			
+			$scope.usersFlag=7;	
+			this.item = this.itemsArray[index];
+		}
+		
+/*
+ *@name: modifyItem
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies an item
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.modifyItem= function(){		
+			
+			if(confirm("Are you sure you want modify this item?")){
+				
+				var imageItem = $("#imageMod")[0].files[0];
+				
+				if(imageItem!= undefined){
+					var imagesNames = filesManagementToModItems(this.item);
+					//New files modification				
+					this.item.setImage(imagesNames[0]);
+				}				
+				
+				var dateToGetYear = new Date();
+				var year = dateToGetYear.getFullYear();
+				
+				if(this.item.getReleaseYear()>year){
+					alert("You must introduce a valid release year");
+				}																	
+		
+				
+				this.item = angular.copy(this.item);
+				var itemsToModArray= new Array();
+				itemsToModArray.push(this.item);
+				var success;
+				$.ajax({
+					url: 'php/control/control.php',
+					type: 'POST',
+					async: false,
+					data: 'action=7&JSONItemToMod='+JSON.stringify(itemsToModArray),
+					dataType: "json",
+					success: function (response) { 
+						  success=response;
+					},
+					error: function (xhr, ajaxOptions, thrownError) {
+						alert(xhr.status+"\n"+thrownError);
+					}	
+				});
+				
+				if(success){
+					alert("Item correctly modified.");
+					$scope.usersFlag = 0; 
+				}			
+			}			
+		}
+		
+/*
+ *@name: paginationControl
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function modifies an item
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/			
+		this.paginationControl= function(action){		
+			
+			switch(action){
+				case 'first':
+					$scope.pagination=0;
+					break;
+				case 'previous':
+					$scope.pagination=$scope.pagination-9;
+					break;
+				case 'next':
+					$scope.pagination=$scope.pagination+9;
+					break;
+				case 'last':
+					$scope.pagination=this.itemsArray.length-(this.itemsArray.length%9);
+					break;
+			}
+		}
+/*
+ *@name: loadSwaps
+ *@author: Irene Blanco Fabregat
+ *@versio: 1.0
+ *@description: This function loads the swaps
+ *@date: 2015/05/05
+ *@params: none
+ *@return: none
+ *
+*/		
+		this.loadSwaps= function(){
+			this.swapsArray= new Array();
+			//calls to AJAX in order to search all swaps
+			var outPutdata= new Array(); 
+			$.ajax({
+				  url: 'php/control/control.php',  
+				  type: 'POST',  
+				  async: false,   
+				  data: 'action=69',
+				  dataType: "json", 
+				  success: function (response) { 
+					  outPutdata = response;
+				  },
+				  error: function (xhr, ajaxOptions, thrownError){
+						alert("There has been and error while connecting to server");
+						console.log(xhr.status+"\n"+thrownError);
+				  }	
+			});
+			
+			if(outPutdata[0]){
+				for (var i = 0; i < outPutdata[1].length; i++){
+					alert(outPutdata[1][i].swapID, outPutdata[1][i].itemOfferedID, outPutdata[1][i].itemDemandedID, 
+						  outPutdata[1][i].demandedUserName, outPutdata[1][i].offeredUserName, outPutdata[1][i].startDate, 
+						  outPutdata[1][i].finishDate, outPutdata[1][i].success);
+				}			
+			}else showErrors(outPutdata[1]);
 		}
 
 		
@@ -502,6 +1351,7 @@
                 }
             };
      });	
+     
 	
 	swapYourMusicApp.directive("usersAdminManagement", function (){
 		return {
@@ -513,6 +1363,62 @@
 		  controllerAs: 'usersAdminManagement'
 		};
 	});
+	
+	swapYourMusicApp.directive("warningsAdminSending", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/warnings-admin-sending.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'warningsAdminSending'
+		};
+	});
+	
+	swapYourMusicApp.directive("warningsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/warnings-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'warningsAdminManagement'
+		};
+	});
+	
+	swapYourMusicApp.directive("bidsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/bids-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'bidsAdminManagement'
+		};
+	});
+	
+	swapYourMusicApp.directive("itemsAdminManagement", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/items-admin-management.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'itemsAdminManagement'
+		};
+	});
+	
+	swapYourMusicApp.directive("itemsAdminModification", function (){
+		return {
+		  restrict: 'E',
+		  templateUrl:"templates/items-admin-modification.html",
+		  controller:function(){
+
+		  },
+		  controllerAs: 'itemsAdminModification'
+		};
+	});
+	
 	
 })();
 
@@ -558,15 +1464,7 @@ function userImagesManagement(userNick, imageName)
 	
 	var image = $("#imageUserMod")[0].files[0];
 	
-	//File name
-	var fileName = image.name;
-	
-	//File type
-	var fileType = image.type;
-	
-	//File size
-	var fileSize = image.size;
-	
+
 	imageFiles.append('images[]',image);
 	
 	var serverFileNames = new Array();
@@ -593,6 +1491,106 @@ function userImagesManagement(userNick, imageName)
 	
 }
 
+ /*
+		* @name: imagesManagement()
+		* @author: Irene Blanco
+		* @version: 1.0
+		* @description: this function manages the images
+		* the database
+		* @date: 26/04/2015
+		* @params: userNick
+		* @return: none
+		*/
+function imagesManagement(userName)
+{
+	var imageFiles = new FormData();
+	var userNamesArray = new Array();
+	userNamesArray.push(userName);
+	
+	var image = $("#imageUser")[0].files[0];
+	
+	//File name
+	var fileName = image.name;
+	
+	//File type
+	var fileType = image.type;
+	
+	//File size
+	var fileSize = image.size;
+	
+	imageFiles.append('images[]',image);
+	
+	var serverFileNames = new Array();
+	
+	$.ajax({
+		url : 'php/control/controlFiles.php?action=50&userNamesArray='+JSON.stringify(userNamesArray),
+        type : 'POST',
+        async: false,
+        data : imageFiles,
+        dataType: "json",
+        //~ beforesend:
+        //~ complete:
+        processData : false, 
+        contentType : false, 
+        success : function(response){
+                   serverFileNames = response;
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+			alert(xhr.status+"\n"+thrownError);
+		}                
+    });
+    
+    return serverFileNames;
+	
+}
+
+function filesManagementToModItems(itemToMod){
+	//Remove image
+	var imagesNameArray=new Array();
+	imagesNameArray.push(itemToMod.getImage());
+	$.ajax({
+		url : 'php/control/controlFiles.php',
+        type : 'POST',
+        async: false,
+        data : 'action=2&JSONData='+JSON.stringify(imagesNameArray),
+        dataType: "json",
+        success : function(response){
+                   
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+			alert(xhr.status+"\n"+thrownError);
+		}                
+    });
+    
+	
+	//Upload image
+	var imageFiles = new FormData();
+	
+	var image = $("#imageMod")[0].files[0];
+		
+	imageFiles.append('images[]',image);
+	
+	var serverFileNames = new Array();
+	itemToMod = angular.copy(itemToMod);
+	
+	$.ajax({
+		url : 'php/control/controlFiles.php?action=1&titleItem='+$("#titleMod").val()+'&userID='+itemToMod.getUserID(),
+        type : 'POST',
+        async: false,
+        data : imageFiles,
+        dataType: "json",
+        processData : false, 
+        contentType : false, 
+        success : function(response){
+                   serverFileNames = response;
+        },
+        error: function (xhr, ajaxOptions, thrownError) {
+			alert(xhr.status+"\n"+thrownError);
+		}                
+    });
+    
+    return serverFileNames;
+}
 
  
 
